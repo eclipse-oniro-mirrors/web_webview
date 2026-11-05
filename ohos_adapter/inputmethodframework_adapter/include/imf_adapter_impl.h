@@ -41,48 +41,6 @@ private:
     IMFAdapterEnterKeyType enterKeyType = IMFAdapterEnterKeyType::UNSPECIFIED;
 };
 
-class IMFPreviewTextStyleAdapterImpl : public IMFPreviewTextStyleAdapter {
-public:
-    IMFPreviewTextStyleAdapterImpl() = default;
-
-    ~IMFPreviewTextStyleAdapterImpl() = default;
-
-    IMFAdapterUnderlineStyle GetUnderlineStyle() const override
-    {
-        return underlineStyle_;
-    }
-
-    uint32_t GetUnderlineColor() const override
-    {
-        return underlineColor_;
-    }
-
-    bool HasUnderlineColor() const override
-    {
-        return hasUnderlineColor_;
-    }
-
-    void SetUnderlineStyle(IMFAdapterUnderlineStyle style)
-    {
-        underlineStyle_ = style;
-    }
-
-    void SetUnderlineColor(uint32_t color)
-    {
-        underlineColor_ = color;
-    }
-
-    void SetHasUnderlineColor(bool hasColor)
-    {
-        hasUnderlineColor_ = hasColor;
-    }
-
-private:
-    IMFAdapterUnderlineStyle underlineStyle_ = IMFAdapterUnderlineStyle::NONE;
-    uint32_t underlineColor_ = 0;
-    bool hasUnderlineColor_ = false;
-};
-
 class IMFTextListenerAdapterImpl : public MiscServices::OnTextChangedListener {
 public:
     explicit IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener);
@@ -126,17 +84,12 @@ public:
 
     void NotifyPanelStatusInfo(const MiscServices::PanelStatusInfo& info) override;
 
-    int32_t SetPreviewTextWithStyle(const std::u16string &text, const MiscServices::Range &range,
-        const PreviewTextStyleInner &style) override;
-
-    bool IsSupportPreviewTextWithStyle() override;
 private:
     std::shared_ptr<IMFTextListenerAdapter> listener_ = nullptr;
     const std::string PREVIEW_TEXT_STYLE_KEY = "previewTextStyle";
     const std::string PREVIEW_TEXT_STYLE_UNDERLINE = "underline";
     const std::string AUTO_FILL_PARAMS_USERNAME = "com.autofill.params.userName";
     const std::string AUTO_FILL_PARAMS_OTHERACCOUNT = "com.autofill.params.otherAccount";
-    std::shared_ptr<IMFPreviewTextStyleAdapterImpl> previewTextAdapter_ = nullptr;
 };
 
 class IMFAdapterImpl : public IMFAdapter {

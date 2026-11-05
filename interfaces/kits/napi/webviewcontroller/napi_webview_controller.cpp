@@ -15,6 +15,8 @@
 
 #include "napi_webview_controller.h"
 
+#include "napi_navigation_throttle.h"
+
 #include <arpa/inet.h>
 #include <cctype>
 #include <chrono>
@@ -742,6 +744,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setNavigationEntryUserData", NapiWebviewController::SetNavigationEntryUserData),
         DECLARE_NAPI_FUNCTION("getNavigationEntryUserData", NapiWebviewController::GetNavigationEntryUserData),
         DECLARE_NAPI_FUNCTION("removeNavigationEntryUserData", NapiWebviewController::RemoveNavigationEntryUserData),
+        DECLARE_NAPI_FUNCTION("setNavigationThrottle", NapiWebviewController::SetNavigationThrottle),
         DECLARE_NAPI_FUNCTION("getTitle", NapiWebviewController::GetTitle),
         DECLARE_NAPI_FUNCTION("getProgress", NapiWebviewController::GetProgress),
         DECLARE_NAPI_FUNCTION("getPageHeight", NapiWebviewController::GetPageHeight),
@@ -1000,6 +1003,20 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(mediaPlaybackStateProperties) /
         sizeof(mediaPlaybackStateProperties[0]), mediaPlaybackStateProperties, &mediaPlaybackStateEnum);
     napi_set_named_property(env, exports, WEB_MEDIA_PLAYBACK_STATE_ENUM_NAME.c_str(), mediaPlaybackStateEnum);
+
+    napi_value navThrottleActionEnum = nullptr;
+    napi_property_descriptor navThrottleActionProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("PROCEED", NapiParseUtils::ToInt32Value(env, 0)),
+        DECLARE_NAPI_STATIC_PROPERTY("CANCEL", NapiParseUtils::ToInt32Value(env, 1)),
+        DECLARE_NAPI_STATIC_PROPERTY("DEFER", NapiParseUtils::ToInt32Value(env, 2)),
+    };
+    napi_define_class(env, WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME.c_str(),
+        WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(navThrottleActionProperties) / sizeof(navThrottleActionProperties[0]),
+        navThrottleActionProperties, &navThrottleActionEnum);
+    napi_set_named_property(env, exports, WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME.c_str(),
+        navThrottleActionEnum);
 
     napi_value msgPortCons = nullptr;
     napi_property_descriptor msgPortProperties[] = {
@@ -3334,6 +3351,52 @@ napi_value NapiWebviewController::RemoveNavigationEntryUserData(napi_env env, na
         return result;
     }
     ErrCode ret = webviewController->RemoveNavigationEntryUserData(key);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::SetNavigationThrottle(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, reinterpret_cast<void **>(&webviewController));
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler = nullptr;
+    if (!NapiNavigationThrottle::IsClearValue(env, argv[INTEGER_ZERO])) {
+        napi_valuetype valueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[INTEGER_ZERO], &valueType));
+        if (valueType != napi_object) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR,
+                                        "throttle", "NavigationThrottle"));
+            return result;
+        }
+        handler = NapiNavigationThrottle::CreateHandler(env, argv[INTEGER_ZERO],
+                                                        webviewController->GetWebId());
+        if (handler == nullptr) {
+            WVLOG_E("SetNavigationThrottle: create handler failed");
+            return result;
+        }
+    }
+    ErrCode ret = webviewController->SetNavigationThrottle(handler);
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
     }

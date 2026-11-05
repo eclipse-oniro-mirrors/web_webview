@@ -85,6 +85,7 @@ ohos_shared_library("webview_napi") {
     "webviewcontroller/napi_web_download_manager.h",
     "webviewcontroller/napi_web_scheme_handler_request.cpp",
     "webviewcontroller/napi_web_scheme_handler_request.h",
+    "webviewcontroller/napi_navigation_throttle.cpp",
     "webviewcontroller/napi_webview_controller.cpp",
     "webviewcontroller/native_media_player_impl.cpp",
     "webviewcontroller/native_media_player_impl.h",

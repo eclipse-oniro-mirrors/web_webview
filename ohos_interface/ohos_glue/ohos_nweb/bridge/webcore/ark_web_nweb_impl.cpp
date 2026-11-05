@@ -40,6 +40,7 @@
 #include "ohos_nweb/bridge/ark_web_keyboard_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_mouse_event_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_navigation_throttle_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_preference_impl.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_rom_value_wrapper.h"
@@ -1967,4 +1968,24 @@ void ArkWebNWebImpl::RemoveNavigationEntryUserData(const ArkWebString& key)
 {
     nweb_nweb_->RemoveNavigationEntryUserData(ArkWebStringStructToClass(key));
 }
+
+void ArkWebNWebImpl::SetNavigationThrottle(ArkWebRefPtr<ArkWebNavigationThrottleHandler> handler)
+{
+    if (CHECK_REF_PTR_IS_NULL(handler)) {
+        nweb_nweb_->SetNavigationThrottle(nullptr);
+        return;
+    }
+    nweb_nweb_->SetNavigationThrottle(std::make_shared<ArkWebNavigationThrottleHandlerWrapper>(handler));
+}
+
+bool ArkWebNWebImpl::HasThrottleCallback()
+{
+    return nweb_nweb_->HasThrottleCallback();
+}
+
+void ArkWebNWebImpl::ResolveNavigationDefer(uint64_t deferId, bool proceed)
+{
+    nweb_nweb_->ResolveNavigationDefer(deferId, proceed);
+}
+
 } // namespace OHOS::ArkWeb

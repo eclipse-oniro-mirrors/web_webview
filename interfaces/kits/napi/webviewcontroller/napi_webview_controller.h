@@ -59,6 +59,7 @@ const std::string WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME = "WebHttpCookieSam
 const std::string WEB_HARDWARE_TYPE_ENUM_NAME = "WebHardwareType";
 const std::string WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME = "WebDeviceListUpdateAction";
 const std::string WEB_DEVICE_GUARD_POLICY_ENUM_NAME = "WebDeviceGuardPolicy";
+const std::string WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME = "NavigationThrottleAction";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
 
@@ -148,6 +149,7 @@ private:
     static napi_value GetCustomUserAgent(napi_env env, napi_callback_info info);
 
     static napi_value SetCustomUserAgent(napi_env env, napi_callback_info info);
+    static napi_value SetNavigationThrottle(napi_env env, napi_callback_info info);
 
     static napi_value SetNavigationEntryUserData(napi_env env, napi_callback_info info);
 

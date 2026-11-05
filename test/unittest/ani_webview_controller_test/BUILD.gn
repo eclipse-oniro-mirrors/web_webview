@@ -47,6 +47,8 @@ ohos_unittest("ani_webview_controller_test") {
   sources = [
     "ani_webview_controller_unittest.cpp",
     "$webview_path/interfaces/kits/ani/webview/src/webviewcontroller/ani_webview_ai_page_command_callback.cpp",
+    "$webview_path/interfaces/kits/ani/webview/src/webviewcontroller/ani_navigation_throttle.cpp",
+    "$webview_path/interfaces/kits/ani/webview/src/common/ani_web_net_error_list.cpp",
   ]
 
   configs = [ ":module_private_config" ]

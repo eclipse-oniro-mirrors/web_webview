@@ -33,6 +33,7 @@
 #include "ani_business_error.h"
 #include "ani_parse_utils.h"
 #endif
+#include "ani_navigation_throttle.h"
 #include "ani_class_name.h"
 #include "nweb_init_params.h"
 
@@ -8023,6 +8024,7 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "backOrForward", nullptr, reinterpret_cast<void *>(BackOrForward) },
         ani_native_function { "enableSafeBrowsing", nullptr, reinterpret_cast<void *>(EnableSafeBrowsing) },
         ani_native_function { "setCustomUserAgent", nullptr, reinterpret_cast<void *>(SetCustomUserAgent) },
+        ani_native_function { "setNavigationThrottle", nullptr, reinterpret_cast<void *>(AniSetNavigationThrottle) },
         ani_native_function { "removeCache", nullptr, reinterpret_cast<void *>(RemoveCache) },
         ani_native_function { "setNetworkAvailable", nullptr, reinterpret_cast<void *>(SetNetworkAvailable) },
         ani_native_function { "isIncognitoMode", nullptr, reinterpret_cast<void *>(IsIncognitoMode) },
