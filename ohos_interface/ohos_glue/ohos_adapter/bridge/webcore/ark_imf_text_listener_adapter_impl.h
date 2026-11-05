@@ -67,6 +67,10 @@ public:
 
     void WebSetImeShow(bool visible) override;
 
+    int32_t SetPreviewTextWithStyle(const ArkWebU16String& text, int32_t start, int32_t end,
+        ArkWebRefPtr<ArkIMFPreviewTextStyleAdapter> style) override;
+
+    bool IsSupportPreviewTextWithStyle() override;
 private:
     std::shared_ptr<OHOS::NWeb::IMFTextListenerAdapter> real_;
 
