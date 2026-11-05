@@ -110,7 +110,6 @@ public:
     void SetDamageRegion(SurfaceControl* surfaceControl, const OH_Rect* rects, uint32_t count);
     void SetBufferAlpha(SurfaceControl* surfaceControl, float alpha);
     void SetBackgroundColor(SurfaceControl* surfaceControl, float red, float green, float blue, float alpha);
-    void SetName(SurfaceControl* surfaceControl, const char* name);
     void SetHardwareEnableHint(SurfaceControl* surfaceControl, bool enable);
     void SetSrcRect(SurfaceControl* surfaceControl, float x, float y, float w, float h);
     void SetDisplayRect(SurfaceControl* surfaceControl, float x, float y, float w, float h);

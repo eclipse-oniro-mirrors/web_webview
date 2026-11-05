@@ -74,7 +74,6 @@ public:
     void SetDamageRegion(std::vector<Rect> rects);
     void SetBufferAlpha(float alpha);
     void SetBackgroundColor(float red, float green, float blue, float alpha);
-    void SetName(std::string name);
     void SetHardwareEnableHint(bool enable);
     void SetSrcRect(float x, float y, float w, float h);
     void SetDisplayRect(float x, float y, float w, float h);
@@ -83,6 +82,12 @@ public:
     uint64_t GetRosenWebNodeId() { return rosenWebNodeId_; }
 
 private:
+    void SetBoundsInner(float x, float y, float w, float h);
+
+    std::shared_ptr<Rosen::ModifierNG::RSModifier> pivotModifier_;
+    std::shared_ptr<Rosen::ModifierNG::RSModifier> visibilityModifier_;
+    std::shared_ptr<Rosen::ModifierNG::RSModifier> boundsModifier_;
+    std::shared_ptr<Rosen::ModifierNG::RSModifier> bufferAlphaModifier_;
     std::shared_ptr<OHOS::Rosen::RSSurfaceNode> surfaceNode_ = nullptr;
     std::shared_ptr<OHOS::Rosen::RSNode> parentNode_ = nullptr;
     bool isRootSurface_ = false;

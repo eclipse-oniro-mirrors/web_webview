@@ -17,13 +17,19 @@
 #include "aafwk_browser_client_adapter_impl.h"
 #include <algorithm>
 #include <charconv>
+#include "feature/delegate_composite/rs_delegate_composite_listener.h"
 #include <iostream>
+#include "ipc_callbacks/rs_delegate_composite_callback.h"
+#include "modifier_ng/geometry/rs_bounds_modifier.h"
+#include "modifier_ng/geometry/rs_transform_modifier.h"
+#include "modifier_ng/appearance/rs_visibility_modifier.h"
+#include "modifier_ng/appearance/rs_alpha_modifier.h"
 #include <mutex>
+#include "nweb_log.h"
 #include "surface_buffer.h"
 #include "surface_transaction.h"
 #include "surface/window.h"
 #include "native_window.h"
-#include "nweb_log.h"
 #include "transaction/rs_interfaces.h"
 #include "ui/rs_display_node.h"
 #include "ui/rs_proxy_node.h"
@@ -31,8 +37,6 @@
 #include "ui/rs_ui_context_manager.h"
 #include "ui/rs_ui_director.h"
 #include "web_surface_registry.h"
-#include "ipc_callbacks/rs_delegate_composite_callback.h"
-#include "feature/delegate_composite/rs_delegate_composite_listener.h"
 
 using namespace OHOS::Rosen;
 
@@ -218,7 +222,7 @@ SurfaceControl::SurfaceControl(std::shared_ptr<Rosen::RSSurfaceNode> surfaceNode
 {
     if (surfaceNode_) {
         surfaceNode_->SetDelegateMode(true);
-        surfaceNode_->SetPivot(0, 0);
+        SetPivot(0, 0);
         auto instance = RSSurfaceNodeReleaseBufferWorker::GetInstance();
         if (instance != nullptr) {
             instance->RegisterNode(surfaceNode_);
@@ -263,6 +267,14 @@ void SurfaceControl::SetVisibility(bool visibility)
     RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], visibility=%d",
         __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), visibility);
     surfaceNode_->SetVisible(visibility);
+
+    if (visibilityModifier_) {
+        surfaceNode_->RemoveModifier(visibilityModifier_);
+    }
+    auto modifier = std::make_shared<Rosen::ModifierNG::RSVisibilityModifier>();
+    modifier->SetVisible(visibility);
+    surfaceNode_->AddModifier(modifier);
+    visibilityModifier_ = modifier;
 }
 
 void SurfaceControl::SetZOrder(int32_t zOrder)
@@ -300,13 +312,26 @@ void SurfaceControl::SetSrcRect(float x, float y, float w, float h)
     surfaceNode_->SetDelegateSrcRect(x, y, w, h);
 }
 
+void SurfaceControl::SetBoundsInner(float x, float y, float w, float h)
+{
+    CHECK_NULL_POINTER(surfaceNode_);
+    surfaceNode_->SetBounds(x, y, w, h);
+
+    if (boundsModifier_) {
+        surfaceNode_->RemoveModifier(boundsModifier_);
+    }
+    auto modifier = std::make_shared<Rosen::ModifierNG::RSBoundsModifier>();
+    modifier->SetBounds({x, y, w, h});
+    surfaceNode_->AddModifier(modifier);
+    boundsModifier_ = modifier;
+}
+
 void SurfaceControl::SetDisplayRect(float x, float y, float w, float h)
 {
     CHECK_NULL_POINTER(surfaceNode_);
-    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], "
-        "DisplayRect[x:%.2f, y:%.2f, w:%.2f, h:%.2f]", __func__, surfaceNode_->GetName().c_str(),
-        surfaceNode_->GetId(), x, y, w, h);
-    surfaceNode_->SetBounds(x, y, w, h);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], rect[x:%.2f, y:%.2f, w:%.2f, h:%.2f]",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), x, y, w, h);
+    SetBoundsInner(x, y, w, h);
     surfaceNode_->SetDelegateDstRect(x, y, w, h);
 }
 
@@ -322,7 +347,9 @@ void SurfaceControl::SetBounds(float x, float y, float w, float h)
         WVLOG_E("Invalid bounds, x: %.2f, y: %.2f, w: %.2f, h: %.2f", x, y, w, h);
         return;
     }
-    surfaceNode_->SetBounds(x, y, w, h);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], bounds[x:%.2f, y:%.2f, w:%.2f, h:%.2f]",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), x, y, w, h);
+    SetBoundsInner(x, y, w, h);
     surfaceNode_->SetDelegateDstRect(x, y, w, h);
 }
 
@@ -332,6 +359,14 @@ void SurfaceControl::SetPivot(float x, float y)
     RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], pivot=[x:%.2f, y:%.2f]",
         __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), x, y);
     surfaceNode_->SetPivot(x, y);
+
+    if (pivotModifier_) {
+        surfaceNode_->RemoveModifier(pivotModifier_);
+    }
+    auto modifier = std::make_shared<Rosen::ModifierNG::RSTransformModifier>();
+    modifier->SetPivot({x, y});
+    surfaceNode_->AddModifier(modifier);
+    pivotModifier_ = modifier;
 }
 
 void SurfaceControl::SetBufferTransform(GraphicTransformType transform)
@@ -358,6 +393,14 @@ void SurfaceControl::SetBufferAlpha(float alpha)
     RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], alpha=%.2f",
         __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), alpha);
     surfaceNode_->SetAlpha(alpha);
+
+    if (bufferAlphaModifier_) {
+        surfaceNode_->RemoveModifier(bufferAlphaModifier_);
+    }
+    auto modifier = std::make_shared<Rosen::ModifierNG::RSAlphaModifier>();
+    modifier->SetAlpha(alpha);
+    surfaceNode_->AddModifier(modifier);
+    bufferAlphaModifier_ = modifier;
 }
 
 void SurfaceControl::SetBackgroundColor(float red, float green, float blue, float alpha)
@@ -366,12 +409,6 @@ void SurfaceControl::SetBackgroundColor(float red, float green, float blue, floa
     RS_TRACE_NAME_FMT("SurfaceControl::SetBackgroundColor: [r:%f, g:%f, b:%f, a:%f], nodeId=%llu",
         red, green, blue, alpha, surfaceNode_->GetId());
     surfaceNode_->SetBackgroundColor(ToARGB(red, green, blue, alpha));
-}
-
-void SurfaceControl::SetName(std::string name)
-{
-    CHECK_NULL_POINTER(surfaceNode_);
-    surfaceNode_->SetNodeName(name);
 }
 
 void SurfaceControl::SetHardwareEnableHint(bool enable)

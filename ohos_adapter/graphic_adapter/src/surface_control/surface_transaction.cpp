@@ -322,19 +322,6 @@ void SurfaceTransaction::SetBackgroundColor(
     });
 }
 
-void SurfaceTransaction::SetName(SurfaceControl* surfaceControl, const char* name)
-{
-    if (!surfaceControl) {
-        WVLOG_E("surfaceControl is nullptr");
-        return;
-    }
-    transactionCommands_.push_back([surface = sptr<SurfaceControl>(surfaceControl), nameStr = std::string(name)] {
-        if (surface) {
-            surface->SetName(std::move(nameStr));
-        }
-    });
-}
-
 void SurfaceTransaction::SetHardwareEnableHint(SurfaceControl* surfaceControl, bool enable)
 {
     if (!surfaceControl) {
