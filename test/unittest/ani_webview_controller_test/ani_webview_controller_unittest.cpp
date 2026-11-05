@@ -2475,6 +2475,7 @@ TEST_F(AniWebviewControllerTest, GetDataDirectorySuffix_DefaultEmpty)
     EXPECT_NE(result, nullptr);
     EXPECT_EQ(gStringNewUtf8LastStr, std::string(""));
 }
+/**
  * @tc.name: SetNavigationEntryUserData_ForwardAndOverwrite
  * @tc.desc: SetNavigationEntryUserData forwards (key, value) to the controller and
  *           the same key overwrites the previous value (AC-1.5).
