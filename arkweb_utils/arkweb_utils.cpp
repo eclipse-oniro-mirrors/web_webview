@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "arkweb_utils.h"
+#include "arkweb_preload_common.h"
 
 #include "parameters.h"
 #include "nweb_log.h"
@@ -29,6 +30,8 @@
 #include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <unordered_set>
 #include <regex>
 #include <iomanip>
@@ -985,11 +988,8 @@ bool NeedShareRelro()
     return g_arkwebEngineAccessible;
 }
 
-bool ReserveAddressSpace()
+static bool ReserveAddressSpaceInternal()
 {
-    if (!NeedShareRelro()) {
-        return false;
-    }
     void* addr = mmap(nullptr, RESERVED_VMA_SIZE, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (addr == MAP_FAILED) {
         WVLOG_E("ReserveAddressSpace: mmap failed, error=[%{public}s]", strerror(errno));
@@ -1000,6 +1000,31 @@ bool ReserveAddressSpace()
     g_reservedSize = RESERVED_VMA_SIZE;
     WVLOG_I("1.Reserve address space success, size:%{public}zd bytes", g_reservedSize);
     return true;
+}
+
+bool ReserveAddressSpace()
+{
+    if (!NeedShareRelro()) {
+        return false;
+    }
+    return ReserveAddressSpaceInternal();
+}
+
+bool ReserveAddressSpaceForPreload()
+{
+    // nwebspawn runs outside the app sandbox and can directly access the real install path
+    std::string arkwebEngineLibDir = GetArkwebBundleInstallLibPath();
+    std::filesystem::path arkwebEngineLibPath = arkwebEngineLibDir + "/" + ARK_WEB_ENGINE_LIB_NAME;
+    g_arkwebEngineAccessible = CheckTargetExists(arkwebEngineLibPath);
+    if (!g_arkwebEngineAccessible) {
+        WVLOG_E("ReserveAddressSpaceForPreload: arkweb engine lib is not accessible at %{public}s.",
+                arkwebEngineLibPath.string().c_str());
+        return false;
+    }
+    WVLOG_I("ReserveAddressSpaceForPreload: arkweb engine lib is accessible at %{public}s.",
+            arkwebEngineLibPath.string().c_str());
+    g_shareRelroEnabled = true;
+    return ReserveAddressSpaceInternal();
 }
 
 void* CreateRelroFile(const std::string& lib, Dl_namespace* dlns)
@@ -1041,42 +1066,102 @@ void* CreateRelroFile(const std::string& lib, Dl_namespace* dlns)
     return result;
 }
 
-void CreateRelroFileInSubProc()
+static constexpr int RELRO_SUBPROC_SUCCESS = 0;
+static constexpr int RELRO_SUBPROC_FAILURE = 1;
+
+static int InitAndCreateRelroFile(const std::string& libPath)
+{
+    WVLOG_I("Fork sub process success.");
+    if (prctl(PR_SET_NAME, "shared_relro") != 0) {
+        WVLOG_E("Set sub process name failed, error=[%{public}s]", strerror(errno));
+    }
+    if (setgid(SHARED_RELRO_UID) != 0 || setuid(SHARED_RELRO_UID) != 0) {
+        WVLOG_E("Set uid/gid failed, error=[%{public}s]", strerror(errno));
+        return RELRO_SUBPROC_FAILURE;
+    }
+    if (RestoreconRecurse(SHARED_RELRO_DIR.c_str()) != 0) {
+        WVLOG_E("Restorecon failed, error=[%{public}s]", strerror(errno));
+        return RELRO_SUBPROC_FAILURE;
+    }
+
+    if (libPath.empty()) {
+        WVLOG_E("InitAndCreateRelroFile: lib path is empty.");
+        return RELRO_SUBPROC_FAILURE;
+    }
+    const std::string libNsName = GetArkwebNameSpace();
+    Dl_namespace dlns;
+    dlns_init(&dlns, libNsName.c_str());
+    dlns_create(&dlns, libPath.c_str());
+    Dl_namespace platformNamespace;
+    dlns_get("ndk", &platformNamespace);
+    dlns_inherit(&dlns, &platformNamespace, "allow_all_shared_libs");
+
+    void* webEngineHandle = CreateRelroFile(ARK_WEB_ENGINE_LIB_NAME, &dlns);
+    if (webEngineHandle == nullptr) {
+        WVLOG_E("Create relro file failed.");
+        return RELRO_SUBPROC_FAILURE;
+    }
+    WVLOG_I("Create relro file success.");
+    return RELRO_SUBPROC_SUCCESS;
+}
+
+static pid_t ForkCreateRelroFileSubProc(const std::string& libPath)
 {
     pid_t pid = fork();
     if (pid < 0) {
         WVLOG_E("Fork sub process failed.");
     } else if (pid == 0) {
-        WVLOG_I("Fork sub process success.");
-        if (prctl(PR_SET_NAME, "shared_relro") != 0) {
-            WVLOG_E("Set sub process name failed, error=[%{public}s]", strerror(errno));
-        }
-        if (setuid(SHARED_RELRO_UID) != 0 || setgid(SHARED_RELRO_UID)  != 0) {
-            WVLOG_E("Set uid/gid failed, error=[%{public}s]", strerror(errno));
-            exit(0);
-        }
-        if (RestoreconRecurse(SHARED_RELRO_DIR.c_str()) != 0) {
-            WVLOG_E("Restorecon failed, error=[%{public}s]", strerror(errno));
-            exit(0);
-        }
-
-        const std::string libNsName = GetArkwebNameSpace();
-        const std::string libpath = GetArkwebLibPath();
-        Dl_namespace dlns;
-        dlns_init(&dlns, libNsName.c_str());
-        dlns_create(&dlns, libpath.c_str());
-        Dl_namespace ndkns;
-        dlns_get("ndk", &ndkns);
-        dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-
-        void* webEngineHandle = CreateRelroFile(ARK_WEB_ENGINE_LIB_NAME, &dlns);
-        if (webEngineHandle) {
-            WVLOG_I("Create relro file success.");
-        } else {
-            WVLOG_E("Create relro file failed.");
-        }
-        exit(0);
+        // Child process: use _exit() to avoid triggering atexit handlers and static
+        // destructors inherited from the parent.
+        int exitCode = InitAndCreateRelroFile(libPath);
+        _exit(exitCode);
     }
+    return pid;
+}
+
+void CreateRelroFileInSubProc()
+{
+    // called by appspawn/render process inside the sandbox, use sandbox path
+    (void)ForkCreateRelroFileSubProc(GetArkwebLibPath());
+}
+
+static bool WaitForRelroFileSubProc(pid_t pid)
+{
+    int status = 0;
+    pid_t waitResult = -1;
+    do {
+        waitResult = waitpid(pid, &status, 0);
+    } while (waitResult < 0 && errno == EINTR);
+
+    if (waitResult != pid) {
+        WVLOG_E("Wait shared_relro process failed, error=[%{public}s]", strerror(errno));
+        return false;
+    }
+    if (!WIFEXITED(status)) {
+        WVLOG_E("shared_relro process exit abnormal, status:%{public}d", status);
+        return false;
+    }
+    int exitCode = WEXITSTATUS(status);
+    if (exitCode != RELRO_SUBPROC_SUCCESS) {
+        WVLOG_E("shared_relro process failed, exitCode:%{public}d", exitCode);
+        return false;
+    }
+    return true;
+}
+
+bool CreateRelroFileInSubProcAndWait()
+{
+    // called by nwebspawn preload (outside sandbox), use real install path
+    const std::string libPath = GetArkwebBundleInstallLibPath();
+    if (libPath.empty()) {
+        WVLOG_E("CreateRelroFileInSubProcAndWait: arkweb bundle install lib path is empty.");
+        return false;
+    }
+    pid_t pid = ForkCreateRelroFileSubProc(libPath);
+    if (pid < 0) {
+        return false;
+    }
+    return WaitForRelroFileSubProc(pid);
 }
 
 void* LoadWithRelroFile(const std::string& lib, Dl_namespace* dlns)

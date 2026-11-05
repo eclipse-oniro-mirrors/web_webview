@@ -158,7 +158,7 @@ void NapiWebStorage::ExecuteGetOrigins(napi_env env, void *data)
         napiOrigin.usage = origin->GetUsage();
         param->origins.push_back(napiOrigin);
     }
-    param->errCode = INTERFACE_OK;
+    param->errCode = param->origins.empty() ? NWebError::NO_WEBSTORAGE_ORIGIN : INTERFACE_OK;
     param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
 }
 

@@ -18,6 +18,7 @@
 #pragma once
 
 #include "include/nweb.h"
+#include <vector>
 #include "include/nweb_blankless_callback.h"
 #include "include/nweb_snapshot_callback.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
@@ -2138,6 +2139,49 @@ public:
 
     void SetFlingSpeedLimit(float speed_limit) override;
 
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    void SetNavigationEntryUserData(const std::string& key, const std::string& value) override;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    std::string GetNavigationEntryUserData(const std::string& key) override;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    void RemoveNavigationEntryUserData(const std::string& key) override;
+
+    /**
+     * @brief Set the navigation throttle handler. Only one handler takes effect; setting a new one
+     *        overwrites the previous one, and setting nullptr clears it.
+     *
+     * @param handler The navigation throttle handler to set, or nullptr to clear.
+     */
+    /*--ark web()--*/
+    void SetNavigationThrottle(std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler) override;
+
+    /**
+     * @brief Check whether a navigation throttle handler is registered.
+     *
+     * @return true if a handler is registered, false otherwise.
+     */
+    /*--ark web()--*/
+    bool HasThrottleCallback() override;
+
+    /**
+     * @brief Resume or cancel a deferred navigation.
+     *
+     * @param deferId The defer identifier passed to NWebNavigationThrottleHandler::OnThrottleEvent.
+     * @param proceed true to resume the navigation, false to cancel it.
+     */
+    /*--ark web()--*/
+    void ResolveNavigationDefer(uint64_t deferId, bool proceed) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
@@ -2145,3 +2189,4 @@ private:
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_WEB_NWEB_WRAPPER_H_
+

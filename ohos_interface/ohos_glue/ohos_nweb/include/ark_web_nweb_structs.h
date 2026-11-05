@@ -32,17 +32,6 @@ const ArkWebDateTime ark_web_date_time_default = {
     0,
 };
 
-typedef struct {
-    int32_t routing_id;
-    int32_t frame_child_id;
-    int32_t object_id;
-    int fd;
-} ArkWebJsCallInfo;
-
-const ArkWebJsCallInfo ark_web_js_call_info_default = {
-    -1, -1, -1, -1,
-};
-
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 
 typedef void (*NativeArkWebOnValidCallback)(const char*);

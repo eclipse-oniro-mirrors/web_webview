@@ -26,15 +26,21 @@
 
 namespace OHOS::NWeb {
 
+class OHOS_NWEB_EXPORT NWebJsCallInfo {
+public:
+    virtual ~NWebJsCallInfo() = default;
+
+    virtual int32_t GetRoutingId() = 0;
+
+    virtual int32_t GetFrameChildId() = 0;
+
+    virtual int32_t GetObjectId() = 0;
+
+    virtual int GetFd() = 0;
+};
+
 class OHOS_NWEB_EXPORT NWebJavaScriptResultCallBack {
 public:
-    struct JsCallInfo {
-        int32_t routing_id = -1;
-        int32_t frame_child_id = -1;
-        int32_t object_id = -1;
-        int fd = -1;
-    };
-
     NWebJavaScriptResultCallBack() = default;
 
     virtual ~NWebJavaScriptResultCallBack() = default;
@@ -88,7 +94,7 @@ public:
      * @param result: means the JavaScript method execution result
      */
     virtual void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
-        const std::string& method, const std::string& object_name, const JsCallInfo& call_info,
+        const std::string& method, const std::string& object_name, std::shared_ptr<NWebJsCallInfo> call_info,
         std::shared_ptr<NWebHapValue> result) = 0;
 
     /* GetJavaScriptResultFlowbufV3
@@ -100,7 +106,7 @@ public:
      * @param result: means the JavaScript method execution result
      */
     virtual void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
-        const std::string& method, const std::string& object_name, const JsCallInfo& call_info,
+        const std::string& method, const std::string& object_name, std::shared_ptr<NWebJsCallInfo> call_info,
         std::shared_ptr<NWebHapValue> result) = 0;
 };
 

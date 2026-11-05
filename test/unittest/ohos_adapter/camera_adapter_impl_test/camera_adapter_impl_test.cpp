@@ -350,6 +350,10 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     EXPECT_NE(result, 0);
     sptr<ICameraDeviceService> deviceObj = nullptr;
     std::vector<sptr<CameraDevice>> cameras = g_cameraManager->GetSupportedCameras();
+    if (cameras.empty()) {
+        //The x86 emulator is missing the camera HDI implementation
+        return;
+    }
     sptr<CameraInput> cameraInput = g_cameraManager->CreateCameraInput(cameras[0]);
     adapter.cameraInput_ = cameraInput;
     result = adapter.InitCameraInput(deviceId);

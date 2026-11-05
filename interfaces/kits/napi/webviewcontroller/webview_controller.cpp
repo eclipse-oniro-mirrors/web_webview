@@ -493,6 +493,47 @@ ErrCode WebviewController::SetCustomUserAgent(const std::string& userAgent)
     return NWebError::NO_ERROR;
 }
 
+ErrCode WebviewController::SetNavigationEntryUserData(const std::string& key, const std::string& value)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    nweb_ptr->SetNavigationEntryUserData(key, value);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::GetNavigationEntryUserData(const std::string& key, std::string& value)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    value = nweb_ptr->GetNavigationEntryUserData(key);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::RemoveNavigationEntryUserData(const std::string& key)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    nweb_ptr->RemoveNavigationEntryUserData(key);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::SetNavigationThrottle(
+    std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    nweb_ptr->SetNavigationThrottle(std::move(handler));
+    return NWebError::NO_ERROR;
+}
+
 std::string WebviewController::GetTitle()
 {
     std::string title = "";
@@ -1000,15 +1041,18 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
+        WVLOG_E("SetNWebJavaScriptResultCallBack: nweb_ptr is null, nwebId=%{public}d", nwebId_);
         return;
     }
 
     if (javaScriptResultCb_ && (javaScriptResultCb_->GetNWebId() == nwebId_)) {
+        WVLOG_I("SetNWebJavaScriptResultCallBack: callback already set, nwebId=%{public}d", nwebId_);
         return;
     }
 
     javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nwebId_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
+    WVLOG_I("SetNWebJavaScriptResultCallBack: registered callback, nwebId=%{public}d", nwebId_);
 }
 
 void WebviewController::RegisterJavaScriptProxy(RegisterJavaScriptProxyParam& param)

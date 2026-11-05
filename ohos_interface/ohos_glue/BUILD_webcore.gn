@@ -104,6 +104,10 @@ component("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_doh_config_wrapper.h",
     "ohos_nweb/bridge/ark_web_download_callback_wrapper.cpp",
     "ohos_nweb/bridge/ark_web_download_callback_wrapper.h",
+    "ohos_nweb/bridge/ark_web_navigation_throttle_handler_wrapper.cpp",
+    "ohos_nweb/bridge/ark_web_navigation_throttle_handler_wrapper.h",
+    "ohos_nweb/bridge/ark_web_navigation_throttle_info_impl.cpp",
+    "ohos_nweb/bridge/ark_web_navigation_throttle_info_impl.h",
     "ohos_nweb/bridge/ark_web_download_manager_impl.cpp",
     "ohos_nweb/bridge/ark_web_download_manager_impl.h",
     "ohos_nweb/bridge/ark_web_drag_data_impl.cpp",
@@ -144,6 +148,8 @@ component("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_js_dialog_result_impl.h",
     "ohos_nweb/bridge/ark_web_js_http_auth_result_impl.cpp",
     "ohos_nweb/bridge/ark_web_js_http_auth_result_impl.h",
+    "ohos_nweb/bridge/ark_web_js_call_info_impl.cpp",
+    "ohos_nweb/bridge/ark_web_js_call_info_impl.h",
     "ohos_nweb/bridge/ark_web_js_proxy_callback_wrapper.cpp",
     "ohos_nweb/bridge/ark_web_js_proxy_callback_wrapper.h",
     "ohos_nweb/bridge/ark_web_js_proxy_method_wrapper.cpp",
@@ -300,6 +306,8 @@ component("ohos_nweb_glue_source") {
     "ohos_nweb/cpptoc/ark_web_context_menu_callback_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_context_menu_params_cpptoc.cpp",
     "ohos_nweb/cpptoc/ark_web_context_menu_params_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_navigation_throttle_info_cpptoc.cpp",
+    "ohos_nweb/cpptoc/ark_web_navigation_throttle_info_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_context_menu_options_cpptoc.cpp",
     "ohos_nweb/cpptoc/ark_web_context_menu_options_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_controller_handler_cpptoc.cpp",
@@ -354,6 +362,8 @@ component("ohos_nweb_glue_source") {
     "ohos_nweb/cpptoc/ark_web_image_options_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_js_all_ssl_error_result_cpptoc.cpp",
     "ohos_nweb/cpptoc/ark_web_js_all_ssl_error_result_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_js_call_info_cpptoc.cpp",
+    "ohos_nweb/cpptoc/ark_web_js_call_info_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_js_dialog_result_cpptoc.cpp",
     "ohos_nweb/cpptoc/ark_web_js_dialog_result_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_js_http_auth_result_cpptoc.cpp",
@@ -492,6 +502,8 @@ component("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_command_action_info_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_native_media_player_bridge_ctocpp.cpp",
     "ohos_nweb/ctocpp/ark_web_native_media_player_bridge_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_navigation_throttle_handler_ctocpp.cpp",
+    "ohos_nweb/ctocpp/ark_web_navigation_throttle_handler_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_nweb_create_info_ctocpp.cpp",
     "ohos_nweb/ctocpp/ark_web_nweb_create_info_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_user_agent_metadata_ctocpp.cpp",
@@ -730,6 +742,8 @@ component("ohos_adapter_glue_source") {
     "ohos_adapter/bridge/ark_iconsumer_surface_adapter_wrapper.h",
     "ohos_adapter/bridge/ark_imf_adapter_function_key_adapter_wrapper.cpp",
     "ohos_adapter/bridge/ark_imf_adapter_function_key_adapter_wrapper.h",
+    "ohos_adapter/bridge/ark_imf_preview_text_style_adapter_wrapper.cpp",
+    "ohos_adapter/bridge/ark_imf_preview_text_style_adapter_wrapper.h",
     "ohos_adapter/bridge/ark_imf_cursor_info_adapter_impl.cpp",
     "ohos_adapter/bridge/ark_imf_cursor_info_adapter_impl.h",
     "ohos_adapter/bridge/ark_imf_input_attribute_adapter_impl.cpp",
@@ -1105,6 +1119,8 @@ component("ohos_adapter_glue_source") {
     "ohos_adapter/ctocpp/ark_imfadapter_ctocpp.h",
     "ohos_adapter/ctocpp/ark_imfadapter_function_key_adapter_ctocpp.cpp",
     "ohos_adapter/ctocpp/ark_imfadapter_function_key_adapter_ctocpp.h",
+    "ohos_adapter/ctocpp/ark_imfpreview_text_style_adapter_ctocpp.cpp",
+    "ohos_adapter/ctocpp/ark_imfpreview_text_style_adapter_ctocpp.h",
     "ohos_adapter/ctocpp/ark_keystore_adapter_ctocpp.cpp",
     "ohos_adapter/ctocpp/ark_keystore_adapter_ctocpp.h",
     "ohos_adapter/ctocpp/ark_location_info_ctocpp.cpp",
@@ -1216,4 +1232,19 @@ component("ohos_adapter_glue_source") {
   ]
 
   deps = [ "//ohos_glue:ohos_base_glue_source" ]
+}
+
+#################################################
+config("navigation_throttle_glue_config") {
+  include_dirs = [ "//ohos_glue/base/include" ]
+}
+
+# WebContents-to-dispatcher router for the NavigationThrottle feature.
+# Synced from ohos_interface/ohos_glue/base/include/ via prepare.sh.
+static_library("navigation_throttle_glue") {
+  sources = [
+    "base/include/navigation_throttle_glue.cpp",
+    "base/include/navigation_throttle_glue.h",
+  ]
+  public_configs = [ ":navigation_throttle_glue_config" ]
 }

@@ -39,7 +39,7 @@ const int32_t SIZE_KB = 1024;
 
 enum class RenderPreLoadMode {
     PRELOAD_NO = 0,         // 不预加载
-    PRELOAD_PARTIAL = 1,    // 只预加载libohos_adapter_glue_source.z.so
+    PRELOAD_PARTIAL = 1,    // 只预加载libarkweb_engine.so
     PRELOAD_FULL = 2        // 预加载libohos_adapter_glue_source.z.so和libarkweb_engine.so
 };
 
@@ -81,7 +81,18 @@ static void PreloadArkWebEngineLib()
     dlns_create(&dlns, libNsPath.c_str());
     dlns_get("ndk", &ndkns);
     dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    void *webEngineHandle = dlopen_ns(&dlns, ARK_WEB_ENGINE_LIB_NAME.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    void *webEngineHandle = nullptr;
+#if !defined(CROSS_PLATFORM) && !defined(PRELOAD_RENDER_LIB)
+    if (ReserveAddressSpaceForPreload() && CreateRelroFileInSubProcAndWait()) {
+        webEngineHandle = LoadWithRelroFile(ARK_WEB_ENGINE_LIB_NAME, &dlns);
+        if (webEngineHandle != nullptr) {
+            WVLOG_I("Preload libarkweb_engine.so with shared relro success.");
+            return;
+        }
+    }
+    WVLOG_W("Preload libarkweb_engine.so with shared relro failed, fallback to dlopen_ns.");
+#endif
+    webEngineHandle = dlopen_ns(&dlns, ARK_WEB_ENGINE_LIB_NAME.c_str(), RTLD_NOW | RTLD_GLOBAL);
     if (webEngineHandle == nullptr) {
         WVLOG_E("Fail to dlopen libarkweb_engine.so, errno: %{public}d", errno);
     }

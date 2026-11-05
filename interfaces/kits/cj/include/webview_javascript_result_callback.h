@@ -179,12 +179,12 @@ public:
     void GetJavaScriptObjectMethodsV2(int32_t objectId, std::shared_ptr<NWeb::NWebHapValue> result) override;
 
     void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args, const std::string& method,
-        const std::string& objectName, const NWeb::NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        const std::string& objectName, std::shared_ptr<NWeb::NWebJsCallInfo> callInfo,
         std::shared_ptr<NWeb::NWebHapValue> result) override;
 
     void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args,
         const std::string& method, const std::string& objectName,
-        const NWeb::NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        std::shared_ptr<NWeb::NWebJsCallInfo> callInfo,
         std::shared_ptr<NWeb::NWebHapValue> result) override;
 
     int32_t GetNWebId()

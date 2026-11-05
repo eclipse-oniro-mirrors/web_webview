@@ -18,7 +18,7 @@
 #pragma once
 
 #include "ohos_nweb/include/ark_web_hap_value.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "ohos_nweb/include/ark_web_js_call_info.h"
 #include "ohos_nweb/include/ark_web_value.h"
 #include "ohos_nweb/include/ark_web_value_vector.h"
 
@@ -95,7 +95,7 @@ public:
      */
     /*--ark web()--*/
     virtual void GetJavaScriptResultV3(const ArkWebHapValueVector& args, const ArkWebString& method,
-        const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+        const ArkWebString& object_name, ArkWebRefPtr<ArkWebJsCallInfo> call_info,
         ArkWebRefPtr<ArkWebHapValue> result) = 0;
 
     /**
@@ -109,7 +109,7 @@ public:
      */
     /*--ark web()--*/
     virtual void GetJavaScriptResultFlowbufV3(const ArkWebHapValueVector& args, const ArkWebString& method,
-        const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+        const ArkWebString& object_name, ArkWebRefPtr<ArkWebJsCallInfo> call_info,
         ArkWebRefPtr<ArkWebHapValue> result) = 0;
 };
 

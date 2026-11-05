@@ -2129,6 +2129,49 @@ public:
 
     void SetFlingSpeedLimit(float speed_limit) override;
 
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) override;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    ArkWebString GetNavigationEntryUserData(const ArkWebString& key) override;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    void RemoveNavigationEntryUserData(const ArkWebString& key) override;
+
+    /**
+     * @brief Set the navigation throttle handler. Only one handler takes
+     *        effect; setting a new one overwrites the previous one, and
+     *        setting nullptr clears it.
+     *
+     * @param handler The navigation throttle handler to set, or nullptr to clear.
+     */
+    /*--ark web()--*/
+    void SetNavigationThrottle(ArkWebRefPtr<ArkWebNavigationThrottleHandler> handler) override;
+
+    /**
+     * @brief Check whether a navigation throttle handler is registered.
+     */
+    /*--ark web()--*/
+    bool HasThrottleCallback() override;
+
+    /**
+     * @brief Resume or cancel a deferred navigation.
+     *
+     * @param deferId The defer identifier passed to
+     *        ArkWebNavigationThrottleHandler::OnThrottleEvent.
+     * @param proceed true to resume the navigation, false to cancel it.
+     */
+    /*--ark web()--*/
+    void ResolveNavigationDefer(uint64_t deferId, bool proceed) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

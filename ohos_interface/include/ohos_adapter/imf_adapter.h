@@ -64,6 +64,26 @@ enum class IMFAdapterKeyboardAppearanceType : int32_t {
     DARK_IMMERSIVE = 3
 };
 
+enum class IMFAdapterUnderlineStyle : int32_t {
+    NONE = 0,
+    SOLID = 1,
+    WAVY = 2,
+    DASHED = 3
+};
+
+class IMFPreviewTextStyleAdapter {
+public:
+    IMFPreviewTextStyleAdapter() = default;
+
+    virtual ~IMFPreviewTextStyleAdapter() = default;
+
+    virtual IMFAdapterUnderlineStyle GetUnderlineStyle() const = 0;
+
+    virtual uint32_t GetUnderlineColor() const = 0;
+
+    virtual bool HasUnderlineColor() const = 0;
+};
+
 class IMFCursorInfoAdapter {
 public:
     IMFCursorInfoAdapter() = default;
@@ -177,6 +197,14 @@ public:
     virtual std::u16string GetRightTextOfCursor(int32_t number) = 0;
 
     virtual int32_t SetPreviewText(const std::u16string& text, int32_t start, int32_t end) = 0;
+
+    virtual int32_t SetPreviewTextWithStyle(const std::u16string& text, int32_t start, int32_t end,
+        std::shared_ptr<IMFPreviewTextStyleAdapter> style)
+    {
+        return -1;
+    }
+
+    virtual bool IsSupportPreviewTextWithStyle() { return false; }
 
     virtual void FinishTextPreview() = 0;
 

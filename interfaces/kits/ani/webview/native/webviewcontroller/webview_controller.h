@@ -210,6 +210,17 @@ public:
 
     ErrCode SetCustomUserAgent(const std::string& userAgent);
 
+    ErrCode SetNavigationEntryUserData(const std::string& key, const std::string& value);
+
+    ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value);
+
+    ErrCode RemoveNavigationEntryUserData(const std::string& key);
+
+    // Registers (handler != nullptr) or clears (handler == nullptr) the
+    // navigation throttle for this WebviewController's NWeb instance.
+    ErrCode SetNavigationThrottle(
+        std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler);
+
     std::string GetTitle();
 
     int32_t GetProgress();

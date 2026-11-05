@@ -59,9 +59,9 @@ public:
 };
 
 // Static member initialization
-bool AniBusinessError::g_errorWasThrown = false;
-int32_t AniBusinessError::g_lastErrorCode = 0;
-std::string AniBusinessError::g_lastErrorMessage = "";
+inline bool AniBusinessError::g_errorWasThrown = false;
+inline int32_t AniBusinessError::g_lastErrorCode = 0;
+inline std::string AniBusinessError::g_lastErrorMessage = "";
 
 } // namespace NWebError
 } // namespace OHOS

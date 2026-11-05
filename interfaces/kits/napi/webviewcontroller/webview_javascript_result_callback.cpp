@@ -26,7 +26,7 @@
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
 #include "webview_value.h"
-#include "base/include/ark_web_errno.h"
+#include "../../../../ohos_interface/ohos_glue/base/include/ark_web_errno.h"
 
 namespace OHOS::NWeb {
 namespace {
@@ -1488,10 +1488,6 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     int32_t routingId, int32_t objectId)
 {
     (void)objName; // to be compatible with older webcontroller, classname may be empty
-    WVLOG_D(
-        "GetJavaScriptResult objName = %{public}s, method = %{public}s, "
-        "routingId = %{public}d, objectId = %{public}d",
-        objName.c_str(), method.c_str(), routingId, objectId);
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || !jsObj->HasMethod(method)) {
@@ -1697,7 +1693,6 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultF
     int32_t routingId, int32_t objectId)
 {
     (void)objName; // to be compatible with older webcontroller, classname may be empty
-    WVLOG_D("GetJavaScriptResult method = %{public}s", method.c_str());
 
     FdAutoClose autoClose(fd);
 
@@ -2385,10 +2380,22 @@ void WebviewJavaScriptResultCallBack::CallH5FunctionInternal(
         return;
     }
 
-    nweb_ptr->CallH5FunctionV3(bundle.frameRoutingId, bundle.frameChildId, bundle.h5Id, bundle.funcName, romArgs);
-    if (ArkWebGetErrno() != RESULT_OK) {
+    bool v3Called = false;
+    if (bundle.frameChildId > 0) {
+        ArkWebResetErrno();
+        bool v3Ret = nweb_ptr->CallH5FunctionV3(
+            bundle.frameRoutingId, bundle.frameChildId, bundle.h5Id, bundle.funcName, romArgs);
+        if (v3Ret && ArkWebGetErrno() == RESULT_OK) {
+            v3Called = true;
+        }
+    }
+    if (!v3Called) {
+        ArkWebResetErrno();
         nweb_ptr->CallH5FunctionV2(bundle.frameRoutingId, bundle.h5Id, bundle.funcName, romArgs);
+        WVLOG_D("CallH5FunctionInternal V2 errno=%{public}d routing=%{public}d h5Id=%{public}d",
+            ArkWebGetErrno(), bundle.frameRoutingId, bundle.h5Id);
         if (ArkWebGetErrno() != RESULT_OK) {
+            ArkWebResetErrno();
             nweb_ptr->CallH5Function(bundle.frameRoutingId, bundle.h5Id, bundle.funcName, nwebArgs);
         }
     }
@@ -2808,8 +2815,6 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultV2(const std::vector<st
     std::shared_ptr<NWebHapValue> result)
 {
     (void)objectName; // to be compatible with older webcontroller, classname may be empty
-    WVLOG_D("GetJavaScriptResult method = %{public}s,routingId = %{public}d, objectId = %{public}d", method.c_str(),
-        routingId, objectId);
 
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || !jsObj->HasMethod(method)) {
@@ -2843,7 +2848,6 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV2(
     int fd, int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result)
 {
     (void)objectName; // to be compatible with older webcontroller, classname may be empty
-    WVLOG_D("GetJavaScriptResult method = %{public}s", method.c_str());
 
     FdAutoClose autoClose(fd);
 
@@ -2948,12 +2952,19 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptObjectMethodsV2(
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
     const std::string& method, const std::string& objectName,
-    const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+    std::shared_ptr<NWebJsCallInfo> callInfo,
     std::shared_ptr<NWebHapValue> result)
 {
     (void)objectName; // to be compatible with older webcontroller, classname may be empty
+    if (!callInfo) {
+        return;
+    }
 
-    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.object_id);
+    int32_t objectId = callInfo->GetObjectId();
+    int32_t routingId = callInfo->GetRoutingId();
+    int32_t frameChildId = callInfo->GetFrameChildId();
+
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || !jsObj->HasMethod(method)) {
         return;
     }
@@ -2963,13 +2974,13 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultV3(const std::vector<st
         return;
     }
 
-    JsCallInfo innerCallInfo{callInfo.routing_id, callInfo.frame_child_id, callInfo.object_id};
+    JsCallInfo innerCallInfo{routingId, frameChildId, objectId};
     if (pthread_self() == engine->GetTid()) {
         GetJavaScriptResultSelfV2(args, method, innerCallInfo, result);
     } else {
         WVLOG_D("get javaScript result V3, not in js thread, post task to js thread");
 
-        FrameInfo frame{GetNWebId(), callInfo.routing_id, callInfo.frame_child_id};
+        FrameInfo frame{GetNWebId(), routingId, frameChildId};
         napi_env env = jsObj->GetEnv();
         std::vector<napi_value> argv = {};
         for (auto& input : args) {
@@ -2982,14 +2993,23 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultV3(const std::vector<st
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV3(
     const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, const std::string& objectName,
-    const NWebJavaScriptResultCallBack::JsCallInfo& callInfo, std::shared_ptr<NWebHapValue> result)
+    std::shared_ptr<NWebJsCallInfo> callInfo, std::shared_ptr<NWebHapValue> result)
 {
     (void)objectName; // to be compatible with older webcontroller, classname may be empty
     WVLOG_D("GetJavaScriptResultFlowbufV3 method = %{public}s", method.c_str());
 
-    FdAutoClose autoClose(callInfo.fd);
+    if (!callInfo) {
+        return;
+    }
 
-    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.object_id);
+    int32_t objectId = callInfo->GetObjectId();
+    int32_t routingId = callInfo->GetRoutingId();
+    int32_t frameChildId = callInfo->GetFrameChildId();
+    int fd = callInfo->GetFd();
+
+    FdAutoClose autoClose(fd);
+
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || !jsObj->HasMethod(method)) {
         return;
     }
@@ -2999,7 +3019,7 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV3(
         return;
     }
 
-    JsCallInfo innerCallInfo{callInfo.routing_id, callInfo.frame_child_id, callInfo.object_id};
+    JsCallInfo innerCallInfo{routingId, frameChildId, objectId};
     if (pthread_self() == engine->GetTid()) {
         GetJavaScriptResultSelfFlowbufV2(args, method, autoClose.Release(), innerCallInfo, result);
     } else {
@@ -3009,7 +3029,7 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV3(
         }
 
         auto ashmem = flowbufferAdapter->CreateAshmemWithFd(
-            callInfo.fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
+            fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
         if (!ashmem) {
             (void)autoClose.Release(); // fd is already closed.
             return;

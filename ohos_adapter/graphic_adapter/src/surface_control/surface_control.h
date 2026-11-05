@@ -87,6 +87,7 @@ private:
     std::shared_ptr<OHOS::Rosen::RSNode> parentNode_ = nullptr;
     bool isRootSurface_ = false;
     uint64_t rosenWebNodeId_ = 0;
+    int32_t zOrder_ = -1;
 
     static inline std::mutex rsUiContextMutex_;
     static inline OHOS::sptr<OHOS::IRemoteObject> connectToRender_ = nullptr;

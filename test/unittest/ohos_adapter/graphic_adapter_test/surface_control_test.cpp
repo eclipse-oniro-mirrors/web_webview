@@ -609,7 +609,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_Destructor_ParentNonNull_037, TestSi
 
     if (surfaceNode && parentSurfaceNode) {
         parentSurfaceNode->AddChild(surfaceNode, -1);
-        EXPECT_EQ(parentRef->GetChildren().size(), 0);
+        EXPECT_EQ(parentRef->GetChildren().size(), 1u);
 
         std::shared_ptr<OHOS::Rosen::RSNode> parentNode = parentSurfaceNode;
         sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), std::move(parentNode), true, 0);
@@ -675,7 +675,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_OldParentNonNullNewParentV
 
     if (childSurfaceNode && oldParentSurfaceNode && newParentSurfaceNode) {
         oldParentSurfaceNode->AddChild(childSurfaceNode, -1);
-        EXPECT_EQ(oldParentRef->GetChildren().size(), 0);
+        EXPECT_EQ(oldParentRef->GetChildren().size(), 1u);
 
         std::shared_ptr<OHOS::Rosen::RSNode> oldParentNode = oldParentSurfaceNode;
         sptr<SurfaceControl> childSc = new SurfaceControl(
@@ -685,7 +685,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_OldParentNonNullNewParentV
         childSc->SetParent(newParentSc.GetRefPtr());
 
         EXPECT_EQ(oldParentRef->GetChildren().size(), 0);
-        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 0);
+        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 1u);
         EXPECT_NE(childSc->parentNode_, nullptr);
     }
 }
@@ -712,7 +712,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_OldParentNullNewParentVali
 
         childSc->SetParent(newParentSc.GetRefPtr());
 
-        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 0);
+        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 1u);
         EXPECT_NE(childSc->parentNode_, nullptr);
     }
 }
@@ -770,7 +770,8 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_NewParentNonNullSurfaceNod
 
 /**
  * @tc.name: SurfaceControl_SetZOrder_SurfaceNodeNull_044.
- * @tc.desc: Test SetZOrder when surfaceNode is null (CHECK_NULL_POINTER early return).
+ * @tc.desc: Test SetZOrder when surfaceNode is null (CHECK_NULL_POINTER early return,
+ *           zOrder_ must not be cached).
  * @tc.type: FUNC
  * @tc.require: issue#5183
  */
@@ -778,11 +779,12 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_SurfaceNodeNull_044, TestS
 {
     sptr<SurfaceControl> sc = new SurfaceControl(nullptr, nullptr, false, 0);
     sc->SetZOrder(5);
+    EXPECT_EQ(sc->zOrder_, -1);
 }
 
 /**
  * @tc.name: SurfaceControl_SetZOrder_ParentExists_045.
- * @tc.desc: Test SetZOrder when surfaceNode has a parent (line 275: MoveChild called).
+ * @tc.desc: Test SetZOrder when surfaceNode has a parent (MoveChild called, zOrder_ cached).
  * @tc.type: FUNC
  * @tc.require: issue#5183
  */
@@ -804,12 +806,14 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_ParentExists_045, TestSize
 
         EXPECT_NE(sc->surfaceNode_->GetParent(), nullptr);
         sc->SetZOrder(5);
+        EXPECT_EQ(sc->zOrder_, 5);
     }
 }
 
 /**
  * @tc.name: SurfaceControl_SetZOrder_ParentNull_046.
- * @tc.desc: Test SetZOrder when surfaceNode has no parent (line 275 implicit else: no MoveChild).
+ * @tc.desc: Test SetZOrder when surfaceNode has no parent (early return with error log,
+ *           zOrder_ must not be cached).
  * @tc.type: FUNC
  * @tc.require: issue#5183
  */
@@ -824,6 +828,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_ParentNull_046, TestSize.L
 
         EXPECT_EQ(sc->surfaceNode_->GetParent(), nullptr);
         sc->SetZOrder(5);
+        EXPECT_EQ(sc->zOrder_, -1);
     }
 }
 
@@ -1263,10 +1268,18 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_AddDelegateContainerNodeOnClient_Par
  */
 HWTEST_F(SurfaceControlTest, SurfaceControl_AddDelegateContainerNodeOnClient_Success_066, TestSize.Level1)
 {
-    // Create and register a parent node
+    // AddDelegateContainerNodeOnClient takes the UI context from the parent node itself,
+    // so the parent must be created with a non-null RSUIContext.
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    // Create and register a parent node carrying the UI context
     OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
     parentConfig.SurfaceNodeName = "parent_node_add";
-    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false, uiContext);
     ASSERT_NE(parentNode, nullptr);
     uint64_t parentNodeId = parentNode->GetId();
     WebDelegateSurfaceRegistry::Instance().SetSurfaceRsNode(parentNodeId, parentNode);
@@ -1284,6 +1297,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_AddDelegateContainerNodeOnClient_Suc
     // Clean up
     SurfaceControl::delegateContainerNodeMap_.erase(parentNodeId);
     WebDelegateSurfaceRegistry::Instance().RemoveSurfaceRsNode(parentNodeId);
+    manager.isMultiInstanceOpen_ = false;
 }
 
 /**
@@ -1355,10 +1369,18 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_RemoveDelegateContainerNodeOnClient_
  */
 HWTEST_F(SurfaceControlTest, SurfaceControl_RemoveDelegateContainerNodeOnClient_Success_071, TestSize.Level1)
 {
-    // Create and register parent node
+    // AddDelegateContainerNodeOnClient/RemoveDelegateContainerNodeOnClient take the UI
+    // context from the parent node itself, so the parent must be created with one.
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    // Create and register parent node carrying the UI context
     OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
     parentConfig.SurfaceNodeName = "parent_remove_success";
-    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false, uiContext);
     ASSERT_NE(parentNode, nullptr);
     uint64_t parentNodeId = parentNode->GetId();
     WebDelegateSurfaceRegistry::Instance().SetSurfaceRsNode(parentNodeId, parentNode);
@@ -1376,6 +1398,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_RemoveDelegateContainerNodeOnClient_
     EXPECT_EQ(SurfaceControl::delegateContainerNodeMap_.count(parentNodeId), 0u);
 
     WebDelegateSurfaceRegistry::Instance().RemoveSurfaceRsNode(parentNodeId);
+    manager.isMultiInstanceOpen_ = false;
 }
 
 /**
@@ -1522,4 +1545,133 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_UiContextFallbackNu
         EXPECT_EQ(result, nullptr);
     }
 }
+
+/**
+ * @tc.name: SurfaceControl_SetZOrder_SameZOrderSkipped_077.
+ * @tc.desc: Test SetZOrder with the same zOrder twice: the second call is deduplicated
+ *           (zOrder_ unchanged, no crash) and only the first call reaches MoveChild.
+ * @tc.type: FUNC
+ * @tc.require: issue#5183
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_SameZOrderSkipped_077, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
+    parentConfig.SurfaceNodeName = "setzorder_dedup_parent_node";
+    auto parentSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+
+    OHOS::Rosen::RSSurfaceNodeConfig childConfig;
+    childConfig.SurfaceNodeName = "setzorder_dedup_child_node";
+    auto childSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(childConfig, false);
+
+    if (parentSurfaceNode && childSurfaceNode) {
+        parentSurfaceNode->AddChild(childSurfaceNode, -1);
+
+        std::shared_ptr<OHOS::Rosen::RSNode> parentNode = parentSurfaceNode;
+        sptr<SurfaceControl> sc = new SurfaceControl(std::move(childSurfaceNode), std::move(parentNode), true, 0);
+
+        EXPECT_NE(sc->surfaceNode_->GetParent(), nullptr);
+        sc->SetZOrder(5);
+        EXPECT_EQ(sc->zOrder_, 5);
+        // Second call with the same zOrder: deduplicated, cache keeps the value.
+        sc->SetZOrder(5);
+        EXPECT_EQ(sc->zOrder_, 5);
+    }
+}
+
+/**
+ * @tc.name: SurfaceControl_SetZOrder_DifferentZOrderUpdatesCache_078.
+ * @tc.desc: Test SetZOrder with different values: each new value updates the cached
+ *           zOrder_ and reaches MoveChild.
+ * @tc.type: FUNC
+ * @tc.require: issue#5183
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_DifferentZOrderUpdatesCache_078, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
+    parentConfig.SurfaceNodeName = "setzorder_update_parent_node";
+    auto parentSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+
+    OHOS::Rosen::RSSurfaceNodeConfig childConfig;
+    childConfig.SurfaceNodeName = "setzorder_update_child_node";
+    auto childSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(childConfig, false);
+
+    if (parentSurfaceNode && childSurfaceNode) {
+        parentSurfaceNode->AddChild(childSurfaceNode, -1);
+
+        std::shared_ptr<OHOS::Rosen::RSNode> parentNode = parentSurfaceNode;
+        sptr<SurfaceControl> sc = new SurfaceControl(std::move(childSurfaceNode), std::move(parentNode), true, 0);
+
+        EXPECT_NE(sc->surfaceNode_->GetParent(), nullptr);
+        EXPECT_EQ(sc->zOrder_, -1);
+        sc->SetZOrder(3);
+        EXPECT_EQ(sc->zOrder_, 3);
+        sc->SetZOrder(7);
+        EXPECT_EQ(sc->zOrder_, 7);
+    }
+}
+
+/**
+ * @tc.name: SurfaceControl_SetZOrder_InitialValueDedup_079.
+ * @tc.desc: Test zOrder_ is initialized to -1 and a first SetZOrder(-1) with a parent
+ *           is treated as a duplicate and skipped (zOrder_ keeps the initial value).
+ * @tc.type: FUNC
+ * @tc.require: issue#5183
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_InitialValueDedup_079, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
+    parentConfig.SurfaceNodeName = "setzorder_initial_parent_node";
+    auto parentSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+
+    OHOS::Rosen::RSSurfaceNodeConfig childConfig;
+    childConfig.SurfaceNodeName = "setzorder_initial_child_node";
+    auto childSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(childConfig, false);
+
+    if (parentSurfaceNode && childSurfaceNode) {
+        parentSurfaceNode->AddChild(childSurfaceNode, -1);
+
+        std::shared_ptr<OHOS::Rosen::RSNode> parentNode = parentSurfaceNode;
+        sptr<SurfaceControl> sc = new SurfaceControl(std::move(childSurfaceNode), std::move(parentNode), true, 0);
+
+        EXPECT_EQ(sc->zOrder_, -1);
+        EXPECT_NE(sc->surfaceNode_->GetParent(), nullptr);
+        sc->SetZOrder(-1);
+        EXPECT_EQ(sc->zOrder_, -1);
+    }
+}
+
+/**
+ * @tc.name: SurfaceControl_SetZOrder_AfterParentSet_080.
+ * @tc.desc: Test SetZOrder fails without caching zOrder_ when parent is null, then
+ *           succeeds with the same zOrder after SetParent provides a valid parent.
+ * @tc.type: FUNC
+ * @tc.require: issue#5183
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_AfterParentSet_080, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig childConfig;
+    childConfig.SurfaceNodeName = "setzorder_afterparent_child_node";
+    auto childSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(childConfig, false);
+
+    OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
+    parentConfig.SurfaceNodeName = "setzorder_afterparent_parent_node";
+    auto parentSurfaceNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+
+    if (childSurfaceNode && parentSurfaceNode) {
+        sptr<SurfaceControl> childSc = new SurfaceControl(std::move(childSurfaceNode), nullptr, false, 0);
+        sptr<SurfaceControl> parentSc = new SurfaceControl(std::move(parentSurfaceNode), nullptr, false, 0);
+
+        // No parent yet: SetZOrder fails and zOrder_ must not be cached.
+        EXPECT_EQ(childSc->surfaceNode_->GetParent(), nullptr);
+        childSc->SetZOrder(5);
+        EXPECT_EQ(childSc->zOrder_, -1);
+
+        // After a valid parent is set, the same zOrder is applied and cached.
+        childSc->SetParent(parentSc.GetRefPtr());
+        EXPECT_NE(childSc->surfaceNode_->GetParent(), nullptr);
+        childSc->SetZOrder(5);
+        EXPECT_EQ(childSc->zOrder_, 5);
+    }
+}
+
 }

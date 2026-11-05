@@ -713,12 +713,12 @@ public:
     void GetJavaScriptObjectMethodsV2(int32_t objectId, std::shared_ptr<NWebHapValue> result) override;
 
     void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method,
-        const std::string& objectName, const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        const std::string& objectName, std::shared_ptr<NWebJsCallInfo> callInfo,
         std::shared_ptr<NWebHapValue> result) override;
 
     void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
         const std::string& method, const std::string& objectName,
-        const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        std::shared_ptr<NWebJsCallInfo> callInfo,
         std::shared_ptr<NWebHapValue> result) override;
 
     void RemoveTransientJavaScriptObject() override;

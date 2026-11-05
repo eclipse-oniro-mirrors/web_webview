@@ -38,6 +38,10 @@ std::map<std::string, std::shared_ptr<OHOS::NWeb::NWebRomValue>> ArkWebRomValueM
 
 ARK_WEB_NO_SANITIZE void ArkWebRomValueMapStructRelease(ArkWebRomValueMap& struct_value)
 {
+    for (int count = 0; count < struct_value.size; count++) {
+        ArkWebStringStructRelease(struct_value.key[count]);
+    }
+
     struct_value.size = 0;
     SAFE_FREE(struct_value.key, struct_value.ark_web_mem_free_func);
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
