@@ -1967,5 +1967,4 @@ void ArkWebNWebImpl::RemoveNavigationEntryUserData(const ArkWebString& key)
 {
     nweb_nweb_->RemoveNavigationEntryUserData(ArkWebStringStructToClass(key));
 }
-}
 } // namespace OHOS::ArkWeb

@@ -2337,5 +2337,4 @@ void ArkWebNWebWrapper::RemoveNavigationEntryUserData(const std::string& key)
 
     ArkWebStringStructRelease(stKey);
 }
-}
 } // namespace OHOS::ArkWeb

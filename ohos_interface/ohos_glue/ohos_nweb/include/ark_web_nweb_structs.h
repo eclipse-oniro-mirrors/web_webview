@@ -94,8 +94,6 @@ typedef struct {
     ArkWebDevicePermissionDeviceIdentifierVector devices;
 } ArkWebDeviceListUpdateEvent;
 
-const ArkWebDeviceListUpdateEvent ark_web_device_list_update_event_default = {
-    0,
-};
+const ArkWebDeviceListUpdateEvent ark_web_device_list_update_event_default = {};
 
 #endif // ARK_WEB_NWEB_STRUCTS_H
