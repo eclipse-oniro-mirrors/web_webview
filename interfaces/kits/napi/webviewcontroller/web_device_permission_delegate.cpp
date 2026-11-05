@@ -121,7 +121,7 @@ void WebDevicePermissionDelegate::PutOnDeviceListUpdated(napi_env env, napi_valu
     }
 }
 
-void WebDevicePermissionDelegate::OnQueryDevicePermissionOrigins(int32_t nweb_id,
+void WebDevicePermissionDelegate::OnQueryDevicePermissionOrigins(int32_t nwebId,
     std::shared_ptr<NWebPermissionOriginsResultCallback> callback)
 {
     WVLOG_D("WebDevicePermissionDelegate::OnQueryDevicePermissionOrigins");
@@ -136,7 +136,7 @@ void WebDevicePermissionDelegate::OnQueryDevicePermissionOrigins(int32_t nweb_id
     CallJsCallback(env_, on_query_permission_callback_, jsEvent);
 }
 
-void WebDevicePermissionDelegate::OnPermissionRevoked(int32_t nweb_id,
+void WebDevicePermissionDelegate::OnPermissionRevoked(int32_t nwebId,
     const NWebDevicePermissionRevokedEvent& event)
 {
     WVLOG_D("WebDevicePermissionDelegate::OnPermissionRevoked");
@@ -154,8 +154,8 @@ void WebDevicePermissionDelegate::OnPermissionRevoked(int32_t nweb_id,
     CallJsCallback(env_, on_permission_revoked_callback_, jsEvent);
 }
 
-void WebDevicePermissionDelegate::OnDevicePicker(int32_t nweb_id, const std::string& request_id,
-    const NWebDevicePermissionRequestBase& request_info,
+void WebDevicePermissionDelegate::OnDevicePicker(int32_t nwebId, const std::string& requestId,
+    const NWebDevicePermissionRequestBase& requestInfo,
     const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
     std::shared_ptr<NWebDevicePermissionResultCallback> callback)
 {
@@ -165,7 +165,7 @@ void WebDevicePermissionDelegate::OnDevicePicker(int32_t nweb_id, const std::str
         return;
     }
     napi_value jsRequest = NapiWebDevicePermissionRequest::CreateInstance(
-        env_, nweb_id, request_id, request_info, devices, callback);
+        env_, nwebId, requestId, requestInfo, devices, callback);
     if (jsRequest == nullptr) {
         WVLOG_E("OnDevicePicker create request instance failed.");
         return;
@@ -173,7 +173,7 @@ void WebDevicePermissionDelegate::OnDevicePicker(int32_t nweb_id, const std::str
     CallJsCallback(env_, on_device_picker_callback_, jsRequest);
 }
 
-void WebDevicePermissionDelegate::OnDeviceListUpdated(int32_t nweb_id,
+void WebDevicePermissionDelegate::OnDeviceListUpdated(int32_t nwebId,
     const NWebDeviceListUpdateEvent& event)
 {
     WVLOG_D("WebDevicePermissionDelegate::OnDeviceListUpdated");

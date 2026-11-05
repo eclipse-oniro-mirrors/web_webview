@@ -77,6 +77,15 @@ bool ParseDeviceIdentifier(napi_env env, napi_value value, NWebDevicePermissionD
     return true;
 }
 
+void ParseOptionalBool(napi_env env, napi_value value, bool& out)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, value, &valueType);
+    if (valueType == napi_boolean) {
+        napi_get_value_bool(env, value, &out);
+    }
+}
+
 bool CallJsCallback(napi_env env, napi_ref callbackRef, napi_value jsEvent)
 {
     if (!env || !callbackRef || !jsEvent) {

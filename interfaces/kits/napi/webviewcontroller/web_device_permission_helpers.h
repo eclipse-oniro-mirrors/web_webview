@@ -34,6 +34,12 @@ napi_value CreateDeviceIdentifierJsObject(napi_env env,
 bool ParseDeviceIdentifier(napi_env env, napi_value value,
     NWebDevicePermissionDeviceIdentifier& device);
 
+/**
+ * @brief Parse an optional boolean argument. Keeps the default value when the
+ *        argument is missing or is not a boolean.
+ */
+void ParseOptionalBool(napi_env env, napi_value value, bool& out);
+
 bool CallJsCallback(napi_env env, napi_ref callbackRef, napi_value jsEvent);
 } // namespace NWeb
 } // namespace OHOS

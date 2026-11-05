@@ -45,18 +45,18 @@ public:
     explicit WebDevicePermissionDelegate(napi_env env);
     ~WebDevicePermissionDelegate() override;
 
-    void OnQueryDevicePermissionOrigins(int32_t nweb_id,
+    void OnQueryDevicePermissionOrigins(int32_t nwebId,
         std::shared_ptr<NWebPermissionOriginsResultCallback> callback) override;
 
-    void OnPermissionRevoked(int32_t nweb_id,
+    void OnPermissionRevoked(int32_t nwebId,
         const NWebDevicePermissionRevokedEvent& event) override;
 
-    void OnDevicePicker(int32_t nweb_id, const std::string& request_id,
-        const NWebDevicePermissionRequestBase& request_info,
+    void OnDevicePicker(int32_t nwebId, const std::string& requestId,
+        const NWebDevicePermissionRequestBase& requestInfo,
         const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
         std::shared_ptr<NWebDevicePermissionResultCallback> callback) override;
 
-    void OnDeviceListUpdated(int32_t nweb_id,
+    void OnDeviceListUpdated(int32_t nwebId,
         const NWebDeviceListUpdateEvent& event) override;
 
     void PutOnQueryDevicePermission(napi_env env, napi_value callback);
