@@ -2872,6 +2872,23 @@ public:
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) {}
     
     virtual void OnQueryNavigationConfig(std::shared_ptr<NWebQueryNavigationConfigCallback> callback) {}
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result
+     */
+    virtual void GetElementInfoForSecurityHitTest(
+        double x, double y, std::shared_ptr<NWebStringValueCallback> callback)
+    {
+        (void)x;
+        (void)y;
+        if (callback) {
+            callback->OnReceiveValue("");
+        }
+    }
 };
 } // namespace OHOS::NWeb
 
