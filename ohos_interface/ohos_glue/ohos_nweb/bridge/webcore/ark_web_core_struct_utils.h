@@ -17,7 +17,6 @@
 #define ARK_WEB_CORE_STRUCT_UTILS_H_
 #pragma once
 
-#include "include/nweb_device_permission_delegate.h"
 #include "include/nweb_handler.h"
 #include "include/nweb_javascript_result_callback.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
@@ -27,47 +26,6 @@ namespace OHOS::ArkWeb {
 ArkWebDateTime ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime& class_value);
 
 OHOS::NWeb::DateTime ArkWebDateTimeStructToClass(const ArkWebDateTime& struct_value);
-
-ArkWebDevicePermissionDeviceIdentifier ArkWebDevicePermissionDeviceIdentifierClassToStruct(
-    const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& class_value);
-
-OHOS::NWeb::NWebDevicePermissionDeviceIdentifier ArkWebDevicePermissionDeviceIdentifierStructToClass(
-    const ArkWebDevicePermissionDeviceIdentifier& struct_value);
-
-void ArkWebDevicePermissionDeviceIdentifierStructRelease(ArkWebDevicePermissionDeviceIdentifier& struct_value);
-
-ArkWebDevicePermissionDeviceIdentifierVector ArkWebDevicePermissionDeviceIdentifierVectorClassToStruct(
-    const std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier>& class_value);
-
-std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier> ArkWebDevicePermissionDeviceIdentifierVectorStructToClass(
-    const ArkWebDevicePermissionDeviceIdentifierVector& struct_value);
-
-void ArkWebDevicePermissionDeviceIdentifierVectorStructRelease(
-    ArkWebDevicePermissionDeviceIdentifierVector& struct_value);
-
-ArkWebDevicePermissionRequestBase ArkWebDevicePermissionRequestBaseClassToStruct(
-    const OHOS::NWeb::NWebDevicePermissionRequestBase& class_value);
-
-OHOS::NWeb::NWebDevicePermissionRequestBase ArkWebDevicePermissionRequestBaseStructToClass(
-    const ArkWebDevicePermissionRequestBase& struct_value);
-
-void ArkWebDevicePermissionRequestBaseStructRelease(ArkWebDevicePermissionRequestBase& struct_value);
-
-ArkWebDevicePermissionRevokedEvent ArkWebDevicePermissionRevokedEventClassToStruct(
-    const OHOS::NWeb::NWebDevicePermissionRevokedEvent& class_value);
-
-OHOS::NWeb::NWebDevicePermissionRevokedEvent ArkWebDevicePermissionRevokedEventStructToClass(
-    const ArkWebDevicePermissionRevokedEvent& struct_value);
-
-void ArkWebDevicePermissionRevokedEventStructRelease(ArkWebDevicePermissionRevokedEvent& struct_value);
-
-ArkWebDeviceListUpdateEvent ArkWebDeviceListUpdateEventClassToStruct(
-    const OHOS::NWeb::NWebDeviceListUpdateEvent& class_value);
-
-OHOS::NWeb::NWebDeviceListUpdateEvent ArkWebDeviceListUpdateEventStructToClass(
-    const ArkWebDeviceListUpdateEvent& struct_value);
-
-void ArkWebDeviceListUpdateEventStructRelease(ArkWebDeviceListUpdateEvent& struct_value);
 
 } // namespace OHOS::ArkWeb
 
