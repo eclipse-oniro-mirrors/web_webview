@@ -110,16 +110,6 @@ ohos_shared_library("webview_napi") {
     "webviewcontroller/napi_user_agent_brand_version.h",
     "webviewcontroller/napi_user_agent_metadata.cpp",
     "webviewcontroller/napi_user_agent_metadata.h",
-    "webviewcontroller/web_device_permission_callback.cpp",
-    "webviewcontroller/web_device_permission_callback.h",
-    "webviewcontroller/web_device_permission_delegate.cpp",
-    "webviewcontroller/web_device_permission_delegate.h",
-    "webviewcontroller/web_device_permission_helpers.cpp",
-    "webviewcontroller/web_device_permission_helpers.h",
-    "webviewcontroller/web_device_permission_manager.cpp",
-    "webviewcontroller/web_device_permission_manager.h",
-    "webviewcontroller/web_device_permission_request.cpp",
-    "webviewcontroller/web_device_permission_request.h",
   ]
 
   use_exceptions = true

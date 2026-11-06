@@ -38,8 +38,6 @@
 #include "napi_proxy_controller.h"
 #include "napi_proxy_config.h"
 #include "napi_proxy_rule.h"
-#include "web_device_permission_delegate.h"
-#include "web_device_permission_request.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -69,8 +67,6 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     NapiProxyRule::Init(env, exports);
     NapiUserAgentBrandVersion::Init(env, exports);
     NapiUserAgentMetadata::Init(env, exports);
-    NapiWebDevicePermissionDelegate::Init(env, exports);
-    NapiWebDevicePermissionRequest::Init(env, exports);
     return exports;
 }
 EXTERN_C_END

@@ -452,22 +452,6 @@ _simpletypes = {
         'ArkWebCookieVector', 'ark_web_cookie_vector_default'
     ],
     'ArkWebImageInfoVector':['ArkWebImageInfoVector', 'ark_web_touch_point_info_vector_default'],
-    'ArkWebDevicePermissionDeviceIdentifier': [
-        'ArkWebDevicePermissionDeviceIdentifier', 'ark_web_device_permission_device_identifier_default'
-    ],
-    'ArkWebDevicePermissionDeviceIdentifierVector': [
-        'ArkWebDevicePermissionDeviceIdentifierVector',
-        'ark_web_device_permission_device_identifier_vector_default'
-    ],
-    'ArkWebDevicePermissionRequestBase': [
-        'ArkWebDevicePermissionRequestBase', 'ark_web_device_permission_request_base_default'
-    ],
-    'ArkWebDevicePermissionRevokedEvent': [
-        'ArkWebDevicePermissionRevokedEvent', 'ark_web_device_permission_revoked_event_default'
-    ],
-    'ArkWebDeviceListUpdateEvent': [
-        'ArkWebDeviceListUpdateEvent', 'ark_web_device_list_update_event_default'
-    ],
 }
 
 

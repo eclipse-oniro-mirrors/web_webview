@@ -48,7 +48,6 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
-#include "nweb_device_permission_delegate.h"
 
 namespace OHOS::NWeb {
 
@@ -2786,37 +2785,6 @@ public:
     {
         return false;
     }
-
-    /**
-     * @brief Set the device permission delegate that will receive device permission
-     * related events. This will replace the current delegate.
-     *
-     * @param delegate: a shared_ptr to an implementation of NWebDevicePermissionDelegate.
-     */
-    virtual void SetDevicePermissionDelegate(std::shared_ptr<NWebDevicePermissionDelegate> delegate) {}
-
-    /**
-     * @brief Revoke device permissions with different granularity.
-     *
-     * @param hardware_type The hardware device type.
-     * @param origin The web origin to revoke permissions for. Empty means all origins.
-     * @param device The device to revoke. Empty device_key means all devices.
-     * @param is_incognito Whether the permission is in incognito mode.
-     */
-    virtual void RevokeDevicePermissions(NWebDevicePermissionHardwareType hardware_type,
-        const std::string& origin, const NWebDevicePermissionDeviceIdentifier& device,
-        bool is_incognito) {}
-
-    /**
-     * @brief Set device permission guard policy.
-     *
-     * @param hardware_type The hardware device type.
-     * @param policy The guard policy.
-     * @param origin The web origin to set policy for. Empty means the global policy.
-     * @param is_incognito Whether the policy is for incognito mode.
-     */
-    virtual void SetGuardPolicy(NWebDevicePermissionHardwareType hardware_type,
-        NWebDeviceGuardPolicy policy, const std::string& origin, bool is_incognito) {}
 
     /**
      * Set user data for the current navigation entry. The user data is session
