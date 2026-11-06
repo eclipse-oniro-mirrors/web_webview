@@ -403,6 +403,7 @@ _simpletypes = {
     'ArkWebJsProxyCallbackVector':['ArkWebJsProxyCallbackVector', 'ark_web_js_proxy_callback_vector_default'],
     'ArkWebWebStorageOriginVector':['ArkWebWebStorageOriginVector', 'ark_web_web_storage_origin_vector_default'],
     'ArkWebDateTimeSuggestionVector':['ArkWebDateTimeSuggestionVector', 'ark_web_date_time_suggestion_vector_default'],
+    'ArkWebColorSuggestionVector':['ArkWebColorSuggestionVector', 'ark_web_color_suggestion_vector_default'],
     'ArkWebSelectPopupMenuItemVector':[
         'ArkWebSelectPopupMenuItemVector', 'ark_web_select_popup_menu_item_vector_default'
     ],

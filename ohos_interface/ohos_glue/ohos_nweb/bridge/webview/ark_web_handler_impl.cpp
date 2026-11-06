@@ -26,6 +26,7 @@
 #include "ohos_nweb/bridge/ark_web_cursor_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_custom_keyboard_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_data_resubmission_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_color_chooser_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
@@ -61,9 +62,11 @@
 #include "ohos_nweb/bridge/ark_web_url_resource_response_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_suggestion_vector_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_color_suggestion_vector_ctocpp.h"
 #include "ohos_nweb/bridge/ark_web_native_message_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_runtime_connect_info_wrapper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "base/include/ark_web_types.h"
 #include "ohos_nweb/bridge/ark_web_window_new_event_info_wrapper.h"
 
 namespace OHOS::ArkWeb {
@@ -1289,5 +1292,25 @@ void ArkWebHandlerImpl::OnMonitoredBlankScreen(
     nweb_handler_->OnMonitoredBlankScreen(
         ArkWebStringStructToClass(url), reason,
         ArkWebStringStructToClass(extraMsg));
+}
+
+void ArkWebHandlerImpl::OnColorChooserPopup(const ArkWebString& color,
+    const ArkWebColorSuggestionVector& suggestions, ArkWebRefPtr<ArkWebColorChooserCallback> callback)
+{
+    std::string nweb_color = ArkWebStringStructToClass(color);
+    std::vector<OHOS::NWeb::NWebColorSuggestion> nweb_suggestions =
+        ArkWebColorSuggestionVectorStructToClass(suggestions);
+
+    std::shared_ptr<OHOS::NWeb::NWebColorChooserCallback> nweb_callback = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_callback = std::make_shared<ArkWebColorChooserCallbackWrapper>(callback);
+    }
+
+    nweb_handler_->OnColorChooserPopup(nweb_color, nweb_suggestions, nweb_callback);
+}
+
+void ArkWebHandlerImpl::OnColorChooserClose()
+{
+    nweb_handler_->OnColorChooserClose();
 }
 } // namespace OHOS::ArkWeb
