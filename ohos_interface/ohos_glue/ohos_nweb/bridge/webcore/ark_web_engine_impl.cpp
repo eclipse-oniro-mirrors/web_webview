@@ -391,6 +391,35 @@ void ArkWebEngineImpl::DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool need
     nweb_engine_->DumpArkWebJSHeap(fd, renderPid, needSnapshot, needGC, needRaw);
 }
 
+void ArkWebEngineImpl::SetOutputFdCallback(ArkWebOutputFdCallback callback)
+{
+    nweb_engine_->SetOutputFdCallback(callback);
+}
+
+// The bridge passes a C-compatible callback (ArkWebString*).
+// The engine expects a C++ callback (std::string&).
+// This reverse trampoline converts back so the engine stores C++ type.
+
+static ArkWebOOMDumpDecisionCallback g_oom_dump_arkweb_cb = nullptr;
+
+static bool OomDumpCppCallback(int32_t pid, bool needDecreaseQuota, std::string& eventConfig)
+{
+    if (!g_oom_dump_arkweb_cb) {
+        return false;
+    }
+    ArkWebString arkStr = ArkWebStringClassToStruct(eventConfig);
+    bool result = g_oom_dump_arkweb_cb(pid, needDecreaseQuota, &arkStr);
+    eventConfig = ArkWebStringStructToClass(arkStr);
+    ArkWebStringStructRelease(arkStr);
+    return result;
+}
+
+void ArkWebEngineImpl::SetOOMDumpDecisionCallback(ArkWebOOMDumpDecisionCallback cb)
+{
+    g_oom_dump_arkweb_cb = cb;
+    nweb_engine_->SetOOMDumpDecisionCallback(cb ? &OomDumpCppCallback : nullptr);
+}
+
 void ArkWebEngineImpl::RemoveVisitedLinksSince(
     int64_t time_ms, ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback)
 {

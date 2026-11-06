@@ -164,6 +164,7 @@ ohos_shared_library("libnweb") {
     "graphic_2d:libcomposer",
     "graphic_2d:librender_service_client",
     "graphic_surface:surface",
+    "faultloggerd:libfaultloggerd",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "i18n:intl_util",

@@ -14,7 +14,9 @@
  */
 
 #include "nweb_helper.h"
+#include "faultloggerd_client.h"
 
+#include <chrono>
 #include <cstdint>
 #include <refbase.h>
 #include <surface.h>
@@ -709,24 +711,57 @@ bool NWebHelper::RegisterCustomSchemes()
     return true;
 }
 
-bool NWebHelper::GetWebEngine(bool fromArk)
+// OOM dump fd provider: requests a temp file fd from faultloggerd.
+// Called by the engine's browser-side dump flow (pull mode, per-event).
+static int GetDfxFdForOOMDump(int32_t renderPid)
 {
-    if (nwebEngine_) {
-        return true;
-    }
+    struct FaultLoggerdRequest request = {};
+    request.pid = static_cast<int32_t>(getpid());
+    request.type = static_cast<int32_t>(FaultLoggerType::ARKWEB_JS_RAW_SNAPSHOT);
+    request.tid = renderPid;
+    request.time = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count());
+    return RequestFileDescriptorEx(&request);
+}
 
+bool NWebHelper::InitBundlePath()
+{
     if (bundlePath_.empty()) {
         auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
         if (!ctx) {
             WVLOG_E("failed to get application context");
             return false;
         }
-
         SetBundlePath(ctx->GetBundleCodeDir());
         if (bundlePath_.empty()) {
             WVLOG_E("bundle path is empty");
             return false;
         }
+    }
+    return true;
+}
+
+void NWebHelper::RegisterOOMDumpCallbacks()
+{
+    nwebEngine_->SetOutputFdCallback(&GetDfxFdForOOMDump);
+    WVLOG_I("dfx fd provider registered");
+
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    auto decisionCb = ctx ? ctx->GetAppFreezeFilterCallback() : nullptr;
+    if (decisionCb == nullptr) {
+        WVLOG_E("oom dump decision callback unavailable");
+    }
+    nwebEngine_->SetOOMDumpDecisionCallback(decisionCb);
+}
+
+bool NWebHelper::GetWebEngine(bool fromArk)
+{
+    if (nwebEngine_) {
+        return true;
+    }
+
+    if (!InitBundlePath()) {
+        return false;
     }
 
     bool webPlayGroundEnable = NWebConfigHelper::Instance().IsWebPlayGroundEnable();
@@ -758,8 +793,10 @@ bool NWebHelper::GetWebEngine(bool fromArk)
 
     coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
     WVLOG_E("api level of arkweb core is %{public}d", coreApiLevel_);
-
     nwebEngine_->SetArkWebRomApiLevel(ARKWEB_CORE_API_LEVEL);
+
+    RegisterOOMDumpCallbacks();
+
     WVLOG_I("web engine libraryloaded");
     auto initArgs = GetInitArgs();
     nwebEngine_->LibraryLoaded(initArgs, lazyInitializeWebEngine_);

@@ -451,6 +451,40 @@ int32_t ArkWebEngineWrapper::GetWebNavigationConfigMode()
     return ark_web_engine_->GetWebNavigationConfigMode();
 }
 
+void ArkWebEngineWrapper::SetOutputFdCallback(int (*callback)(int32_t render_pid))
+{
+    ark_web_engine_->SetOutputFdCallback(callback);
+}
+
+// The bridge only accepts C-compatible types (ArkWebString*).
+// The original callback (from appkit via NWebHelper) uses std::string&.
+// This trampoline wraps the original so it can cross the bridge.
+
+static OOMDumpDecisionCallback g_oom_dump_original_cb = nullptr;
+
+static bool OomDumpBridgeTrampoline(int32_t pid, bool needDecreaseQuota, ArkWebString* eventConfig)
+{
+    if (!g_oom_dump_original_cb) {
+        return false;
+    }
+    std::string config;
+    if (eventConfig) {
+        config = ArkWebStringStructToClass(*eventConfig);
+    }
+    bool result = g_oom_dump_original_cb(pid, needDecreaseQuota, config);
+    if (eventConfig) {
+        ArkWebStringStructRelease(*eventConfig);
+        *eventConfig = ArkWebStringClassToStruct(config);
+    }
+    return result;
+}
+
+void ArkWebEngineWrapper::SetOOMDumpDecisionCallback(OOMDumpDecisionCallback cb)
+{
+    g_oom_dump_original_cb = cb;
+    ark_web_engine_->SetOOMDumpDecisionCallback(cb ? &OomDumpBridgeTrampoline : nullptr);
+}
+
 void ArkWebEngineWrapper::RemoveVisitedLinksSince(
     int64_t time_ms, std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> callback)
 {

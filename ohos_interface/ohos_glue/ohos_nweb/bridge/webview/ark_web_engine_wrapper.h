@@ -26,6 +26,8 @@ using ArkWebRenderProcessMode = OHOS::NWeb::RenderProcessMode;
 
 using ArkWebSiteIsolationMode = OHOS::NWeb::SiteIsolationMode;
 
+using OOMDumpDecisionCallback = OHOS::NWeb::OOMDumpDecisionCallback;
+
 class ArkWebEngineWrapper : public OHOS::NWeb::NWebEngine {
 public:
     ArkWebEngineWrapper(ArkWebRefPtr<ArkWebEngine> ark_web_engine);
@@ -146,6 +148,10 @@ public:
     void SetWholeWebDrawing() override;
 
     void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) override;
+
+    void SetOutputFdCallback(int (*callback)(int32_t render_pid)) override;
+    
+    void SetOOMDumpDecisionCallback(OOMDumpDecisionCallback cb) override;
 
     /**
      * @brief Remove the visited link records of the current application that

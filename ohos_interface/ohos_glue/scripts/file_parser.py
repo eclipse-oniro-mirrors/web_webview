@@ -320,6 +320,8 @@ _simpletypes = {
     'ArkAudioDeviceDescAdapterVector': ['ArkAudioDeviceDescAdapterVector', '{0}'],
     'ArkPrintAttributesAdapter': ['ArkPrintAttributesAdapter', '{0}'],
     'ArkTimeZoneEventCallback': ['ArkTimeZoneEventCallback', 'NULL'],
+    'ArkWebOutputFdCallback': ['ArkWebOutputFdCallback', 'NULL'],
+    'ArkWebOOMDumpDecisionCallback': ['ArkWebOOMDumpDecisionCallback', 'NULL'],
     'ArkIConsumerSurfaceAdapter*': ['ArkIConsumerSurfaceAdapter*', 'NULL'],
     'ArkOhosAdapterHelper*': ['ark_ohos_adapter_helper_t*', 'NULL'],
     'ArkOhosAdapterHelper': ['ark_ohos_adapter_helper_t', 'ArkOhosAdapterHelper()'],

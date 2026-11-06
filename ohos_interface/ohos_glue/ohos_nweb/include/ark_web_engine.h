@@ -26,6 +26,7 @@
 #include "ohos_nweb/include/ark_web_remove_visited_links_callback.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_nweb_create_info.h"
+#include "ohos_nweb/include/ark_web_nweb_structs.h"
 #include "ohos_nweb/include/ark_web_web_storage.h"
 #include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata.h"
@@ -242,6 +243,12 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GetWebNavigationConfigMode() = 0;
+
+    /*--ark web()--*/
+    virtual void SetOutputFdCallback(ArkWebOutputFdCallback callback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetOOMDumpDecisionCallback(ArkWebOOMDumpDecisionCallback cb) = 0;
 
     /**
      * @brief Remove the visited link records of the current application that
