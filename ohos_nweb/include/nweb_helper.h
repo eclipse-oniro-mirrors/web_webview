@@ -95,6 +95,10 @@ public:
 
     void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts);
 
+    void SetWebNavigationConfigMode(int32_t mode);
+
+    int32_t GetWebNavigationConfigMode();
+
     void WarmupServiceWorker(const std::string& url);
 
     void EnableWholeWebPageDrawing();

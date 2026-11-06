@@ -999,6 +999,8 @@ public:
 
     void OnCreateNativeMediaPlayer(ArkWebRefPtr<ArkWebCreateNativeMediaPlayerCallback> callback) override;
 
+    void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) override;
+
     /**
      * @brief Web drag resize optimize.
      */
@@ -2128,6 +2130,14 @@ public:
     bool GetAutoReloadEnabled() override;
 
     void SetFlingSpeedLimit(float speed_limit) override;
+
+    void SetDevicePermissionDelegate(ArkWebRefPtr<ArkWebDevicePermissionDelegate> delegate) override;
+
+    void RevokeDevicePermissions(int32_t hardware_type, const ArkWebString& origin,
+        const ArkWebDevicePermissionDeviceIdentifier& device, bool is_incognito) override;
+
+    void SetGuardPolicy(int32_t hardware_type, int32_t policy, const ArkWebString& origin,
+        bool is_incognito) override;
 
     /**
      * @brief Set user data for the current navigation entry.

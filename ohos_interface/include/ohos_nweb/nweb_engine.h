@@ -119,6 +119,10 @@ public:
 
     virtual void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
 
+    virtual void SetWebNavigationConfigMode(int32_t mode) {}
+
+    virtual int32_t GetWebNavigationConfigMode() { return 0; }
+
     virtual void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) {}
 
     virtual uint32_t AddBlanklessLoadingUrls(const std::vector<std::string>& urls) { return 0; }

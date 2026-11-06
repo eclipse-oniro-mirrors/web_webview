@@ -237,6 +237,12 @@ public:
     /*--ark web()--*/
     virtual void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) = 0;
 
+    /*--ark web()--*/
+    virtual void SetWebNavigationConfigMode(int32_t mode) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetWebNavigationConfigMode() = 0;
+
     /**
      * @brief Remove the visited link records of the current application that
      *        changed at or after the specified time point (inclusive).

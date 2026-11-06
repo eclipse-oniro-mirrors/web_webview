@@ -41,6 +41,7 @@
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_print_document_adapter_adapter.h"
+#include "ohos_nweb/include/ark_web_query_navigation_config_callback.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_rom_value.h"
 #include "ohos_nweb/include/ark_web_rom_value_vector.h"
@@ -58,6 +59,7 @@
 #include "ohos_nweb/include/ark_web_command_action_manager.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata_ack.h"
+#include "ohos_nweb/include/ark_web_device_permission_delegate.h"
 #include "ohos_nweb/include/ark_web_image_info_callback.h"
 
 namespace OHOS::ArkWeb {
@@ -2460,6 +2462,39 @@ public:
         const ArkWebString& h5_method_name, const ArkWebRomValueVector& args) = 0;
 
     /**
+     * @brief Set the device permission delegate that will receive device
+     *        permission related events.
+     *
+     * @param delegate the device permission delegate.
+     */
+    /*--ark web()--*/
+    virtual void SetDevicePermissionDelegate(ArkWebRefPtr<ArkWebDevicePermissionDelegate> delegate) = 0;
+
+    /**
+     * @brief Revoke device permissions with different granularity.
+     *
+     * @param hardware_type The hardware device type.
+     * @param origin The web origin to revoke permissions for. Empty means all origins.
+     * @param device The device to revoke. Empty device_key means all devices.
+     * @param is_incognito Whether the permission is in incognito mode.
+     */
+    /*--ark web()--*/
+    virtual void RevokeDevicePermissions(int32_t hardware_type, const ArkWebString& origin,
+        const ArkWebDevicePermissionDeviceIdentifier& device, bool is_incognito) = 0;
+
+    /**
+     * @brief Set device permission guard policy.
+     *
+     * @param hardware_type The hardware device type.
+     * @param policy The guard policy.
+     * @param origin The web origin to set policy for. Empty means the global policy.
+     * @param is_incognito Whether the policy is for incognito mode.
+     */
+    /*--ark web()--*/
+    virtual void SetGuardPolicy(int32_t hardware_type, int32_t policy, const ArkWebString& origin,
+        bool is_incognito) = 0;
+
+    /**
      * @brief Set user data for the current navigation entry.
      */
     /*--ark web()--*/
@@ -2506,6 +2541,8 @@ public:
      */
     /*--ark web()--*/
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
+    /*--ark web()--*/
+    virtual void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

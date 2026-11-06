@@ -104,6 +104,11 @@ enum class SecureDnsModeType : int {
     SECURE_ONLY = 2,
 };
 
+enum class WebNavigationConfigModeType : int {
+    SET = 0,
+    QUERY = 1,
+};
+
 struct OfflineResourceValueAni {
     ani_ref urlListArray;
     ani_ref resourceArrayBuffer;

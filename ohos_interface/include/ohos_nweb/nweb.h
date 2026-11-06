@@ -37,6 +37,7 @@
 #include "nweb_javascript_result_callback.h"
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
+#include "nweb_query_navigation_config_callback.h"
 #include "nweb_release_surface_callback.h"
 #include "nweb_rom_value.h"
 #include "nweb_snapshot_callback.h"
@@ -47,6 +48,7 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
+#include "nweb_device_permission_delegate.h"
 
 namespace OHOS::NWeb {
 
@@ -2786,6 +2788,37 @@ public:
     }
 
     /**
+     * @brief Set the device permission delegate that will receive device permission
+     * related events. This will replace the current delegate.
+     *
+     * @param delegate: a shared_ptr to an implementation of NWebDevicePermissionDelegate.
+     */
+    virtual void SetDevicePermissionDelegate(std::shared_ptr<NWebDevicePermissionDelegate> delegate) {}
+
+    /**
+     * @brief Revoke device permissions with different granularity.
+     *
+     * @param hardware_type The hardware device type.
+     * @param origin The web origin to revoke permissions for. Empty means all origins.
+     * @param device The device to revoke. Empty device_key means all devices.
+     * @param is_incognito Whether the permission is in incognito mode.
+     */
+    virtual void RevokeDevicePermissions(NWebDevicePermissionHardwareType hardware_type,
+        const std::string& origin, const NWebDevicePermissionDeviceIdentifier& device,
+        bool is_incognito) {}
+
+    /**
+     * @brief Set device permission guard policy.
+     *
+     * @param hardware_type The hardware device type.
+     * @param policy The guard policy.
+     * @param origin The web origin to set policy for. Empty means the global policy.
+     * @param is_incognito Whether the policy is for incognito mode.
+     */
+    virtual void SetGuardPolicy(NWebDevicePermissionHardwareType hardware_type,
+        NWebDeviceGuardPolicy policy, const std::string& origin, bool is_incognito) {}
+
+    /**
      * Set user data for the current navigation entry. The user data is session
      * scoped, kept in memory only, and retained when the navigation entry is
      * cloned for back/forward navigation history. Setting the same key again
@@ -2837,6 +2870,8 @@ public:
      * @param proceed true to resume the navigation, false to cancel it.
      */
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) {}
+    
+    virtual void OnQueryNavigationConfig(std::shared_ptr<NWebQueryNavigationConfigCallback> callback) {}
 };
 } // namespace OHOS::NWeb
 

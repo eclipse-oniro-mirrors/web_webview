@@ -219,6 +219,16 @@ void ArkWebEngineImpl::SetUserAgentForHosts(const ArkWebString& userAgent, const
     nweb_engine_->SetUserAgentForHosts(ArkWebStringStructToClass(userAgent), ArkWebStringVectorStructToClass(hosts));
 }
 
+void ArkWebEngineImpl::SetWebNavigationConfigMode(int32_t mode)
+{
+    nweb_engine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t ArkWebEngineImpl::GetWebNavigationConfigMode()
+{
+    return nweb_engine_->GetWebNavigationConfigMode();
+}
+
 void ArkWebEngineImpl::EnableWholeWebPageDrawing()
 {
     nweb_engine_->EnableWholeWebPageDrawing();

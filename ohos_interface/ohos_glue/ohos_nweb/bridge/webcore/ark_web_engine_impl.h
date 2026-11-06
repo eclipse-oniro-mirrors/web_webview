@@ -82,6 +82,10 @@ public:
 
     void SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts) override;
 
+    void SetWebNavigationConfigMode(int32_t mode) override;
+
+    int32_t GetWebNavigationConfigMode() override;
+
     void EnableWholeWebPageDrawing() override;
 
     ArkWebRefPtr<ArkWebAdsBlockManager> GetAdsBlockManager() override;

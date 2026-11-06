@@ -128,6 +128,14 @@ enum class PressureLevel : int {
     MEMORY_PRESSURE_LEVEL_CRITICAL = 2,
 };
 
+// WebNavigationConfigMode: navigation config query mode.
+// SET = 0 (existing interface, uses preset UA/viewport config during navigation),
+// QUERY = 1 (queries the app via callback for UA and viewport width during navigation).
+enum class WebNavigationConfigModeType : int {
+    SET = 0,
+    QUERY = 1,
+};
+
 enum class ScrollType : int {
     EVENT = 0,
 };

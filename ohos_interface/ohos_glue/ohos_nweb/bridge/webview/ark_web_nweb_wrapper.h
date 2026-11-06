@@ -1016,6 +1016,8 @@ public:
 
     void OnCreateNativeMediaPlayer(std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> callback) override;
 
+    void OnQueryNavigationConfig(std::shared_ptr<OHOS::NWeb::NWebQueryNavigationConfigCallback> callback) override;
+
     /**
      * @brief Send touchpad fling event.
      *
@@ -2138,6 +2140,17 @@ public:
     bool GetAutoReloadEnabled() override;
 
     void SetFlingSpeedLimit(float speed_limit) override;
+
+    void SetDevicePermissionDelegate(
+        std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> delegate) override;
+
+    void RevokeDevicePermissions(OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        const std::string& origin, const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device,
+        bool is_incognito) override;
+
+    void SetGuardPolicy(OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        OHOS::NWeb::NWebDeviceGuardPolicy policy, const std::string& origin,
+        bool is_incognito) override;
 
     /**
      * @brief Set user data for the current navigation entry.

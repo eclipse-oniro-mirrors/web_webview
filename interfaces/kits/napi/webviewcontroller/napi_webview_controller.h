@@ -58,7 +58,11 @@ const std::string WEB_SITE_ISOLATION_MODE_ENUM_NAME = "SiteIsolationMode";
 const std::string WEB_SCROLLBAR_MODE_ENUM_NAME = "ScrollbarMode";
 const std::string WEB_SOFT_KEYBOARD_BEHAVIOR_MODE_ENUM_NAME = "WebSoftKeyboardBehaviorMode";
 const std::string WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME = "WebHttpCookieSameSitePolicy";
+const std::string WEB_HARDWARE_TYPE_ENUM_NAME = "WebHardwareType";
+const std::string WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME = "WebDeviceListUpdateAction";
+const std::string WEB_DEVICE_GUARD_POLICY_ENUM_NAME = "WebDeviceGuardPolicy";
 const std::string WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME = "NavigationThrottleAction";
+const std::string WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME = "WebNavigationConfigMode";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
 
@@ -392,6 +396,12 @@ private:
 
     static napi_value SetUserAgentForHosts(napi_env env, napi_callback_info info);
 
+    static napi_value SetWebNavigationConfigMode(napi_env env, napi_callback_info info);
+
+    static napi_value GetWebNavigationConfigMode(napi_env env, napi_callback_info info);
+
+    static napi_value OnQueryNavigationConfig(napi_env env, napi_callback_info info);
+
     static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
 
     static napi_value GetSurfaceId(napi_env env, napi_callback_info info);
@@ -474,6 +484,9 @@ private:
     static napi_value GetLastPostMessageURL(napi_env env, napi_callback_info info);
     static napi_value SetZoomFactor(napi_env env, napi_callback_info info);
     static napi_value GetZoomFactor(napi_env env, napi_callback_info info);
+    static napi_value SetDevicePermissionDelegate(napi_env env, napi_callback_info info);
+    static napi_value RevokeDevicePermissions(napi_env env, napi_callback_info info);
+    static napi_value SetGuardPolicy(napi_env env, napi_callback_info info);
 };
 
 class ArkWebTransfer {

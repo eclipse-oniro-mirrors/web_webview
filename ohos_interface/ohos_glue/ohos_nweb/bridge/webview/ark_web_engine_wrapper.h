@@ -83,6 +83,10 @@ public:
 
     void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) override;
 
+    void SetWebNavigationConfigMode(int32_t mode) override;
+
+    int32_t GetWebNavigationConfigMode() override;
+
     void EnableWholeWebPageDrawing() override;
 
     std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager> GetAdsBlockManager() override;

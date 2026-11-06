@@ -639,6 +639,8 @@ public:
 
     void OnCreateNativeMediaPlayer(napi_env env, napi_ref callback) {}
 
+    void OnQueryNavigationConfig(napi_env env, napi_ref callback) {}
+
     bool ParseScriptContent(napi_env env, napi_value value, std::string &script)
     {
         return true;
