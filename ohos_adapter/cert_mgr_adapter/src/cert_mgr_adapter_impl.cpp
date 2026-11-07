@@ -18,6 +18,7 @@
 #include "cert_mgr_adapter_impl.h"
 #include "net_manager_constants.h"
 #include "network_security_config.h"
+#include "hm_cert_revocation.h"
 #include "nweb_log.h"
 #include "securec.h"
 
@@ -573,5 +574,39 @@ bool CertManagerAdapterImpl::GetPinSetForHostName(
     }
     pins.emplace_back(pinsString.substr(start));
     return true;
+}
+
+bool CertManagerAdapterImpl::CheckCertRevocation(const std::vector<std::string>& cert_bytes)
+{
+    if (cert_bytes.empty()) {
+        return false;
+    }
+
+    for (const auto& certDer : cert_bytes) {
+        if (certDer.empty()) {
+            continue;
+        }
+
+        CfBlob certBlob;
+        certBlob.data = reinterpret_cast<uint8_t*>(const_cast<char*>(certDer.data()));
+        certBlob.size = static_cast<uint32_t>(certDer.size());
+
+        CfRevocationCheckParam param = {0};
+        param.certChainData = &certBlob;
+
+        CfRevocationCheckResult checkResult = {0};
+        CfResult result = HcfCertRevocationCheck(&param, &checkResult);
+        if (result != CF_SUCCESS) {
+            WVLOG_E("CheckCertRevocation: HcfCertRevocationCheck failed, result: %{public}d", result);
+            continue;
+        }
+
+        if (checkResult.revocationStatus == CF_REVOCATION_CHECK_RESULT_REVOKED) {
+            WVLOG_D("CheckCertRevocation: certificate is revoked");
+            return true;
+        }
+    }
+
+    return false;
 }
 }

@@ -19,6 +19,7 @@
 
 #include "accesstoken_kit.h"
 #include "cert_manager_api.h"
+#include "hm_cert_revocation.h"
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
 #include "securec.h"
@@ -52,6 +53,7 @@ public:
     MOCK_METHOD(int32_t, CmUpdate, (const struct CmBlob*, const struct CmBlob*));
     MOCK_METHOD(int32_t, CmFinish, (const struct CmBlob*, const struct CmBlob*, struct CmBlob*));
     MOCK_METHOD(int32_t, CmAbort, (const struct CmBlob*));
+    MOCK_METHOD(CfResult, HcfCertRevocationCheck, (const CfRevocationCheckParam*, CfRevocationCheckResult*));
 };
 
 static MockCmApi* g_mockCmApi = nullptr;
@@ -103,6 +105,11 @@ int32_t CmFinish(const struct CmBlob* handle, const struct CmBlob* inData, struc
 int32_t CmAbort(const struct CmBlob* handle)
 {
     return g_mockCmApi->CmAbort(handle);
+}
+
+CfResult HcfCertRevocationCheck(const CfRevocationCheckParam* params, CfRevocationCheckResult* result)
+{
+    return g_mockCmApi->HcfCertRevocationCheck(params, result);
 }
 
 #ifdef __cplusplus
@@ -432,5 +439,47 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetPinSetForHostName_008, TestSi
     std::vector<std::string> pins;
     bool result = adapter.GetPinSetForHostName(hostname, pins);
     EXPECT_TRUE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_NoStrategyData_009
+ * @tc.desc: CheckCertRevocation with no strategy data (CF_SUCCESS, not revoked).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_NoStrategyData_009, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+    cert_bytes.emplace_back(std::string(10, '\x30'));
+
+    CfRevocationCheckResult mockResult = {0};
+    mockResult.revocationStatus = CF_REVOCATION_CHECK_RESULT_UNREVOKED;
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgPointee<1>(mockResult), Return(CF_SUCCESS)));
+
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_ApiError_010
+ * @tc.desc: CheckCertRevocation with API error (fail-open returns false).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_ApiError_010, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+    cert_bytes.emplace_back(std::string(10, '\x30'));
+
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _))
+        .Times(1)
+        .WillOnce(Return(static_cast<CfResult>(-1)));
+
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_FALSE(result);
 }
 } // namespace OHOS

@@ -50,6 +50,8 @@ public:
     bool GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs) override;
 
     bool GetPinSetForHostName(const std::string& hostname, std::vector<std::string>& pins) override;
+
+    bool CheckCertRevocation(const std::vector<std::string>& cert_bytes) override;
 private:
     int32_t InitCertList(struct CertList **cList);
 

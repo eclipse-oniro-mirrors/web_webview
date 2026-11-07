@@ -62,6 +62,8 @@ public:
  
     virtual int32_t SignUsingHuks(const std::string& identity, const uint8_t* certData, uint32_t certDataLen,
         uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm, uint32_t keySize) {return -1;}
+
+    virtual bool CheckCertRevocation(const std::vector<std::string>& cert_bytes) {return false;}
 };
 
 } // namespace OHOS::NWeb

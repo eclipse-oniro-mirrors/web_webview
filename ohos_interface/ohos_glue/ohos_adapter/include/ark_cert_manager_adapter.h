@@ -65,6 +65,9 @@ public:
     /*--ark web()--*/
     virtual int32_t SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen, uint8_t* signData,
         uint32_t* signDataLen, uint16_t algorithm) = 0;
+
+    /*--ark web()--*/
+    virtual bool CheckCertRevocation(const ArkWebStringVector& cert_bytes) = 0;
 };
 
 } // namespace OHOS::ArkWeb
