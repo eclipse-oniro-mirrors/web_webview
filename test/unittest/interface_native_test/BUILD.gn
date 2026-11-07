@@ -11,8 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/test.gni")
 import("//build/config/components/idl_tool/idl.gni")
+import("//build/test.gni")
 import("../../../web_aafwk.gni")
 
 ohos_unittest("arkweb_scheme_handler_test") {
@@ -26,9 +26,7 @@ ohos_unittest("arkweb_scheme_handler_test") {
     "$webview_path/interfaces/native:ohweb",
     "$webview_path/ohos_nweb:web_configs",
   ]
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
   external_deps = [
     "ability_runtime:app_context",
     "bundle_framework:appexecfwk_base",
@@ -55,9 +53,7 @@ ohos_unittest("arkweb_interface_test") {
     "$webview_path/ohos_nweb:web_configs",
   ]
 
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
 
   external_deps = [
     "ability_runtime:app_context",
@@ -85,9 +81,7 @@ ohos_unittest("native_javascript_execute_callback_test") {
     "$webview_path/ohos_nweb:web_configs",
   ]
 
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
 
   external_deps = [
     "ability_runtime:app_context",
@@ -105,22 +99,27 @@ ohos_unittest("native_javascript_execute_callback_test") {
 ohos_unittest("native_interface_arkweb_test") {
   module_out_path = "webview/Networking"
 
-  sources = [ "native_interface_arkweb_test.cpp" ]
+  sources = [
+    "${webview_path}/interfaces/kits/nativecommon/web_message_port.cpp",
+    "${webview_path}/interfaces/kits/nativecommon/web_scheme_handler_request.cpp",
+    "native_interface_arkweb_test.cpp",
+    "web_message_port_test.cpp",
+    "web_scheme_handler_request_test.cpp",
+  ]
 
   include_dirs = [
     "../common",
-    "$webview_path/interfaces/native"
+    "$webview_path/interfaces/native",
   ]
 
   deps = [
     "$webview_path/arkweb_utils:libarkweb_utils",
     "$webview_path/interfaces/native:ohweb",
+    "$webview_path/ohos_glue:ohos_base_glue_source",
     "$webview_path/ohos_nweb:web_configs",
   ]
 
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
 
   external_deps = [
     "ability_runtime:app_context",
@@ -129,6 +128,7 @@ ohos_unittest("native_interface_arkweb_test") {
     "c_utils:utils",
     "googletest:gmock_main",
     "googletest:gtest_main",
+    "graphic_2d:librender_service_base",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -139,9 +139,7 @@ ohos_unittest("native_interface_arkweb_test") {
 ohos_unittest("web_native_messaging_extension_context_info_test") {
   module_out_path = "webview/security"
 
-  sources = [
-    "web_native_messaging_extension_context_info_test.cpp"
-  ]
+  sources = [ "web_native_messaging_extension_context_info_test.cpp" ]
 
   include_dirs = [
     "../common",
@@ -151,23 +149,21 @@ ohos_unittest("web_native_messaging_extension_context_info_test") {
 
   deps = [
     "$webview_path/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
-    "$webview_path/sa/web_native_messaging:web_native_messaging_kit",
     "$webview_path/ohos_nweb:web_configs",
+    "$webview_path/sa/web_native_messaging:web_native_messaging_kit",
   ]
 
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:ability_context_native",
+    "ability_runtime:ability_manager",
+    "ability_runtime:ability_start_options",
     "ability_runtime:app_context",
     "ability_runtime:appkit_native",
-    "ability_runtime:napi_common",
-    "ability_runtime:ability_start_options",
-    "ability_runtime:ability_context_native",
     "ability_runtime:extensionkit_native",
-    "ability_runtime:ability_manager",
+    "ability_runtime:napi_common",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
@@ -184,9 +180,7 @@ ohos_unittest("web_native_messaging_extension_context_info_test") {
 ohos_unittest("web_native_messaging_extension_context_test") {
   module_out_path = "webview/security"
 
-  sources = [
-    "web_native_messaging_extension_context_test.cpp"
-  ]
+  sources = [ "web_native_messaging_extension_context_test.cpp" ]
 
   include_dirs = [
     "../common",
@@ -196,23 +190,21 @@ ohos_unittest("web_native_messaging_extension_context_test") {
 
   deps = [
     "$webview_path/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
-    "$webview_path/sa/web_native_messaging:web_native_messaging_kit",
     "$webview_path/ohos_nweb:web_configs",
+    "$webview_path/sa/web_native_messaging:web_native_messaging_kit",
   ]
 
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:ability_context_native",
+    "ability_runtime:ability_manager",
+    "ability_runtime:ability_start_options",
     "ability_runtime:app_context",
     "ability_runtime:appkit_native",
-    "ability_runtime:napi_common",
-    "ability_runtime:ability_start_options",
-    "ability_runtime:ability_context_native",
     "ability_runtime:extensionkit_native",
-    "ability_runtime:ability_manager",
+    "ability_runtime:napi_common",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
@@ -236,26 +228,22 @@ ohos_unittest("web_native_messaging_extension_proxy_test") {
     debug = false
   }
 
-  sources = [
-    "web_native_messaging_extension_proxy_test.cpp"
-  ]
+  sources = [ "web_native_messaging_extension_proxy_test.cpp" ]
 
   include_dirs = [
     "../common",
-    "$webview_path/interfaces/kits/napi/web_native_messaging_extension/extension/include"
+    "$webview_path/interfaces/kits/napi/web_native_messaging_extension/extension/include",
   ]
 
   deps = [
     "$webview_path/arkweb_utils:libarkweb_utils",
-    "$webview_path/interfaces/native:ohweb",
-    "$webview_path/ohos_nweb:web_configs",
     "$webview_path/interfaces/kits/napi/web_native_messaging_extension/extension:connect_info",
     "$webview_path/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
+    "$webview_path/interfaces/native:ohweb",
+    "$webview_path/ohos_nweb:web_configs",
   ]
 
-  deps += [
-    "$webview_path/ohos_nweb:libnweb",
-  ]
+  deps += [ "$webview_path/ohos_nweb:libnweb" ]
 
   external_deps = [
     "ability_runtime:app_context",
@@ -267,8 +255,8 @@ ohos_unittest("web_native_messaging_extension_proxy_test") {
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "init:libbegetutil",
+    "napi:ace_napi",
     "window_manager:libwm",
-    "napi:ace_napi"
   ]
 }
 
@@ -295,7 +283,8 @@ idl_interface_sources = [
 ]
 
 idl_gen_interface("web_native_messaging_service_interface") {
-  src_idl = rebase_path("${webview_path}/sa/web_native_messaging/IWebNativeMessagingService.idl")
+  src_idl = rebase_path(
+          "${webview_path}/sa/web_native_messaging/IWebNativeMessagingService.idl")
   dst_file = string_join(",", idl_interface_sources)
 }
 
@@ -304,6 +293,7 @@ ohos_unittest("web_native_messaging_service_test") {
   output_values = get_target_outputs(":web_native_messaging_service_interface")
   sources = [ "web_native_messaging_service_test.cpp" ]
   sources += [
+    "${webview_path}/sa/web_native_messaging/common/connection_native_info_parcel.cpp",
     "${webview_path}/sa/web_native_messaging/service/connect_native_request.cpp",
     "${webview_path}/sa/web_native_messaging/service/extension_ipc_connection.cpp",
     "${webview_path}/sa/web_native_messaging/service/service_delay_exit_task.cpp",
@@ -311,39 +301,38 @@ ohos_unittest("web_native_messaging_service_test") {
     "${webview_path}/sa/web_native_messaging/service/web_extension_connection_callback_proxy.cpp",
     "${webview_path}/sa/web_native_messaging/service/web_native_messaging_manager.cpp",
     "${webview_path}/sa/web_native_messaging/service/web_native_messaging_service.cpp",
-    "${webview_path}/sa/web_native_messaging/common/connection_native_info_parcel.cpp",
     "mock/mock_accesstoken_kit.cpp",
   ]
   sources += filter_include(output_values, [ "*.cpp" ])
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${webview_path}/sa/web_native_messaging:web_native_messaging_service",
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
     ":web_native_messaging_service_interface",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
+    "${webview_path}/sa/web_native_messaging:web_native_messaging_service",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:ability_connect_callback_stub",
-    "ability_runtime:ability_manager",
-    "ability_runtime:napi_common",
     "ability_runtime:ability_context_native",
+    "ability_runtime:ability_manager",
     "ability_runtime:ability_start_options",
+    "ability_runtime:napi_common",
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "googletest:gmock_main",
-    "googletest:gtest_main",
   ]
 }
 
@@ -351,8 +340,8 @@ ohos_unittest("connect_native_request_test") {
   module_out_path = "webview/security"
   sources = [ "connect_native_request_test.cpp" ]
   sources += [
-    "${webview_path}/sa/web_native_messaging/service/connect_native_request.cpp",
     "${webview_path}/sa/web_native_messaging/common/connection_native_info_parcel.cpp",
+    "${webview_path}/sa/web_native_messaging/service/connect_native_request.cpp",
   ]
 
   include_dirs = [
@@ -366,27 +355,27 @@ ohos_unittest("connect_native_request_test") {
     "${target_gen_dir}/../../ohos_nweb/include",
     "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension/include",
     "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client/include",
-    "mock"
+    "mock",
   ]
 
   deps = [
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
     ":web_native_messaging_service_interface",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:ability_context_native",
     "ability_runtime:ability_manager",
     "ability_runtime:napi_common",
-    "ability_runtime:ability_context_native",
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
-    "hilog:libhilog",
-    "ipc:ipc_core",
     "googletest:gmock_main",
     "googletest:gtest_main",
+    "hilog:libhilog",
+    "ipc:ipc_core",
   ]
 }
 
@@ -395,17 +384,17 @@ ohos_unittest("web_native_messaging_manager_test") {
   sources = [ "web_native_messaging_manager_test.cpp" ]
   output_values = get_target_outputs(":web_native_messaging_service_interface")
   sources += [
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client/src/web_native_messaging_extension_proxy.cpp",
     "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension/src/web_native_messaging_extension_connect_info.cpp",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client/src/web_native_messaging_extension_proxy.cpp",
+    "${webview_path}/sa/web_native_messaging/common/connection_native_info_parcel.cpp",
     "${webview_path}/sa/web_native_messaging/service/connect_native_request.cpp",
     "${webview_path}/sa/web_native_messaging/service/extension_ipc_connection.cpp",
     "${webview_path}/sa/web_native_messaging/service/service_delay_exit_task.cpp",
     "${webview_path}/sa/web_native_messaging/service/service_event_handler.cpp",
     "${webview_path}/sa/web_native_messaging/service/web_extension_connection_callback_proxy.cpp",
     "${webview_path}/sa/web_native_messaging/service/web_native_messaging_manager.cpp",
-    "${webview_path}/sa/web_native_messaging/common/connection_native_info_parcel.cpp",
-    "mock/mock_accesstoken_kit.cpp",
     "mock/bundle_mgr_client.cpp",
+    "mock/mock_accesstoken_kit.cpp",
   ]
   sources += filter_include(output_values, [ "*.cpp" ])
 
@@ -420,33 +409,33 @@ ohos_unittest("web_native_messaging_manager_test") {
     "${target_gen_dir}/../../ohos_nweb/include",
     "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension/include",
     "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client/include",
-    "mock"
+    "mock",
   ]
 
   deps = [
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
-    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
     ":web_native_messaging_service_interface",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
+    "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension_client:web_extension_client",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:ability_connect_callback_stub",
-    "ability_runtime:ability_manager",
-    "ability_runtime:napi_common",
     "ability_runtime:ability_context_native",
+    "ability_runtime:ability_manager",
     "ability_runtime:ability_start_options",
+    "ability_runtime:napi_common",
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "eventhandler:libeventhandler",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "googletest:gmock_main",
-    "googletest:gtest_main",
   ]
 }
 
@@ -467,8 +456,8 @@ ohos_unittest("ets_web_native_messaging_extension_context_test") {
   deps = [
     "${webview_path}/interfaces/kits/ani/webview:webview_ani",
     "${webview_path}/interfaces/kits/napi/web_native_messaging_extension/extension:web_extension",
-    "${webview_path}/sa/web_native_messaging:web_native_messaging_kit",
     "${webview_path}/ohos_nweb:web_configs",
+    "${webview_path}/sa/web_native_messaging:web_native_messaging_kit",
   ]
 
   external_deps = [
@@ -508,9 +497,7 @@ ohos_unittest("ets_web_native_messaging_extension_context_real_test") {
     "ani_native_function=AniNativeFunction",
   ]
 
-  deps = [
-    "${webview_path}/ohos_nweb:web_configs",
-  ]
+  deps = [ "${webview_path}/ohos_nweb:web_configs" ]
 
   external_deps = [
     "c_utils:utils",
@@ -524,9 +511,9 @@ ohos_unittest("ets_web_native_messaging_extension_context_real_test") {
 ohos_unittest("web_history_list_test") {
   module_out_path = "webview/Networking"
 
-  sources = [ 
+  sources = [
+    "${webview_path}/interfaces/kits/nativecommon/web_history_list.cpp",
     "web_history_list_test.cpp",
-    "${webview_path}/interfaces/kits/nativecommon/web_history_list.cpp", 
   ]
 
   include_dirs = [ "../common" ]
@@ -554,9 +541,9 @@ ohos_unittest("web_history_list_test") {
 ohos_unittest("web_resource_handler_test") {
   module_out_path = "webview/Networking"
 
-  sources = [ 
+  sources = [
+    "${webview_path}/interfaces/kits/nativecommon/web_resource_handler.cpp",
     "web_resource_handler_test.cpp",
-    "${webview_path}/interfaces/kits/nativecommon/web_resource_handler.cpp", 
   ]
 
   include_dirs = [ "${webview_path}/interfaces/native" ]
@@ -584,9 +571,9 @@ ohos_unittest("web_resource_handler_test") {
 ohos_unittest("web_scheme_handler_response_test") {
   module_out_path = "webview/Networking"
 
-  sources = [ 
+  sources = [
+    "${webview_path}/interfaces/kits/nativecommon/web_scheme_handler_response.cpp",
     "web_scheme_handler_response_test.cpp",
-    "${webview_path}/interfaces/kits/nativecommon/web_scheme_handler_response.cpp", 
   ]
 
   include_dirs = [ "${webview_path}/interfaces/native" ]
@@ -617,16 +604,16 @@ group("unittest") {
     ":arkweb_interface_test",
     ":arkweb_scheme_handler_test",
     ":connect_native_request_test",
-    ":ets_web_native_messaging_extension_context_test",
     ":ets_web_native_messaging_extension_context_real_test",
+    ":ets_web_native_messaging_extension_context_test",
     ":native_interface_arkweb_test",
     ":native_javascript_execute_callback_test",
+    ":web_history_list_test",
     ":web_native_messaging_extension_context_info_test",
     ":web_native_messaging_extension_context_test",
     ":web_native_messaging_extension_proxy_test",
-    ":web_native_messaging_service_test",
     ":web_native_messaging_manager_test",
-    ":web_history_list_test",
+    ":web_native_messaging_service_test",
     ":web_resource_handler_test",
     ":web_scheme_handler_response_test",
   ]
