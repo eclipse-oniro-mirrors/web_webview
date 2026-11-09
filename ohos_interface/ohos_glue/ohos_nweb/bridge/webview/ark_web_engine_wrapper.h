@@ -17,6 +17,10 @@
 #define ARK_WEB_ENGINE_WRAPPER_H_
 #pragma once
 
+#include <memory>
+#include <mutex>
+#include <unordered_map>
+
 #include "include/nweb_engine.h"
 #include "ohos_nweb/include/ark_web_engine.h"
 #include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
@@ -143,7 +147,12 @@ public:
 
     void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) override;
 private:
+    std::shared_ptr<OHOS::NWeb::NWeb> GetOrCreateNWebWrapper(int32_t nweb_id,
+        ArkWebRefPtr<ArkWebNWeb> ark_web_nweb);
+
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
+    std::unordered_map<int32_t, std::weak_ptr<OHOS::NWeb::NWeb>> nweb_cache_;
+    std::mutex nweb_cache_mtx_;
 };
 
 } // namespace OHOS::ArkWeb

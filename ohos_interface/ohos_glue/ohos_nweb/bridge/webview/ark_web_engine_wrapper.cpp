@@ -62,17 +62,38 @@ std::shared_ptr<OHOS::NWeb::NWeb> ArkWebEngineWrapper::CreateNWeb(
         return nullptr;
     }
 
-    return std::make_shared<ArkWebNWebWrapper>(ark_web_nweb);
+    int32_t nweb_id = static_cast<int32_t>(ark_web_nweb->GetWebId());
+    return GetOrCreateNWebWrapper(nweb_id, ark_web_nweb);
 }
 
 std::shared_ptr<OHOS::NWeb::NWeb> ArkWebEngineWrapper::GetNWeb(int32_t nweb_id)
 {
+    {
+        std::lock_guard<std::mutex> lock(nweb_cache_mtx_);
+        auto it = nweb_cache_.find(nweb_id);
+        if (it != nweb_cache_.end()) {
+            if (auto nweb = it->second.lock()) {
+                return nweb;
+            }
+            nweb_cache_.erase(it);
+        }
+    }
+
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb = ark_web_engine_->GetNWeb(nweb_id);
     if (CHECK_REF_PTR_IS_NULL(ark_web_nweb)) {
         return nullptr;
     }
 
-    return std::make_shared<ArkWebNWebWrapper>(ark_web_nweb);
+    return GetOrCreateNWebWrapper(nweb_id, ark_web_nweb);
+}
+
+std::shared_ptr<OHOS::NWeb::NWeb> ArkWebEngineWrapper::GetOrCreateNWebWrapper(
+    int32_t nweb_id, ArkWebRefPtr<ArkWebNWeb> ark_web_nweb)
+{
+    auto wrapper = std::make_shared<ArkWebNWebWrapper>(ark_web_nweb);
+    std::lock_guard<std::mutex> lock(nweb_cache_mtx_);
+    nweb_cache_[nweb_id] = wrapper;
+    return wrapper;
 }
 
 std::shared_ptr<OHOS::NWeb::NWebDataBase> ArkWebEngineWrapper::GetDataBase()
