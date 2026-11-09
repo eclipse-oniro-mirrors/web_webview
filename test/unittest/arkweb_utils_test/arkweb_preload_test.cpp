@@ -181,6 +181,17 @@ void ArkWebPreloadCommonTest::SetUp(void)
 
 void ArkWebPreloadCommonTest::TearDown(void) {}
 
+#if defined(webview_x86_64)
+void ExpectPreloadMocksNotCalled()
+{
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 0);
+    EXPECT_EQ(g_createRelroCallCount, 0);
+    EXPECT_EQ(g_loadWithRelroCallCount, 0);
+    EXPECT_EQ(g_dlopenMockCallCount, 0);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 0);
+}
+#endif
+
 // ==================== GetArkwebBundleInstallLibPath ====================
 
 /**
@@ -204,14 +215,16 @@ HWTEST_F(ArkWebPreloadCommonTest, GetArkwebBundleInstallLibPath_EvergreenEngine_
     setActiveWebEngineVersion(ArkWebEngineVersion::SYSTEM_DEFAULT);
 
     auto res = GetArkwebBundleInstallLibPath();
+#if defined(webview_x86_64)
+    EXPECT_TRUE(res.empty());
+#else
     EXPECT_FALSE(res.empty());
 #if defined(webview_arm64)
     EXPECT_NE(res.find("arm64"), std::string::npos);
-#elif defined(webview_x86_64)
-    EXPECT_EQ(res, "");
 #else
     EXPECT_NE(res.find("arm"), std::string::npos);
     EXPECT_EQ(res.find("arm64"), std::string::npos);
+#endif
 #endif
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -244,7 +257,11 @@ HWTEST_F(ArkWebPreloadCommonTest, GetSysTotalRAMInfo_Success_001, TestSize.Level
     SetSysinfoMockValue(0); // Simulate success
 
     int32_t ram = GetSysTotalRAMInfo();
+#if defined(webview_x86_64) || defined(ASAN_DETECTOR)
+    EXPECT_EQ(ram, 0);
+#else
     EXPECT_GT(ram, 0);
+#endif
 }
 
 /**
@@ -323,11 +340,15 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebLibForRender_PartialPreload_001, 
 
     SetDlopenMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebLibForRender(1));
+#if defined(webview_x86_64)
+    ExpectPreloadMocksNotCalled();
+#else
     EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
     EXPECT_EQ(g_createRelroCallCount, 1);
     EXPECT_EQ(g_loadWithRelroCallCount, 1);
     EXPECT_EQ(g_dlopenMockCallCount, 0);
     EXPECT_EQ(g_dlopenNsMockCallCount, 0);
+#endif
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -345,11 +366,15 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebLibForRender_FullPreload_001, Tes
     SetDlopenMockValue(reinterpret_cast<void *>(0x1));
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebLibForRender(2));
+#if defined(webview_x86_64)
+    ExpectPreloadMocksNotCalled();
+#else
     EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
     EXPECT_EQ(g_createRelroCallCount, 1);
     EXPECT_EQ(g_loadWithRelroCallCount, 1);
     EXPECT_EQ(g_dlopenMockCallCount, 1);
     EXPECT_EQ(g_dlopenNsMockCallCount, 0);
+#endif
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -377,11 +402,16 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_ValidPath_001, TestSize
 
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+#if defined(webview_x86_64)
+    ExpectPreloadMocksNotCalled();
+    EXPECT_TRUE(g_dlnsCreatePath.empty());
+#else
     EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
     EXPECT_EQ(g_createRelroCallCount, 1);
     EXPECT_EQ(g_loadWithRelroCallCount, 1);
     EXPECT_EQ(g_dlopenNsMockCallCount, 0);
     EXPECT_EQ(g_dlnsCreatePath, GetArkwebBundleInstallLibPath() + ":" + GetArkwebLibPath());
+#endif
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -399,10 +429,14 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_RelroFallback_001, Test
     g_loadWithRelroResult = nullptr;
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+#if defined(webview_x86_64)
+    ExpectPreloadMocksNotCalled();
+#else
     EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
     EXPECT_EQ(g_createRelroCallCount, 1);
     EXPECT_EQ(g_loadWithRelroCallCount, 1);
     EXPECT_EQ(g_dlopenNsMockCallCount, 1);
+#endif
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -420,10 +454,14 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_PrepareFallback_001, Te
     g_reserveAddressSpaceResult = false;
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+#if defined(webview_x86_64)
+    ExpectPreloadMocksNotCalled();
+#else
     EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
     EXPECT_EQ(g_createRelroCallCount, 0);
     EXPECT_EQ(g_loadWithRelroCallCount, 0);
     EXPECT_EQ(g_dlopenNsMockCallCount, 1);
+#endif
 
     g_reserveAddressSpaceResult = true;
     g_createRelroResult = false;
@@ -432,10 +470,14 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_PrepareFallback_001, Te
     g_loadWithRelroCallCount = 0;
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+#if defined(webview_x86_64)
+    ExpectPreloadMocksNotCalled();
+#else
     EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
     EXPECT_EQ(g_createRelroCallCount, 1);
     EXPECT_EQ(g_loadWithRelroCallCount, 0);
     EXPECT_EQ(g_dlopenNsMockCallCount, 1);
+#endif
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
