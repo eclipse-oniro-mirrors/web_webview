@@ -90,6 +90,8 @@ void OhosAdapterHelperTest::TearDown(void) {}
  * @tc.type: FUNC
  * @tc.require:
  */
+// The default x86_64 emulator image does not provide the ArkWebCore runtime required here.
+#if !defined(webview_x86_64)
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize.Level1)
 {
     std::string hapPath = "";
@@ -111,6 +113,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     helper->SetHttpDns(config);
 }
+#endif
 
 /**
  * @tc.name: OhosAdapterHelper_GetInstance_002.
