@@ -178,6 +178,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
  * @tc.type: FUNC
  * @tc.require:
  */
+// The default x86_64 emulator image does not provide the ArkWebCore runtime required here.
+#if !defined(webview_x86_64)
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Level1)
 {
     int32_t nweb_id = 1;
@@ -202,6 +204,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     auto nweb = helper->GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
 }
+#endif
 
 /**
  * @tc.name: OhosAdapterHelper_GetSystemPropertiesInstance_004.
@@ -247,6 +250,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_00
  * @tc.type: FUNC
  * @tc.require:
  */
+// The default x86_64 emulator image does not provide the ArkWebCore runtime required here.
+#if !defined(webview_x86_64)
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelperTest_Init_001, TestSize.Level1)
 {
     std::string hapPath = "";
@@ -261,4 +266,5 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelperTest_Init_001, TestSize.Level1)
     EXPECT_NE(OHOS::ArkWeb::ArkWebAdapterWebviewBridgeHelper::GetInstance().libFileHandler_, nullptr);
     EXPECT_NE(OHOS::ArkWeb::ArkWebAdapterWebviewBridgeHelper::GetInstance().memberCheckFunc_, nullptr);
 }
+#endif
 } // namespace OHOS::NWeb
