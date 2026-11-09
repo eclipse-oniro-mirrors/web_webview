@@ -44,6 +44,10 @@ std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
 
 void DestroyCallbackWrapper(const char* webName)
 {
+    if (webName == nullptr) {
+        WVLOG_E("native DestroyCallbackWrapper webName is null");
+        return;
+    }
     NativeArkWeb_OnDestroyCallback userCallback = nullptr;
     {
         std::lock_guard<std::mutex> guard(g_mtxMap);
