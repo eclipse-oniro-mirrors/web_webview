@@ -332,10 +332,10 @@ public:
     void RemoveAllCache(bool include_disk_files) {}
 
     void RemoveVisitedLinksSince(
-        int64_t time_ms, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback) override
+        int64_t timeMs, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback) override
     {
         removeVisitedLinksCalled_ = true;
-        lastTimeMs_ = time_ms;
+        lastTimeMs_ = timeMs;
         lastCallback_ = callback;
         if (callback) {
             callback->OnRemoveComplete();
@@ -2056,7 +2056,8 @@ HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_Load
  * @tc.desc: Branch 1b: engine load fails, null callback → no crash, state unchanged.
  * @tc.type: FUNC
  */
-HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_LoadFailWithNullCallback_002, TestSize.Level1)
+HWTEST_F(NWebHelperRemoveVisitedLinksTest,
+    NWebHelperRemoveVisitedLinksTest_LoadFailWithNullCallback_002, TestSize.Level1)
 {
     auto savedEngine = NWebHelper::Instance().nwebEngine_;
     bool savedInitFlag = NWebHelper::Instance().initFlag_;
@@ -2153,7 +2154,8 @@ HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_Engi
  * @tc.desc: Branch 2 with null callback: engine becomes null after load, no crash.
  * @tc.type: FUNC
  */
-HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_EngineNullAfterLoadNullCb_006, TestSize.Level1)
+HWTEST_F(NWebHelperRemoveVisitedLinksTest,
+    NWebHelperRemoveVisitedLinksTest_EngineNullAfterLoadNullCb_006, TestSize.Level1)
 {
     class NullingMockNWebEngine : public MockNWebEngine {
     public:
