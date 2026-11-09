@@ -1576,6 +1576,11 @@ public:
      * @brief Called when the color chooser popup should be closed.
      */
     virtual void OnColorChooserClose() {}
+
+    /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    virtual void OnDragCancel() {}
 };
 
 } // namespace OHOS::NWeb
