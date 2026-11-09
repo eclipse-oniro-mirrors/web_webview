@@ -867,6 +867,19 @@ public:
      */
     /*--ark web()--*/
     virtual void PutCaretColor(uint32_t color_value) = 0;
+
+    /**
+     * @brief Set whether to persist visited link records to the local database.
+     *        The default is false.
+     */
+    /*--ark web()--*/
+    virtual void PutVisitedLinkPersistEnabled(bool enabled) = 0;
+
+    /**
+     * @brief Get whether visited link persistence is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool IsVisitedLinkPersistEnabled() = 0;
 };
 
 } // namespace OHOS::ArkWeb

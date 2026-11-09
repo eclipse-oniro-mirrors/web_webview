@@ -28,6 +28,7 @@
 #include "nweb_data_base.h"
 #include "nweb_engine.h"
 #include "nweb_export.h"
+#include "nweb_remove_visited_links_callback.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
 #include "application_state_change_callback.h"
@@ -109,6 +110,9 @@ public:
     void TrimMemoryByPressureLevel(int32_t memoryLevel);
 
     void RemoveAllCache(bool includeDiskFiles);
+
+    void RemoveVisitedLinksSince(int64_t timeMs,
+                                 std::shared_ptr<NWebRemoveVisitedLinksCallback> callback);
 
     void SetProxyOverride(const std::vector<std::string>& proxyUrls,
                           const std::vector<std::string>& proxySchemeFilters,

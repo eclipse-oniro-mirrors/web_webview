@@ -866,6 +866,17 @@ export default namespace webview {
         native searchNext(forward: boolean): void;
         native static getDefaultUserAgent(): string;
         native static removeAllCache(clearRom: boolean): void;
+        native static removeVisitedLinksSincePromise(timeMs: double): Promise<void>;
+        static removeVisitedLinksSince(date: Date, callback: Callback<void>): void {
+            WebviewController.removeVisitedLinksSincePromise(date.getTime()).then((): undefined => {
+                callback(undefined);
+                return undefined;
+            });
+            return;
+        }
+        static removeVisitedLinksSince(date: Date): Promise<void> {
+            return WebviewController.removeVisitedLinksSincePromise(date.getTime());
+        }
         native accessStep(step: int): boolean;
         native isAdsBlockEnabled(): boolean;
         native enableAdsBlock(enable: boolean): void;

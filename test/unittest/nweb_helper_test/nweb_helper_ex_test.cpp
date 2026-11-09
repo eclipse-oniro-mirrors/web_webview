@@ -32,6 +32,7 @@
 #include "application_context.h"
 #include "arkweb_utils.h"
 #include "scene_board_judgement.h"
+#include "nweb_remove_visited_links_callback.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -330,6 +331,17 @@ public:
 
     void RemoveAllCache(bool include_disk_files) {}
 
+    void RemoveVisitedLinksSince(
+        int64_t timeMs, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback) override
+    {
+        removeVisitedLinksCalled_ = true;
+        lastTimeMs_ = timeMs;
+        lastCallback_ = callback;
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+    }
+
     void EnablePrivateNetworkAccess(bool enable) {}
 
     bool IsPrivateNetworkAccessEnabled()
@@ -372,6 +384,11 @@ private:
     RenderProcessMode process_mode_ = RenderProcessMode::SINGLE_MODE;
     bool userAgentClientHintsEnabled_ = false;
     std::shared_ptr<NWebUserAgentMetadata> metadata_ = nullptr;
+
+public:
+    bool removeVisitedLinksCalled_ = false;
+    int64_t lastTimeMs_ = -1;
+    std::shared_ptr<NWebRemoveVisitedLinksCallback> lastCallback_ = nullptr;
 };
 
 void NwebHelperTest::SetUpTestCase(void)
@@ -1993,5 +2010,172 @@ HWTEST_F(NwebHelperTest, NWebHelper_CreateNWeb_Success_001, TestSize.Level1)
     NWebHelper::Instance().nwebEngine_ = savedEngine;
     NWebHelper::Instance().initWebEngine_ = false;
 }
+
+// Test callback implementation for RemoveVisitedLinksSince.
+class NWebRemoveVisitedLinksCallbackTestImpl : public NWebRemoveVisitedLinksCallback {
+public:
+    NWebRemoveVisitedLinksCallbackTestImpl() = default;
+    ~NWebRemoveVisitedLinksCallbackTestImpl() override = default;
+    void OnRemoveComplete() override { completed_ = true; }
+    bool IsCompleted() const { return completed_; }
+private:
+    bool completed_ = false;
+};
+
+class NWebHelperRemoveVisitedLinksTest : public testing::Test {
+public:
+    static void SetUpTestCase(void) {}
+    static void TearDownTestCase(void) {}
+    void SetUp() {}
+    void TearDown() {}
+};
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_LoadFailWithCallback_001
+ * @tc.desc: Branch 1a: engine load fails, non-null callback → OnRemoveComplete invoked.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_LoadFailWithCallback_001, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    NWebHelper::Instance().RemoveVisitedLinksSince(1000, callback);
+    EXPECT_TRUE(callback->IsCompleted());
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_LoadFailWithNullCallback_002
+ * @tc.desc: Branch 1b: engine load fails, null callback → no crash, state unchanged.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest,
+    NWebHelperRemoveVisitedLinksTest_LoadFailWithNullCallback_002, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(2000, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+    EXPECT_FALSE(NWebHelper::Instance().initFlag_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_NormalPath_003
+ * @tc.desc: Branch 3: engine available, delegates to engine with correct params.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_NormalPath_003, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    EXPECT_FALSE(nwebEngineMock->removeVisitedLinksCalled_);
+    NWebHelper::Instance().RemoveVisitedLinksSince(12345, callback);
+    EXPECT_TRUE(nwebEngineMock->removeVisitedLinksCalled_);
+    EXPECT_EQ(nwebEngineMock->lastTimeMs_, 12345);
+    EXPECT_NE(nwebEngineMock->lastCallback_, nullptr);
+    EXPECT_TRUE(callback->IsCompleted());
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_NormalPathNullCallback_004
+ * @tc.desc: Branch 3 with null callback: engine available, delegates with nullptr, no crash.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_NormalPathNullCallback_004, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(6789, nullptr);
+    EXPECT_TRUE(nwebEngineMock->removeVisitedLinksCalled_);
+    EXPECT_EQ(nwebEngineMock->lastTimeMs_, 6789);
+    EXPECT_EQ(nwebEngineMock->lastCallback_, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_EngineNullAfterLoad_005
+ * @tc.desc: Branch 2: engine becomes null after load (defensive), callback → OnRemoveComplete.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_EngineNullAfterLoad_005, TestSize.Level1)
+{
+    // NullingMock nulls NWebHelper::nwebEngine_ inside InitializeWebEngine,
+    // simulating the race that the defensive Branch 2 guards against.
+    class NullingMockNWebEngine : public MockNWebEngine {
+    public:
+        void InitializeWebEngine(std::shared_ptr<NWebEngineInitArgs> init_args) override
+        {
+            NWebHelper::Instance().nwebEngine_ = nullptr;
+        }
+    };
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = std::make_shared<NullingMockNWebEngine>();
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    NWebHelper::Instance().RemoveVisitedLinksSince(3000, callback);
+    EXPECT_TRUE(callback->IsCompleted());
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_EngineNullAfterLoadNullCb_006
+ * @tc.desc: Branch 2 with null callback: engine becomes null after load, no crash.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest,
+    NWebHelperRemoveVisitedLinksTest_EngineNullAfterLoadNullCb_006, TestSize.Level1)
+{
+    class NullingMockNWebEngine : public MockNWebEngine {
+    public:
+        void InitializeWebEngine(std::shared_ptr<NWebEngineInitArgs> init_args) override
+        {
+            NWebHelper::Instance().nwebEngine_ = nullptr;
+        }
+    };
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = std::make_shared<NullingMockNWebEngine>();
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(4000, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
 } // namespace OHOS::NWeb
 }

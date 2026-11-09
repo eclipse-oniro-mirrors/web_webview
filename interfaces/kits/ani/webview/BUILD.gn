@@ -80,6 +80,8 @@ ohos_shared_library("webview_ani") {
     "./src/webviewcontroller/ani_nweb_value_callback_impl.h",
     "./src/webviewcontroller/ani_prefetch_options.cpp",
     "./src/webviewcontroller/ani_prefetch_options.h",
+    "./src/webviewcontroller/ani_remove_visited_links_callback.cpp",
+    "./src/webviewcontroller/ani_remove_visited_links_callback.h",
     "./src/webviewcontroller/ani_user_agent_brand_version.cpp",
     "./src/webviewcontroller/ani_user_agent_brand_version.h",
     "./src/webviewcontroller/ani_user_agent_metadata.cpp",

@@ -1352,6 +1352,27 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     nwebEngine_->RemoveAllCache(includeDiskFiles);
 }
 
+void NWebHelper::RemoveVisitedLinksSince(
+    int64_t timeMs, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback)
+{
+    if (!LoadWebEngine(true, true)) {
+        WVLOG_E("failed to load web engine");
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+        return;
+    }
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+        return;
+    }
+
+    nwebEngine_->RemoveVisitedLinksSince(timeMs, std::move(callback));
+}
+
 void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 {
     if (!LoadWebEngine(true, false)) {

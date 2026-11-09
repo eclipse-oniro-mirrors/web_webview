@@ -23,6 +23,7 @@
 #include "ohos_nweb/include/ark_web_download_manager.h"
 #include "ohos_nweb/include/ark_web_engine_init_args.h"
 #include "ohos_nweb/include/ark_web_engine_prefetch_args.h"
+#include "ohos_nweb/include/ark_web_remove_visited_links_callback.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_nweb_create_info.h"
 #include "ohos_nweb/include/ark_web_web_storage.h"
@@ -241,6 +242,14 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GetWebNavigationConfigMode() = 0;
+
+    /**
+     * @brief Remove the visited link records of the current application that
+     *        changed at or after the specified time point (inclusive).
+     */
+    /*--ark web()--*/
+    virtual void RemoveVisitedLinksSince(
+        int64_t time_ms, ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb
