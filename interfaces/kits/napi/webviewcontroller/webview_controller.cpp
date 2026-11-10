@@ -260,8 +260,16 @@ void WebviewController::SetWebDetach(int32_t nwebId)
         return;
     }
 
-    if (attachState_ != AttachState::NOT_ATTACHED) {
-        attachState_ = AttachState::NOT_ATTACHED;
+    bool stateChanged = false;
+    {
+        std::unique_lock<std::mutex> attachLock(attachMtx_);
+        if (attachState_ != AttachState::NOT_ATTACHED) {
+            attachState_ = AttachState::NOT_ATTACHED;
+            stateChanged = true;
+        }
+    }
+
+    if (stateChanged) {
         TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
     }
 }
