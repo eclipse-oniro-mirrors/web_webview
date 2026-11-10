@@ -16,6 +16,7 @@
 #include "ani_remove_visited_links_callback.h"
 
 #include "ani_business_error.h"
+#include "web_errors.h"
 #include "event_handler.h"
 #include "event_runner.h"
 
