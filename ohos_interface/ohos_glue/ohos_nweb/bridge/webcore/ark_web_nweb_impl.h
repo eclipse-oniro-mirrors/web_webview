@@ -2174,6 +2174,16 @@ public:
     /*--ark web()--*/
     void ResolveNavigationDefer(uint64_t deferId, bool proceed) override;
 
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result, Empty result means failure.
+     */
+    void GetElementInfoForSecurityHitTest(
+        double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

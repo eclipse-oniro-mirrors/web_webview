@@ -2509,6 +2509,17 @@ public:
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
     /*--ark web()--*/
     virtual void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) = 0;
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result, Empty result means failure.
+     */
+    /*--ark web()--*/
+    virtual void GetElementInfoForSecurityHitTest(
+        double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

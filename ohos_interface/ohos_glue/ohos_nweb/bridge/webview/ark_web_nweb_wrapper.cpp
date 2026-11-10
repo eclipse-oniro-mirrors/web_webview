@@ -2335,4 +2335,15 @@ void ArkWebNWebWrapper::OnQueryNavigationConfig(
 
     ark_web_nweb_->OnQueryNavigationConfig(new ArkWebQueryNavigationConfigCallbackImpl(callback));
 }
+
+void ArkWebNWebWrapper::GetElementInfoForSecurityHitTest(double x, double y,
+    std::shared_ptr<OHOS::NWeb::NWebStringValueCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->GetElementInfoForSecurityHitTest(x, y, nullptr);
+        return;
+    }
+
+    ark_web_nweb_->GetElementInfoForSecurityHitTest(x, y, new ArkWebStringValueCallbackImpl(callback));
+}
 } // namespace OHOS::ArkWeb

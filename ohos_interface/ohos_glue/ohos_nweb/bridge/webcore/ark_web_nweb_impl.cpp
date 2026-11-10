@@ -1968,4 +1968,15 @@ void ArkWebNWebImpl::ResolveNavigationDefer(uint64_t deferId, bool proceed)
     nweb_nweb_->ResolveNavigationDefer(deferId, proceed);
 }
 
+void ArkWebNWebImpl::GetElementInfoForSecurityHitTest(double x, double y,
+    ArkWebRefPtr<ArkWebStringValueCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->GetElementInfoForSecurityHitTest(x, y, nullptr);
+        return;
+    }
+    nweb_nweb_->GetElementInfoForSecurityHitTest(
+        x, y, std::make_shared<ArkWebStringValueCallbackWrapper>(callback));
+}
+
 } // namespace OHOS::ArkWeb
