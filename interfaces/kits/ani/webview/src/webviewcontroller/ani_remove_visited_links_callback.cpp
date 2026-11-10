@@ -15,6 +15,7 @@
 
 #include "ani_remove_visited_links_callback.h"
 
+#include "ani_business_error.h"
 #include "event_handler.h"
 #include "event_runner.h"
 
@@ -48,6 +49,11 @@ void AniRemoveVisitedLinksCallback::OnRemoveComplete()
     auto task = [env, resolver]() {
         ani_ref resultRef = nullptr;
         if (env->GetUndefined(&resultRef) != ANI_OK) {
+            WVLOG_E("GetUndefined failed, rejecting promise to avoid pending state");
+            ani_ref jsError = NWebError::AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
+            if (env->PromiseResolver_Reject(resolver, reinterpret_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("PromiseResolver_Reject failed after GetUndefined failure");
+            }
             return;
         }
         if (env->PromiseResolver_Resolve(resolver, resultRef) != ANI_OK) {
