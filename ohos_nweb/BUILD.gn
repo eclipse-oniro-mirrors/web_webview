@@ -127,12 +127,14 @@ ohos_shared_library("libnweb") {
     ":nweb_glue_interface",
   ]
   public_configs = [ ":nweb_public_interface" ]
+  include_dirs = [ "../ohos_interface/include/ohos_adapter" ]
   sources = [
     "../interfaces/kits/nativecommon/full_screen_video_overlay_handler_wrapper.cpp",
     "src/nweb_enhance_surface_adapter.cpp",
     "src/nweb_helper.cpp",
     "src/nweb_hisysevent.cpp",
     "src/nweb_surface_adapter.cpp",
+    "src/nweb_user_agent_builder.cpp",
     "src/webview_value.cpp",
   ]
 
@@ -145,6 +147,7 @@ ohos_shared_library("libnweb") {
     ":web_configs",
     "${webview_path}/arkweb_utils:libarkweb_utils",
     "${webview_path}/ohos_glue:ohos_adapter_glue_source",
+    "${webview_path}/ohos_adapter:nweb_ohos_adapter",
     "${webview_path}/ohos_glue:ohos_base_glue_source",
     "${webview_path}/ohos_glue:ohos_nweb_glue_source",
   ]

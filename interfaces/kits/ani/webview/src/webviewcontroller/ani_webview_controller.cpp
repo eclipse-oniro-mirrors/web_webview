@@ -1452,6 +1452,19 @@ static ani_string GetDefaultUserAgent(ani_env *env, ani_object object)
     return userAgent;
 }
 
+static ani_string GetDefaultUserAgentLite(ani_env *env, ani_object object)
+{
+    ani_string userAgent = nullptr;
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return userAgent;
+    }
+    WVLOG_I("Get the default user agent lite.");
+    std::string result = NWebHelper::Instance().GetDefaultUserAgentLite();
+    env->String_NewUTF8(result.c_str(), result.size(), &userAgent);
+    return userAgent;
+}
+
 static ani_boolean IsSafeBrowsingEnabled(ani_env *env, ani_object object)
 {
     if (!env) {
@@ -8221,6 +8234,7 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "warmupServiceWorker", nullptr, reinterpret_cast<void *>(WarmupServiceWorker) },
         ani_native_function { "prepareForPageLoad", nullptr, reinterpret_cast<void *>(PrepareForPageLoad) },
         ani_native_function { "getDefaultUserAgent", nullptr, reinterpret_cast<void *>(GetDefaultUserAgent) },
+        ani_native_function { "getDefaultUserAgentLite", nullptr, reinterpret_cast<void *>(GetDefaultUserAgentLite) },
         ani_native_function { "removeAllCache", nullptr, reinterpret_cast<void *>(RemoveAllCache) },
         ani_native_function { "setServiceWorkerWebSchemeHandler", nullptr,
                               reinterpret_cast<void *>(SetServiceWorkerWebSchemeHandler) },

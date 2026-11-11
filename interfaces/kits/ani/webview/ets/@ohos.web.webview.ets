@@ -865,6 +865,7 @@ export default namespace webview {
         native enableIntelligentTrackingPrevention(enable: boolean): void;
         native searchNext(forward: boolean): void;
         native static getDefaultUserAgent(): string;
+        native static getDefaultUserAgentLite(): string;
         native static removeAllCache(clearRom: boolean): void;
         native accessStep(step: int): boolean;
         native isAdsBlockEnabled(): boolean;

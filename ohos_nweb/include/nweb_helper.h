@@ -177,6 +177,10 @@ public:
     void DumpArkWebJSHeap(
         int32_t fd = -1, int32_t renderPid = -1, bool needSnapshot = false, bool needGC = false, bool needRaw = false);
 
+    // Returns the default UA assembled without any web engine initialization.
+    // Empty string when the ArkWeb version cannot be resolved from the engine.
+    std::string GetDefaultUserAgentLite();
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);
