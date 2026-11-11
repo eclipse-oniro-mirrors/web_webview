@@ -33,6 +33,7 @@
 #include "ani_business_error.h"
 #include "ani_parse_utils.h"
 #endif
+#include "web_site_config_callback_impl.h"
 #include "ani_navigation_throttle.h"
 #include "ani_class_name.h"
 #include "nweb_init_params.h"
@@ -4407,6 +4408,59 @@ void OnCreateNativeMediaPlayer(ani_env* env, ani_object object, ani_fn_object ca
     controller->OnCreateNativeMediaPlayer(g_vm, callback);
 }
 
+void SetWebSiteConfigCallback(ani_env* env, ani_object object, ani_fn_object callback)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+
+    ani_vm *vm = nullptr;
+    if (env->GetVM(&vm) != ANI_OK) {
+        WVLOG_E("Failed to get VM from env");
+        return;
+    }
+    g_vm = vm;
+    WVLOG_D("put website config callback");
+
+    auto* controller = reinterpret_cast<WebviewController*>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+    controller->PutWebSiteConfigCallback(g_vm, callback);
+}
+
+void SetGlobalWebSiteConfigCallback(ani_env* env, ani_object object, ani_fn_object callback)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+
+    ani_vm *vm = nullptr;
+    if (env->GetVM(&vm) != ANI_OK) {
+        WVLOG_E("Failed to get VM from env");
+        return;
+    }
+    g_vm = vm;
+    WVLOG_D("set global website config callback");
+
+    if (callback == nullptr) {
+        // Clear the global callback by passing nullptr.
+        NWebHelper::Instance().SetGlobalWebSiteConfigCallback(nullptr);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<AniNWebWebSiteConfigCallbackImpl>(g_vm, callback);
+    if (!callbackImpl) {
+        WVLOG_E("failed to create global website config callback impl");
+        return;
+    }
+    NWebHelper::Instance().SetGlobalWebSiteConfigCallback(callbackImpl);
+}
+
+
 static void AvoidVisibleViewportBottom(ani_env* env, ani_object object, ani_int avoidHeight)
 {
     if (env == nullptr) {
@@ -8160,6 +8214,8 @@ ani_status StsWebviewControllerInit(ani_env *env)
                               reinterpret_cast<void *>(SetPathAllowingUniversalAccess) },
         ani_native_function { "onCreateNativeMediaPlayer", "C{std.core.Function2}:",
                               reinterpret_cast<void *>(OnCreateNativeMediaPlayer) },
+        ani_native_function { "setWebSiteConfigCallback", nullptr,
+                              reinterpret_cast<void *>(SetWebSiteConfigCallback) },
         ani_native_function { "injectOfflineResourcesInternal", nullptr,
                               reinterpret_cast<void *>(InjectOfflineResources) },
         ani_native_function { "precompileJavaScriptInternal", nullptr, reinterpret_cast<void *>(PrecompileJavaScript) },
@@ -8278,6 +8334,9 @@ ani_status StsWebviewControllerInit(ani_env *env)
                               reinterpret_cast<void *>(SetServiceWorkerWebSchemeHandler) },
         ani_native_function {
             "SetWebDebuggingAccess", nullptr, reinterpret_cast<void*>(SetWebDebuggingAccess) },
+        ani_native_function {
+            "SetGlobalWebSiteConfigCallback", nullptr,
+            reinterpret_cast<void*>(SetGlobalWebSiteConfigCallback) },
         ani_native_function {
             "setWebDebuggingAccessAndPort", nullptr, reinterpret_cast<void*>(SetWebDebuggingAccessAndPort) },
         ani_native_function { "enableBackForwardCache", nullptr, reinterpret_cast<void *>(EnableBackForwardCache) },

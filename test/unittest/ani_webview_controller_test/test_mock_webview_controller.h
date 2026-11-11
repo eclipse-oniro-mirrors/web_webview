@@ -889,6 +889,11 @@ public:
         // Mock implementation
     }
 
+    void PutWebSiteConfigCallback(ani_vm* vm, ani_fn_object callback)
+    {
+        // Mock implementation
+    }
+
     ErrCode WebPageSnapshot(const char* id, PixelUnit type, int32_t width, int32_t height,
         const WebSnapshotCallback callback)
     {

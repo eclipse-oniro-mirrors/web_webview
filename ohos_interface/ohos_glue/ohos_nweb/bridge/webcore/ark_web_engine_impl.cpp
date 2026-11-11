@@ -27,6 +27,7 @@
 #include "ohos_nweb/bridge/ark_web_web_storage_impl.h"
 #include "ohos_nweb/bridge/ark_web_proxy_changed_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_user_agent_metadata_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_user_agent_metadata_ack_impl.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
@@ -399,5 +400,16 @@ void ArkWebEngineImpl::RemoveVisitedLinksSince(
     if (nweb_engine_) {
         nweb_engine_->RemoveVisitedLinksSince(time_ms, nweb_remove_visited_links_callback);
     }
+}
+
+void ArkWebEngineImpl::SetGlobalWebSiteConfigCallback(
+    ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_engine_->SetGlobalWebSiteConfigCallback(nullptr);
+        return;
+    }
+    nweb_engine_->SetGlobalWebSiteConfigCallback(
+        std::make_shared<ArkWebWebSiteConfigCallbackWrapper>(callback));
 }
 } // namespace OHOS::ArkWeb

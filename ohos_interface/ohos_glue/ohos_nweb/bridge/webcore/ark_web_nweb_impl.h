@@ -1937,7 +1937,7 @@ public:
      */
     void PutVaultPlainTextCallback(
         ArkWebRefPtr<ArkWebVaultPlainTextCallback> callback) override;
-    
+
     /**
      * @brief fill autofill data.
      *
@@ -2183,6 +2183,14 @@ public:
      */
     void GetElementInfoForSecurityHitTest(
         double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) override;
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    /*--ark web()--*/
+    void PutWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
