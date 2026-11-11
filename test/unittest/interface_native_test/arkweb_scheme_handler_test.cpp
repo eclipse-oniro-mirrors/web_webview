@@ -13,15 +13,16 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <securec.h>
 
 #define private public
 #include "nweb.h"
-#include "nweb_helper.h"
-#include "nweb_config_helper.h"
 #include "nweb_adapter_helper.h"
+#include "nweb_config_helper.h"
+#include "nweb_helper.h"
+
 #include "base/web/webview/interfaces/native/arkweb_scheme_handler.h"
 
 using namespace testing;
@@ -680,9 +681,9 @@ public:
 
     void ResumeAllTimers() {}
 
-    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& pre_args,
-        const std::map<std::string, std::string>& additional_http_headers, const std::string& cache_key,
-        const uint32_t& cache_valid_time)
+    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& preArgs,
+        const std::map<std::string, std::string>& additionalHttpHeaders, const std::string& cacheKey,
+        const uint32_t& cacheValidTime)
     {}
 
     void SetRenderProcessMode(RenderProcessMode mode) {}
@@ -1346,5 +1347,89 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     SetSchemeHandlerApiForTest(nullptr);
 }
 
+/**
+ * @tc.name  : OHArkwebSchemeHandlerTest_ErrorInfoApiIsNull_006
+ * @tc.desc  : error info related apis when g_SchemeHandlerApi is nullptr
+ */
+HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_ErrorInfoApiIsNull_006, TestSize.Level1)
+{
+    SetSchemeHandlerApiForTest(nullptr);
+    ArkWeb_ErrorInfo* errorInfo = nullptr;
+    OH_ArkWeb_CreateErrorInfo(&errorInfo);
+    EXPECT_EQ(errorInfo, nullptr);
+    OH_ArkWeb_DestroyErrorInfo(errorInfo);
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetCompleteIfNoResponse(errorInfo, true), ARKWEB_INVALID_PARAM);
+    EXPECT_FALSE(OH_ArkWebErrorInfo_GetCompleteIfNoResponse(errorInfo));
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetCustomErrorCode(errorInfo, 1), ARKWEB_INVALID_PARAM);
+    EXPECT_EQ(OH_ArkWebErrorInfo_GetCustomErrorCode(errorInfo), 0);
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetErrorCode(errorInfo, ARKWEB_NET_OK), ARKWEB_INVALID_PARAM);
+    EXPECT_EQ(OH_ArkWebErrorInfo_GetErrorCode(errorInfo), ARKWEB_ERR_FAILED);
+
+    ArkWeb_Response* response = nullptr;
+    EXPECT_EQ(OH_ArkWebResponse_SetCustomErrorCode(response, 1), ARKWEB_ERROR_UNKNOWN);
+    EXPECT_EQ(OH_ArkWebResponse_GetCustomErrorCode(response), 0);
+    EXPECT_EQ(OH_ArkWebResponse_SetErrorInfo(response, errorInfo), ARKWEB_ERROR_UNKNOWN);
+    EXPECT_EQ(OH_ArkWebResponse_GetErrorInfo(response), nullptr);
+
+    ArkWeb_ResourceHandler* resourceHandler = nullptr;
+    EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithErrorInfo(resourceHandler, errorInfo), ARKWEB_ERROR_UNKNOWN);
+}
+
+/**
+ * @tc.name  : OHArkwebSchemeHandlerTest_ErrorInfoImplIsNull_007
+ * @tc.desc  : error info related apis when impl pointers are nullptr
+ */
+HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_ErrorInfoImplIsNull_007, TestSize.Level1)
+{
+    static char zeroApi[2048] = { 0 };
+    SetSchemeHandlerApiForTest(zeroApi);
+    ArkWeb_ErrorInfo* errorInfo = nullptr;
+    OH_ArkWeb_CreateErrorInfo(&errorInfo);
+    OH_ArkWeb_DestroyErrorInfo(errorInfo);
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetCompleteIfNoResponse(errorInfo, true), ARKWEB_INVALID_PARAM);
+    EXPECT_FALSE(OH_ArkWebErrorInfo_GetCompleteIfNoResponse(errorInfo));
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetCustomErrorCode(errorInfo, 1), ARKWEB_INVALID_PARAM);
+    EXPECT_EQ(OH_ArkWebErrorInfo_GetCustomErrorCode(errorInfo), 0);
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetErrorCode(errorInfo, ARKWEB_NET_OK), ARKWEB_INVALID_PARAM);
+    EXPECT_EQ(OH_ArkWebErrorInfo_GetErrorCode(errorInfo), ARKWEB_ERR_FAILED);
+
+    ArkWeb_Response* response = nullptr;
+    EXPECT_EQ(OH_ArkWebResponse_SetCustomErrorCode(response, 1), ARKWEB_ERROR_UNKNOWN);
+    EXPECT_EQ(OH_ArkWebResponse_GetCustomErrorCode(response), 0);
+    EXPECT_EQ(OH_ArkWebResponse_SetErrorInfo(response, errorInfo), ARKWEB_ERROR_UNKNOWN);
+    EXPECT_EQ(OH_ArkWebResponse_GetErrorInfo(response), nullptr);
+
+    ArkWeb_ResourceHandler* resourceHandler = nullptr;
+    EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithErrorInfo(resourceHandler, errorInfo), ARKWEB_ERROR_UNKNOWN);
+    SetSchemeHandlerApiForTest(nullptr);
+}
+
+/**
+ * @tc.name  : OHArkwebSchemeHandlerTest_ErrorInfoApiIsNotNull_008
+ * @tc.desc  : error info related apis when g_SchemeHandlerApi is not nullptr
+ */
+HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_ErrorInfoApiIsNotNull_008, TestSize.Level1)
+{
+    SetSchemeHandlerApiForTest(&g_testSchemeHandlerApi);
+    ArkWeb_ErrorInfo* errorInfo = nullptr;
+    OH_ArkWeb_CreateErrorInfo(&errorInfo);
+    OH_ArkWeb_DestroyErrorInfo(errorInfo);
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetCompleteIfNoResponse(errorInfo, true), 0);
+    EXPECT_FALSE(OH_ArkWebErrorInfo_GetCompleteIfNoResponse(errorInfo));
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetCustomErrorCode(errorInfo, 1), 0);
+    EXPECT_EQ(OH_ArkWebErrorInfo_GetCustomErrorCode(errorInfo), 0);
+    EXPECT_EQ(OH_ArkWebErrorInfo_SetErrorCode(errorInfo, ARKWEB_NET_OK), 0);
+    EXPECT_EQ(OH_ArkWebErrorInfo_GetErrorCode(errorInfo), ARKWEB_ERR_FAILED);
+
+    ArkWeb_Response* response = nullptr;
+    EXPECT_EQ(OH_ArkWebResponse_SetCustomErrorCode(response, 1), 0);
+    EXPECT_EQ(OH_ArkWebResponse_GetCustomErrorCode(response), 0);
+    EXPECT_EQ(OH_ArkWebResponse_SetErrorInfo(response, errorInfo), 0);
+    EXPECT_EQ(OH_ArkWebResponse_GetErrorInfo(response), nullptr);
+
+    ArkWeb_ResourceHandler* resourceHandler = nullptr;
+    EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithErrorInfo(resourceHandler, errorInfo), 0);
+    SetSchemeHandlerApiForTest(nullptr);
+}
 }
 }

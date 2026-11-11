@@ -221,4 +221,26 @@ HWTEST_F(WebviewValueTest, WebviewValue_ERR_007, TestSize.Level1)
     EXPECT_EQ(name, errName);
     EXPECT_EQ(msg, errMsg);
 }
+
+/**
+ * @tc.name: WebviewValue_BRANCH_008
+ * @tc.desc: Test NewChildValue when child node exists and CheckType mismatch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(WebviewValueTest, WebviewValue_BRANCH_008, TestSize.Level1)
+{
+    std::shared_ptr<WebViewValue> webviewValue = std::make_shared<WebViewValue>(NWebRomValue::Type::NONE);
+    // child_node_ is not nullptr on the second call.
+    std::shared_ptr<NWebRomValue> childNode = webviewValue->NewChildValue();
+    EXPECT_NE(nullptr, childNode);
+    std::shared_ptr<NWebRomValue> childNode2 = webviewValue->NewChildValue();
+    EXPECT_NE(nullptr, childNode2);
+
+    // CheckType mismatch: current type is STRING but accessed as INTEGER.
+    webviewValue->SetType(NWebRomValue::Type::STRING);
+    webviewValue->SetString("test");
+    webviewValue->SetInt(1);
+    EXPECT_EQ(1, webviewValue->GetInt());
+}
 }

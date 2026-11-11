@@ -17,6 +17,8 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+#include <sys/syscall.h>
+#include <unistd.h>
 
 #define private public
 #include "nweb.h"
@@ -36,7 +38,17 @@ namespace NWeb {
 namespace {
 constexpr int32_t TEST_NWEB_ID = 1;
 constexpr ErrCode PORT_INIT_ERROR = -2;
+bool g_fakeUidEnabled = false;
+uid_t g_fakeUid = 0;
 } // namespace
+
+extern "C" uid_t getuid(void)
+{
+    if (g_fakeUidEnabled) {
+        return g_fakeUid;
+    }
+    return static_cast<uid_t>(syscall(SYS_getuid));
+}
 
 class MockMessagePortNWeb : public NWebMock {
 public:
@@ -340,9 +352,9 @@ public:
 
     void ResumeAllTimers() {}
 
-    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& pre_args,
-        const std::map<std::string, std::string>& additional_http_headers, const std::string& cache_key,
-        const uint32_t& cache_valid_time)
+    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& preArgs,
+        const std::map<std::string, std::string>& additionalHttpHeaders, const std::string& cacheKey,
+        const uint32_t& cacheValidTime)
     {}
 
     void SetRenderProcessMode(RenderProcessMode mode) {}
@@ -537,6 +549,29 @@ HWTEST_F(WebMessagePortTest, WebMessagePortTest_Constructor_010, TestSize.Level1
     WebMessagePort portNotExtention(TEST_NWEB_ID, handle, false);
     EXPECT_EQ(portNotExtention.GetPortHandle(), "portHandle");
     EXPECT_FALSE(portNotExtention.IsExtentionType());
+}
+
+/**
+ * @tc.name  : WebMessagePortTest_LogDomain_011
+ * @tc.desc  : Cover WVLOG render process domain branches via faked uid
+ */
+HWTEST_F(WebMessagePortTest, WebMessagePortTest_LogDomain_011, TestSize.Level1)
+{
+    std::string handle;
+    WebMessagePort port(TEST_NWEB_ID, handle, false);
+
+    // uid inside render process isolation range: both range checks are true.
+    g_fakeUidEnabled = true;
+    g_fakeUid = 100000;
+    EXPECT_EQ(port.PostPortMessage(nullptr, nullptr), NWebError::CAN_NOT_POST_MESSAGE);
+    EXPECT_EQ(port.SetPortMessageCallback(nullptr), NWebError::CAN_NOT_REGISTER_MESSAGE_EVENT);
+
+    // uid above the render process isolation range: first check true, second false.
+    g_fakeUid = 110000;
+    EXPECT_EQ(port.PostPortMessage(nullptr, nullptr), NWebError::CAN_NOT_POST_MESSAGE);
+    EXPECT_EQ(port.SetPortMessageCallback(nullptr), NWebError::CAN_NOT_REGISTER_MESSAGE_EVENT);
+
+    g_fakeUidEnabled = false;
 }
 } // namespace NWeb
 } // namespace OHOS
