@@ -73,10 +73,12 @@ ohos_unittest("nweb_user_agent_builder_test") {
     "c_utils:utils",
     "googletest:gmock_main",
     "googletest:gtest_main",
+    "graphic_2d:librender_service_base",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "libxml2:libxml2",
     "window_manager:libwm",
+    "window_manager:libwsutils",
   ]
 }
 
