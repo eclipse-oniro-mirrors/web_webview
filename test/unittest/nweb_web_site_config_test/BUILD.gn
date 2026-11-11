@@ -1,0 +1,53 @@
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//base/web/webview/web_aafwk.gni")
+import("//build/test.gni")
+
+module_output_path = "webview/Web_Framework"
+
+ohos_unittest("nweb_web_site_config_test") {
+  module_out_path = module_output_path
+
+  sources = [ "nweb_web_site_config_test.cpp" ]
+
+  include_dirs = [
+    "${target_gen_dir}/../../../ohos_glue/ohos_nweb/bridge",
+    "${target_gen_dir}/../../../ohos_glue",
+    "${target_gen_dir}/../../../ohos_nweb",
+    "$webview_path/ohos_interface",
+    "$webview_path/ohos_interface/include/ohos_nweb",
+    "$webview_path/ohos_interface/ohos_glue/ohos_nweb/include",
+    "$webview_path/ohos_interface/ohos_glue/base/include",
+    "$webview_path/ohos_interface/ohos_glue/ohos_nweb/bridge/webview",
+    "$webview_path/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore",
+  ]
+
+  deps = [
+    "$webview_path/ohos_nweb:libnweb",
+    "${webview_path}/ohos_glue:ohos_base_glue_source",
+    "${webview_path}/ohos_glue:ohos_nweb_glue_source",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+  ]
+}
+
+group("unittest") {
+  testonly = true
+  deps = [ ":nweb_web_site_config_test" ]
+}

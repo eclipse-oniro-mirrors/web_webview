@@ -1582,6 +1582,19 @@ void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
     nwebEngine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
 }
 
+void NWebHelper::SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback)
+{
+    if (!initFlag_) {
+        WVLOG_E("SetGlobalWebSiteConfigCallback, not initialized");
+        return;
+    }
+    if (!nwebEngine_) {
+        WVLOG_E("SetGlobalWebSiteConfigCallback, nweb engine is nullptr");
+        return;
+    }
+    nwebEngine_->SetGlobalWebSiteConfigCallback(callback);
+}
+
 std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
 {
     if (!nwebEngine_) {

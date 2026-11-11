@@ -51,6 +51,7 @@
 #include "ohos_nweb/bridge/ark_web_stylus_touch_point_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_vault_plain_text_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_print_document_adapter_adapter_impl.h"
 #include "ohos_nweb/ctocpp/ark_web_js_proxy_callback_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_rom_value_vector_ctocpp.h"
@@ -1979,4 +1980,14 @@ void ArkWebNWebImpl::GetElementInfoForSecurityHitTest(double x, double y,
         x, y, std::make_shared<ArkWebStringValueCallbackWrapper>(callback));
 }
 
+void ArkWebNWebImpl::PutWebSiteConfigCallback(
+    ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->PutWebSiteConfigCallback(nullptr);
+        return;
+    }
+    nweb_nweb_->PutWebSiteConfigCallback(
+        std::make_shared<ArkWebWebSiteConfigCallbackWrapper>(callback));
+}
 } // namespace OHOS::ArkWeb

@@ -48,6 +48,7 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
+#include "nweb_web_site_config_callback.h"
 
 namespace OHOS::NWeb {
 
@@ -2449,7 +2450,7 @@ public:
      */
     virtual void PutVaultPlainTextCallback(
         std::shared_ptr<NWebVaultPlainTextCallback> callback) {}
-    
+
     /**
      * @brief fill autofill data.
      *
@@ -2857,6 +2858,13 @@ public:
             callback->OnReceiveValue("");
         }
     }
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    virtual void PutWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
 };
 } // namespace OHOS::NWeb
 

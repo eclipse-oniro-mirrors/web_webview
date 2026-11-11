@@ -177,6 +177,9 @@ public:
      */
     virtual void RemoveVisitedLinksSince(int64_t time_ms,
                                          std::shared_ptr<NWebRemoveVisitedLinksCallback> callback) {}
+
+    virtual void SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
+
 };
 
 } // namespace OHOS::NWeb

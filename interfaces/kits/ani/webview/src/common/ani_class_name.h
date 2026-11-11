@@ -53,6 +53,8 @@ const char* ANI_WEB_RESOURCE_HANDLER_CLASS_NAME = "@ohos.web.webview.webview.Web
 const char* ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME = "@ohos.web.webview.webview.WebSchemeHandlerRequest";
 
 const char* ANI_ENUM_ARK_WEB_ENGINE_VERSION = "@ohos.web.webview.webview.ArkWebEngineVersion";
+const char* ANI_CLASS_WEB_SITE_CONFIG_PARAMS = "@ohos.web.webview.webview.WebSiteConfigParamsInner";
+const char* ANI_ENUM_WEB_SITE_SOURCE = "@ohos.web.webview.webview.WebSiteSource";
 }
 
 } // namespace NWeb

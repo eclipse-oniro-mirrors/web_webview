@@ -472,6 +472,8 @@ public:
 
     void OnCreateNativeMediaPlayer(ani_vm *vm, ani_fn_object callback);
 
+    void PutWebSiteConfigCallback(ani_vm *vm, ani_fn_object callback);
+
     int32_t GetNWebId();
 
     ErrCode SetErrorPageEnabled(bool enable);
