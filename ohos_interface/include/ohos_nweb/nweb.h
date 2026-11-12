@@ -2857,6 +2857,44 @@ public:
             callback->OnReceiveValue("");
         }
     }
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    virtual void PutWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
+
+    /**
+     * @brief Get the window bounds and state for CDP Browser domain.
+     *        Reads left/top/width/height and windowState ("normal"/"minimized"/
+     *        "maximized"/"fullscreen") of the ArkUI window hosting this NWeb.
+     * @param x      Out: window left (screen coordinate).
+     * @param y      Out: window top (screen coordinate).
+     * @param w      Out: window width.
+     * @param h      Out: window height.
+     * @param state  Out: window state string.
+     * @return true on success, false if window unavailable or ownership mismatch.
+     */
+    virtual bool GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                 std::string& state) { return false; }
+
+    /**
+     * @brief Set the window bounds and state for CDP Browser domain.
+     *        Applies left/top/width/height and/or windowState to the ArkUI window
+     *        hosting this NWeb. Per CDP protocol, windowState != "normal" cannot
+     *        be combined with left/top/width/height; caller enforces this.
+     * @param x      In: target window left.
+     * @param y      In: target window top.
+     * @param w      In: target window width.
+     * @param h      In: target window height.
+     * @param state  In: target window state ("normal"/"minimized"/"maximized"/
+     *               "fullscreen"). Empty means no state change.
+     * @return true on success, false if window unavailable, ownership mismatch,
+     *         or window call failed.
+     */
+    virtual bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                 const std::string& state) { return false; }
 };
 } // namespace OHOS::NWeb
 

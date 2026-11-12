@@ -2346,4 +2346,37 @@ void ArkWebNWebWrapper::GetElementInfoForSecurityHitTest(double x, double y,
 
     ark_web_nweb_->GetElementInfoForSecurityHitTest(x, y, new ArkWebStringValueCallbackImpl(callback));
 }
+
+void ArkWebNWebWrapper::PutWebSiteConfigCallback(
+    std::shared_ptr<OHOS::NWeb::NWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->PutWebSiteConfigCallback(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->PutWebSiteConfigCallback(
+        new ArkWebWebSiteConfigCallbackImpl(callback));
+}
+
+bool ArkWebNWebWrapper::GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                        std::string& state)
+{
+    ArkWebString stState;
+    bool ok = ark_web_nweb_->GetWindowBounds(x, y, w, h, stState);
+    if (ok) {
+        state = ArkWebStringStructToClass(stState);
+        ArkWebStringStructRelease(stState);
+    }
+    return ok;
+}
+
+bool ArkWebNWebWrapper::SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                        const std::string& state)
+{
+    ArkWebString stState = ArkWebStringClassToStruct(state);
+    bool ok = ark_web_nweb_->SetWindowBounds(x, y, w, h, stState);
+    ArkWebStringStructRelease(stState);
+    return ok;
+}
 } // namespace OHOS::ArkWeb
