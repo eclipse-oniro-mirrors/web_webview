@@ -380,6 +380,11 @@ void ArkWebHandlerWrapper::UpdateDragCursor(ArkWebDragOperation op)
     ark_web_handler_->UpdateDragCursor(static_cast<unsigned char>(op));
 }
 
+void ArkWebHandlerWrapper::OnDragCancel()
+{
+    ark_web_handler_->OnDragCancel();
+}
+
 bool ArkWebHandlerWrapper::FilterScrollEvent(
     const float x, const float y, const float x_velocity, const float y_velocity)
 {

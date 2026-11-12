@@ -898,6 +898,11 @@ public:
         const ArkWebColorSuggestionVector& suggestions, ArkWebRefPtr<ArkWebColorChooserCallback> callback) override;
 
     void OnColorChooserClose() override;
+
+    /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    void OnDragCancel() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
