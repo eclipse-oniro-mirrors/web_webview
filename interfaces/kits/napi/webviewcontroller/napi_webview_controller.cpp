@@ -909,6 +909,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("setScrollbarMode", NapiWebviewController::SetScrollbarMode),
         DECLARE_NAPI_STATIC_FUNCTION("setActiveWebEngineVersion", NapiWebviewController::SetActiveWebEngineVersion),
         DECLARE_NAPI_STATIC_FUNCTION("getActiveWebEngineVersion", NapiWebviewController::GetActiveWebEngineVersion),
+        DECLARE_NAPI_STATIC_FUNCTION("setDataDirectorySuffix", NapiWebviewController::SetDataDirectorySuffix),
+        DECLARE_NAPI_STATIC_FUNCTION("getDataDirectorySuffix", NapiWebviewController::GetDataDirectorySuffix),
         DECLARE_NAPI_STATIC_FUNCTION("isActiveWebEngineEvergreen", NapiWebviewController::IsActiveWebEngineEvergreen),
         DECLARE_NAPI_STATIC_FUNCTION("setAutoPreconnect", NapiWebviewController::SetAutoPreconnect),
         DECLARE_NAPI_STATIC_FUNCTION("isAutoPreconnectEnabled", NapiWebviewController::IsAutoPreconnectEnabled),
@@ -9128,6 +9130,54 @@ napi_value NapiWebviewController::GetActiveWebEngineVersion(napi_env env, napi_c
                           static_cast<int32_t>(OHOS::ArkWeb::ArkWebEngineVersionMetrics::COUNT) - 1);
 #endif
     napi_create_int32(env, static_cast<int32_t>(version), &result);
+    return result;
+}
+
+napi_value NapiWebviewController::SetDataDirectorySuffix(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    std::string suffix;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], suffix)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "suffix", "string"));
+        return result;
+    }
+
+    int32_t ret = OHOS::ArkWeb::setDataDirectorySuffix(suffix);
+    if (ret != OHOS::ArkWeb::DATA_DIR_SUFFIX_OK) {
+        WVLOG_E("setDataDirectorySuffix failed, suffix=%{public}s, ret=%{public}d",
+            suffix.c_str(), ret);
+        ErrCode errCode = PARAM_CHECK_ERROR;
+        if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_ERR_ALREADY_SET) {
+            errCode = SUFFIX_ALREADY_SET;
+        } else if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_ERR_ENGINE_LOADED) {
+            errCode = ENGINE_ALREADY_INITIALIZED;
+        }
+        BusinessError::ThrowErrorByErrcode(env, errCode);
+        return result;
+    }
+    WVLOG_I("setDataDirectorySuffix success, suffix=%{public}s", suffix.c_str());
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetDataDirectorySuffix(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    std::string suffix = OHOS::ArkWeb::getDataDirectorySuffix();
+    WVLOG_I("getDataDirectorySuffix: %{public}s", suffix.c_str());
+    NAPI_CALL(env, napi_create_string_utf8(env, suffix.c_str(), suffix.length(), &result));
     return result;
 }
 

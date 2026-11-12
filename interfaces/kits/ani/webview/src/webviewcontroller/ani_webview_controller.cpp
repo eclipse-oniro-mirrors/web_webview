@@ -8014,6 +8014,51 @@ static void SetActiveWebEngineVersion(ani_env *env, ani_object object, ani_enum_
     OHOS::ArkWeb::setActiveWebEngineVersion(version);
 }
 
+static void SetDataDirectorySuffix(ani_env *env, ani_object object, ani_object aniSuffix)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+
+    std::string suffix;
+    if (!AniParseUtils::ParseString(env, aniSuffix, suffix)) {
+        AniBusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "suffix", "string"));
+        return;
+    }
+
+    int32_t ret = OHOS::ArkWeb::setDataDirectorySuffix(suffix);
+    if (ret != OHOS::ArkWeb::DATA_DIR_SUFFIX_OK) {
+        ErrCode errCode = PARAM_CHECK_ERROR;
+        if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_ERR_ALREADY_SET) {
+            errCode = SUFFIX_ALREADY_SET;
+        } else if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_ERR_ENGINE_LOADED) {
+            errCode = ENGINE_ALREADY_INITIALIZED;
+        }
+        AniBusinessError::ThrowErrorByErrCode(env, errCode);
+        return;
+    }
+}
+
+static ani_string GetDataDirectorySuffix(ani_env *env, ani_object object)
+{
+    ani_string suffix = nullptr;
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return suffix;
+    }
+    std::string result = OHOS::ArkWeb::getDataDirectorySuffix();
+    ani_status status = env->String_NewUTF8(result.c_str(), result.size(), &suffix);
+    if (status != ANI_OK) {
+        WVLOG_E("String_NewUTF8 failed, status=%{public}d", static_cast<int>(status));
+        // Retry with an empty string so the frontend always receives a valid
+        // ani_string instead of a null handle.
+        env->String_NewUTF8("", 0, &suffix);
+    }
+    return suffix;
+}
+
 static ani_boolean IsActiveWebEngineEvergreen(ani_env *env, ani_object object)
 {
     if (!OHOS::ArkWeb::IsActiveWebEngineEvergreen()) {
@@ -8376,6 +8421,10 @@ ani_status StsWebviewControllerInit(ani_env *env)
                               reinterpret_cast<void*>(GetActiveWebEngineVersion) },
         ani_native_function { "setActiveWebEngineVersion", nullptr,
                               reinterpret_cast<void*>(SetActiveWebEngineVersion) },
+        ani_native_function { "setDataDirectorySuffix", nullptr,
+                              reinterpret_cast<void*>(SetDataDirectorySuffix) },
+        ani_native_function { "getDataDirectorySuffix", nullptr,
+                              reinterpret_cast<void*>(GetDataDirectorySuffix) },
         ani_native_function { "isActiveWebEngineEvergreen", nullptr,
                               reinterpret_cast<void*>(IsActiveWebEngineEvergreen) },
         ani_native_function { "setScrollbarMode", nullptr,

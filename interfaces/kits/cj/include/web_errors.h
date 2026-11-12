@@ -49,6 +49,10 @@ constexpr ErrCode HTTP_BODY_STREAN_INIT_FAILED = 17100022;
 
 constexpr ErrCode HTTP_AUTH_MALLOC_FAILED = 17100023;
 
+constexpr ErrCode ENGINE_ALREADY_INITIALIZED = 17100025;
+
+constexpr ErrCode SUFFIX_ALREADY_SET = 17100026;
+
 std::string GetErrMsgByErrCode(ErrCode code);
 }
 }

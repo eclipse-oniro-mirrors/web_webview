@@ -24,6 +24,7 @@
 #include "geolocation_permission.h"
 #include "nweb_cache_options_impl.h"
 #include "nweb_helper.h"
+#include "arkweb_utils.h"
 #include "nweb_init_params.h"
 #include "parameters.h"
 #include "pixel_map.h"
@@ -186,6 +187,39 @@ extern "C" {
         WEBVIEWLOGI("FfiOHOSWebviewCtlInitializeWebEngine NWebHelper initialized, \
             init web engine done, bundle_path: %{public}s", bundle_path.c_str());
         return;
+    }
+
+    int32_t FfiOHOSWebviewCtlSetDataDirectorySuffix(char* suffix)
+    {
+        if (suffix == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlSetDataDirectorySuffix suffix is nullptr.");
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        int32_t ret = OHOS::ArkWeb::setDataDirectorySuffix(std::string(suffix));
+        if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_OK) {
+            return NWebError::NO_ERROR;
+        }
+        if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_ERR_ALREADY_SET) {
+            return NWebError::SUFFIX_ALREADY_SET;
+        }
+        if (ret == OHOS::ArkWeb::DATA_DIR_SUFFIX_ERR_ENGINE_LOADED) {
+            return NWebError::ENGINE_ALREADY_INITIALIZED;
+        }
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+
+    char* FfiOHOSWebviewCtlGetDataDirectorySuffix(int32_t* errCode)
+    {
+        if (errCode == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlGetDataDirectorySuffix errCode is nullptr.");
+            return nullptr;
+        }
+        std::string suffix = OHOS::ArkWeb::getDataDirectorySuffix();
+        char* result = MallocCString(suffix);
+        // MallocCString may return nullptr on OOM: keep errCode consistent with
+        // the returned pointer so callers never treat a null string as success.
+        *errCode = (result != nullptr) ? NWebError::NO_ERROR : NWebError::NEW_OOM;
+        return result;
     }
 
     void FfiOHOSWebviewCtlSetHttpDns(int32_t secureDnsMode, char* secureDnsConfig)

@@ -129,6 +129,20 @@ ARKWEB_EXPORT void setActiveWebEngineVersion(ArkWebEngineVersion version);
 ARKWEB_EXPORT void SetActiveWebPlayGround(ArkWebEngineVersion version);
 ARKWEB_EXPORT ArkWebEngineVersion getActiveWebEngineVersion();
 ARKWEB_EXPORT ArkWebEngineType getActiveWebEngineType();
+// Internal result codes of setDataDirectorySuffix (global-state layer
+// semantics; not public API error codes). The NAPI/ANI/CJ interface layers
+// map them to 401 / 17100025 / 17100026.
+constexpr int32_t DATA_DIR_SUFFIX_OK = 0;
+constexpr int32_t DATA_DIR_SUFFIX_ERR_INVALID = 1;
+constexpr int32_t DATA_DIR_SUFFIX_ERR_ALREADY_SET = 2;
+constexpr int32_t DATA_DIR_SUFFIX_ERR_ENGINE_LOADED = 3;
+ARKWEB_EXPORT int32_t setDataDirectorySuffix(const std::string& suffix);
+ARKWEB_EXPORT std::string getDataDirectorySuffix();
+ARKWEB_EXPORT bool IsValidDataDirectorySuffix(const std::string& suffix);
+// Internal/test-only: resets the suffix state. Not exported on purpose, so that
+// external modules cannot bypass the "set only once" invariant enforced by
+// setDataDirectorySuffix. Unit tests access it via #include of the source file.
+void ResetDataDirectorySuffix();
 ARKWEB_EXPORT std::string GetBundleName();
 ARKWEB_EXPORT std::string GetApiVersion();
 ARKWEB_EXPORT std::string GetAppVersion();

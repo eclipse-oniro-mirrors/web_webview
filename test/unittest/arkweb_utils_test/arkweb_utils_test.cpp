@@ -83,6 +83,8 @@ void ArkWebUtilsTest::SetUp(void)
     SetBundleNameInner("");
     SetApiVersionInner("");
     SetAppVersionInner("");
+    g_webEngineInitFlag = false;
+    g_appDataDirectorySuffix = "";
     // Reset engine-selection globals so each test starts from a deterministic state.
     g_appEngineVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
     g_cloudEnableAppVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
@@ -92,12 +94,111 @@ void ArkWebUtilsTest::SetUp(void)
 }
 
 void ArkWebUtilsTest::TearDown(void)
-{}
+{
+    // Reset global state here so that a failing or aborted assertion never
+    // leaves polluted state behind for subsequent test cases.
+    g_webEngineInitFlag = false;
+    g_appDataDirectorySuffix = "";
+}
 
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebEngineVersionInner_001, TestSize.Level1) {
     SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
 
     EXPECT_EQ(getActiveWebEngineVersion(), ArkWebEngineVersion::SYSTEM_DEFAULT);
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_001, TestSize.Level1) {
+    EXPECT_TRUE(IsValidDataDirectorySuffix("a"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_002, TestSize.Level1) {
+    EXPECT_TRUE(IsValidDataDirectorySuffix("account1"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_003, TestSize.Level1) {
+    EXPECT_TRUE(IsValidDataDirectorySuffix("A1b2C3"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_004, TestSize.Level1) {
+    std::string maxLenSuffix(128, 'a');
+    EXPECT_TRUE(IsValidDataDirectorySuffix(maxLenSuffix));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_005, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix(""));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_006, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("account 1"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_007, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("account.1"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_008, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("../escape"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_009, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("/absolute"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_010, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("back\\slash"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_011, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("中文后缀"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_012, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("%2e%2e%2f"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_013, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix("a_b-c"));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_014, TestSize.Level1) {
+    std::string overLenSuffix(129, 'a');
+    EXPECT_FALSE(IsValidDataDirectorySuffix(overLenSuffix));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_001, TestSize.Level1) {
+    EXPECT_EQ(setDataDirectorySuffix("account1"), DATA_DIR_SUFFIX_OK);
+    EXPECT_EQ(getDataDirectorySuffix(), "account1");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_002, TestSize.Level1) {
+    EXPECT_EQ(setDataDirectorySuffix("account1"), DATA_DIR_SUFFIX_OK);
+    int32_t ret = setDataDirectorySuffix("account2");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_ERR_ALREADY_SET);
+    EXPECT_EQ(getDataDirectorySuffix(), "account1");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_003, TestSize.Level1) {
+    // Scenario setup only: engine already initialized. Global state cleanup is
+    // guaranteed by SetUp/TearDown regardless of assertion outcomes.
+    g_webEngineInitFlag = true;
+
+    int32_t ret = setDataDirectorySuffix("account1");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_ERR_ENGINE_LOADED);
+    EXPECT_EQ(getDataDirectorySuffix(), "");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_004, TestSize.Level1) {
+    int32_t ret = setDataDirectorySuffix("../escape");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_ERR_INVALID);
+    EXPECT_EQ(getDataDirectorySuffix(), "");
+
+    ret = setDataDirectorySuffix("account1");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_OK);
+    EXPECT_EQ(getDataDirectorySuffix(), "account1");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetDataDirectorySuffix_DefaultEmpty, TestSize.Level1) {
+    EXPECT_EQ(getDataDirectorySuffix(), "");
 }
 
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebEngineVersionInner_002, TestSize.Level1) {

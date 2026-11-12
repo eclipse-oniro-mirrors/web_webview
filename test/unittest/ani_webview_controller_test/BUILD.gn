@@ -22,6 +22,11 @@ config("module_private_config") {
 
   include_dirs = [
     ".",  # 当前目录优先，让源文件找到mock头文件
+    # arkweb_utils.cpp is compiled into this test target (see the unittest source);
+    # its own includes must resolve here as well.
+    "$webview_path/arkweb_utils",
+    "$webview_path/ohos_adapter/system_properties_adapter/include",
+    "$webview_path/ohos_adapter/hiviewdfx_adapter/include",
     "$webview_path/interfaces/kits/ani/webview/src",
     "$webview_path/interfaces/kits/ani/webview/src/common",
     "$webview_path/interfaces/kits/ani/webview/src/webviewcontroller",
@@ -37,7 +42,6 @@ config("module_private_config") {
     "$webview_path/interfaces/native",
     "$webview_path/ohos_adapter",
     "$webview_path/ohos_adapter/ohos_resource_adapter/include",
-    "$webview_path/ohos_adapter/system_properties_adapter/include",
   ]
 }
 
@@ -77,9 +81,11 @@ ohos_unittest("ani_webview_controller_test") {
     "image_framework:image_native",
     "image_framework:image_taihe",
     "init:libbegetutil",
+    "jsoncpp:jsoncpp",
     "napi:ace_napi",
     "runtime_core:ani",
     "runtime_core:ani_helpers",
+    "selinux_adapter:librestorecon",
     "window_manager:libwm",
   ]
 
