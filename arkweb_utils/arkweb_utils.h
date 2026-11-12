@@ -111,6 +111,18 @@ enum class ArkWebEngineVersionMetrics {
     COUNT,
 };
 
+/**
+ * @brief Result of resolving the ArkWeb version string from libarkweb_engine.so.
+ *
+ * Used by the UA Lite path (getDefaultUserAgentLite) to distinguish failure
+ * reasons without initializing the web engine.
+ */
+enum class ArkWebVersionResolveResult {
+    OK = 0,
+    LIB_OPEN_FAILURE = 1,
+    SYMBOL_NOT_FOUND = 2,
+};
+
 ARKWEB_EXPORT ArkWebEngineVersionMetrics MapToMetricsVersion(ArkWebEngineVersion version);
 
 ARKWEB_EXPORT void setActiveWebEngineVersion(ArkWebEngineVersion version);
@@ -152,6 +164,50 @@ ARKWEB_EXPORT bool CreateRelroFileInSubProcAndWait();
 ARKWEB_EXPORT void* LoadWithRelroFile(const std::string& lib, Dl_namespace* dlns);
 #endif
 ARKWEB_EXPORT void CreateArkWebSandboxPathIfNeed();
+
+/**
+ * @brief Obtains the Chrome compatible version string from libarkweb_engine.so without
+ *        engine initialization.
+ *
+ * Only dlopen + dlsym of the read-only GetChromeCompatibleVersionString symbol is performed;
+ * no engine initialization entry is called and g_webEngineInitFlag is not set. The library
+ * handle (shared with the ArkWeb version resolution) and the symbol are resolved once per
+ * process and cached; a failed resolution is also cached and is not retried within the process.
+ *
+ * @return The Chrome compatible major version string (e.g. "144"), or an empty string when
+ *         the library or symbol is unavailable.
+ */
+ARKWEB_EXPORT std::string GetChromeCompatibleVersionStringFromEngine();
+
+/**
+ * @brief Detailed overload of GetChromeCompatibleVersionStringFromEngine.
+ *
+ * @param versionString Output version string; empty on any failure.
+ * @return OK on success; LIB_OPEN_FAILURE when libarkweb_engine.so cannot be opened;
+ *         SYMBOL_NOT_FOUND when the GetChromeCompatibleVersionString symbol is missing.
+ */
+ARKWEB_EXPORT ArkWebVersionResolveResult GetChromeCompatibleVersionStringFromEngine(std::string& versionString);
+
+/**
+ * @brief Obtains the ArkWeb version string from libarkweb_engine.so without engine initialization.
+ *
+ * Only dlopen + dlsym of the read-only GetArkWebVersionString symbol is performed; no engine
+ * initialization entry is called and g_webEngineInitFlag is not set. The library handle and
+ * symbol are resolved once per process and cached; a failed resolution is also cached and is
+ * not retried within the process.
+ *
+ * @return The version string, or an empty string when the library or symbol is unavailable.
+ */
+ARKWEB_EXPORT std::string GetArkWebVersionStringFromEngine();
+
+/**
+ * @brief Detailed overload of GetArkWebVersionStringFromEngine.
+ *
+ * @param versionString Output version string; empty on any failure.
+ * @return OK on success; LIB_OPEN_FAILURE when libarkweb_engine.so cannot be opened;
+ *         SYMBOL_NOT_FOUND when the GetArkWebVersionString symbol is missing.
+ */
+ARKWEB_EXPORT ArkWebVersionResolveResult GetArkWebVersionStringFromEngine(std::string& versionString);
 } // namespace OHOS::ArkWeb
 
 #endif // WEB_WEBVIEW_ARKWEB_UTILS_ARKWEB_UTILS_H

@@ -900,6 +900,11 @@ public:
     void OnColorChooserClose() override;
 
     /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    void OnDragCancel() override;
+
+    /**
      * @brief Synchronous callback to get window bounds from the NWeb host.
      *
      * @param x output: x coordinate.
@@ -924,6 +929,7 @@ public:
      */
     bool OnSetWindowBounds(int32_t x, int32_t y,
                            uint32_t w, uint32_t h, const ArkWebString& state) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

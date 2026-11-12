@@ -83,6 +83,12 @@ void ArkWebUtilsTest::SetUp(void)
     SetBundleNameInner("");
     SetApiVersionInner("");
     SetAppVersionInner("");
+    // Reset engine-selection globals so each test starts from a deterministic state.
+    g_appEngineVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    g_cloudEnableAppVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    g_activeEngineVersion = ArkWebEngineVersion::SYSTEM_DEFAULT;
+    g_legacyApp.reset();
+    g_dataMigrateApp.reset();
 }
 
 void ArkWebUtilsTest::TearDown(void)
@@ -268,16 +274,33 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SelectWebcoreBeforeProcessRun_002, Tes
 }
 
 #if (defined(webview_arm64) && !defined(ASAN_DETECTOR))
+// `const.startup.appspawn.preload.arkwebEngine` is a read-only const parameter.
+// SetParameter on it fails with errno 107 on a running device, so the flag can
+// only be flipped at boot. When the flag cannot be reset, the real dlopen/dlclose
+// path of DlopenArkWebLib/DlcloseArkWebLib would load and unload libarkweb_engine.so
+// (and its IPC broker dependencies) for real. Those .so files own static C++
+// objects whose atexit destructors are not removed on dlclose, so a subsequent
+// process exit crashes inside __funcs_on_exit -> ~basic_string() on unmapped
+// memory (SIGSEGV SEGV_MAPERR). Guard both cases: only run them when the
+// parameter was actually set to "false"; otherwise skip.
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_DlopenArkWebLib_001, TestSize.Level1) {
     auto flg = OHOS::system::GetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, "false");
-    OHOS::system::SetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, "false");
+    bool ok = OHOS::system::SetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, "false");
+    if (!ok) {
+        GTEST_SKIP() << "Cannot disable " << APPSPAWN_PRELOAD_ARKWEB_ENGINE
+                     << " (read-only const param); skip to avoid real engine dlopen.";
+    }
     DlopenArkWebLib();
     OHOS::system::SetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, flg);
 }
 
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_DlcloseArkWebLib_001, TestSize.Level1) {
     auto flg = OHOS::system::GetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, "false");
-    OHOS::system::SetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, "false");
+    bool ok = OHOS::system::SetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, "false");
+    if (!ok) {
+        GTEST_SKIP() << "Cannot disable " << APPSPAWN_PRELOAD_ARKWEB_ENGINE
+                     << " (read-only const param); skip to avoid real engine dlclose.";
+    }
     int ret = DlcloseArkWebLib();
     EXPECT_EQ(ret, 0);
     OHOS::system::SetParameter(APPSPAWN_PRELOAD_ARKWEB_ENGINE, flg);
@@ -618,6 +641,12 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_NoAppVersion, TestSize.Level1)
 */
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_NormalScene, TestSize.Level1)
 {
+    // UpdateAppInfoFromCmdline does not parse #--appEngineVersion; set it
+    // explicitly so the engine-version assertion is deterministic and does
+    // not depend on state leaked from earlier tests.
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    setActiveWebEngineVersion(ArkWebEngineVersion::M144);
     std::string renderCmd = "#--appEngineVersion=3#--appBundleName=test#--appApiVersion=1#--appVersion=3";
     UpdateAppInfoFromCmdline(renderCmd);
     EXPECT_EQ(OHOS::ArkWeb::getActiveWebEngineVersion(),
@@ -625,6 +654,7 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_NormalScene, TestSize.Level1)
     EXPECT_EQ(OHOS::ArkWeb::GetBundleName(), "test");
     EXPECT_EQ(OHOS::ArkWeb::GetApiVersion(), "1");
     EXPECT_EQ(OHOS::ArkWeb::GetAppVersion(), "3");
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
 
 /**
@@ -655,5 +685,486 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_MapToMetricsVersion_002, TestSize.Leve
               ArkWebEngineVersionMetrics::UNKNOWN_METRICS);
     EXPECT_EQ(MapToMetricsVersion(static_cast<ArkWebEngineVersion>(-1)),
               ArkWebEngineVersionMetrics::UNKNOWN_METRICS);
+}
+
+// ---- Additional branch coverage tests below ----
+
+/**
+ * @brief setActiveWebEngineVersion rejects unsupported version values.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_setActiveWebEngineVersion_001, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    // Unsupported version: current active version must be unchanged.
+    ArkWebEngineVersion before = getActiveWebEngineVersion();
+    setActiveWebEngineVersion(static_cast<ArkWebEngineVersion>(42));
+    EXPECT_EQ(getActiveWebEngineVersion(), before);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief setActiveWebEngineVersion with SYSTEM_EVERGREEN maps to ArkWebEngineType::EVERGREEN
+ *        via CalculateActiveWebEngineVersion.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_setActiveWebEngineVersion_002, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    setActiveWebEngineVersion(ArkWebEngineVersion::SYSTEM_EVERGREEN);
+    EXPECT_EQ(getActiveWebEngineType(), ArkWebEngineType::EVERGREEN);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief CalculateActiveWebEngineVersion honors web.engine.enforce = EVERGREEN.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CalculateActiveWebEngineVersion_001, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce",
+        std::to_string(static_cast<int>(ArkWebEngineType::EVERGREEN)));
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    EXPECT_EQ(CalculateActiveWebEngineVersion(),
+        static_cast<ArkWebEngineVersion>(ArkWebEngineType::EVERGREEN));
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief CalculateActiveWebEngineVersion honors web.engine.enforce = LEGACY.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CalculateActiveWebEngineVersion_002, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce",
+        std::to_string(static_cast<int>(ArkWebEngineType::LEGACY)));
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    EXPECT_EQ(CalculateActiveWebEngineVersion(),
+        static_cast<ArkWebEngineVersion>(ArkWebEngineType::LEGACY));
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief CalculateActiveWebEngineVersion falls back to g_cloudEnableAppVersion == LEGACY
+ *        when appEngineVersion is SYSTEM_DEFAULT and enforce is not LEGACY/EVERGREEN.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CalculateActiveWebEngineVersion_003, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    // Put the app in the legacy cloud list, then run SelectWebcoreBeforeProcessRun so
+    // g_cloudEnableAppVersion is set to LEGACY and g_legacyApp is cleared.
+    std::string appBundleName = "com.example.cloud.legacy";
+    Json::Value legacyArray(Json::arrayValue);
+    legacyArray.append(appBundleName);
+    ProcessLegacyAppParam(legacyArray);
+    ASSERT_NE(g_legacyApp, nullptr);
+    SelectWebcoreBeforeProcessRun(appBundleName);
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    EXPECT_EQ(CalculateActiveWebEngineVersion(),
+        static_cast<ArkWebEngineVersion>(ArkWebEngineType::LEGACY));
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief CalculateActiveWebEngineVersion returns EVERGREEN when web.engine.default is
+ *        neither LEGACY nor EVERGREEN (error fallback branch).
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CalculateActiveWebEngineVersion_004, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    int webEngineDefault = OHOS::system::GetIntParameter("web.engine.default", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    OHOS::system::SetParameter("web.engine.default", "42");
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    // Ensure cloud legacy path is not active.
+    ProcessLegacyAppParam(Json::Value(Json::arrayValue));
+    SelectWebcoreBeforeProcessRun("com.example.none");
+    EXPECT_EQ(CalculateActiveWebEngineVersion(),
+        static_cast<ArkWebEngineVersion>(ArkWebEngineType::EVERGREEN));
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+    OHOS::system::SetParameter("web.engine.default", std::to_string(webEngineDefault));
+}
+
+/**
+ * @brief CalculateActiveWebEngineVersion returns the web.engine.default value (LEGACY)
+ *        in the final fallback branch.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CalculateActiveWebEngineVersion_005, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    int webEngineDefault = OHOS::system::GetIntParameter("web.engine.default", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    OHOS::system::SetParameter("web.engine.default",
+        std::to_string(static_cast<int>(ArkWebEngineType::LEGACY)));
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    ProcessLegacyAppParam(Json::Value(Json::arrayValue));
+    SelectWebcoreBeforeProcessRun("com.example.none");
+    EXPECT_EQ(CalculateActiveWebEngineVersion(),
+        static_cast<ArkWebEngineVersion>(ArkWebEngineType::LEGACY));
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+    OHOS::system::SetParameter("web.engine.default", std::to_string(webEngineDefault));
+}
+
+/**
+ * @brief getActiveWebEngineType returns EVERGREEN when enforce is EVERGREEN.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_getActiveWebEngineType_004, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce",
+        std::to_string(static_cast<int>(ArkWebEngineType::EVERGREEN)));
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    EXPECT_EQ(getActiveWebEngineType(), ArkWebEngineType::EVERGREEN);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief GetArkwebNameSpace returns nweb_ns_playground for PLAYGROUND engine.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetArkwebNameSpace_003, TestSize.Level1)
+{
+    SetActiveWebEngineVersionInner(static_cast<ArkWebEngineVersion>(
+        static_cast<int>(ArkWebEngineType::PLAYGROUND)));
+    EXPECT_EQ(GetArkwebNameSpace(), "nweb_ns_playground");
+}
+
+/**
+ * @brief GetArkwebLibPath returns the evergreen path for PLAYGROUND engine.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetArkwebLibPath_003, TestSize.Level1)
+{
+    SetActiveWebEngineVersionInner(static_cast<ArkWebEngineVersion>(
+        static_cast<int>(ArkWebEngineType::PLAYGROUND)));
+    EXPECT_EQ(GetArkwebLibPath(), ARK_WEB_CORE_HAP_LIB_PATH);
+}
+
+/**
+ * @brief GetArkwebRelativePathForBundle returns the evergreen path for PLAYGROUND engine.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetArkwebRelativePathForBundle_003, TestSize.Level1)
+{
+    SetActiveWebEngineVersionInner(static_cast<ArkWebEngineVersion>(
+        static_cast<int>(ArkWebEngineType::PLAYGROUND)));
+#if defined(IS_ASAN)
+    EXPECT_EQ(GetArkwebRelativePathForBundle(), ARK_WEB_CORE_ASAN_PATH_FOR_BUNDLE);
+#else
+    EXPECT_EQ(GetArkwebRelativePathForBundle(), ARK_WEB_CORE_PATH_FOR_BUNDLE);
+#endif
+}
+
+/**
+ * @brief GetArkwebInstallPath returns evergreen paths for PLAYGROUND engine.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetArkwebInstallPath_003, TestSize.Level1)
+{
+    SetActiveWebEngineVersionInner(static_cast<ArkWebEngineVersion>(
+        static_cast<int>(ArkWebEngineType::PLAYGROUND)));
+    auto aclPath = GetArkwebInstallPath();
+    bool res = (aclPath == SANDBOX_EVERGREEN_HAP_PATH || aclPath == PRECONFIG_EVERGREEN_HAP_PATH);
+    EXPECT_TRUE(res);
+}
+
+/**
+ * @brief GetArkwebRelativePathForMock returns the mock relative path.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetArkwebRelativePathForMock_001, TestSize.Level1)
+{
+    EXPECT_EQ(GetArkwebRelativePathForMock(), ARK_WEB_CORE_PATH_FOR_MOCK);
+}
+
+/**
+ * @brief LogForUnsupportedFunc emits a warning log (smoke test, no crash).
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_LogForUnsupportedFunc_001, TestSize.Level1)
+{
+    LogForUnsupportedFunc(ArkWebEngineVersion::M114, "testFunc");
+    SUCCEED();
+}
+
+/**
+ * @brief SetActiveWebPlayGround with a non-PLAYGROUND version is rejected;
+ *        active version is unchanged.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebPlayGround_001, TestSize.Level1)
+{
+    ArkWebEngineVersion before = getActiveWebEngineVersion();
+    SetActiveWebPlayGround(ArkWebEngineVersion::M114);
+    EXPECT_EQ(getActiveWebEngineVersion(), before);
+}
+
+/**
+ * @brief SetActiveWebPlayGround with PLAYGROUND sets the active version.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebPlayGround_002, TestSize.Level1)
+{
+    SetActiveWebPlayGround(ArkWebEngineVersion::PLAYGROUND);
+    EXPECT_EQ(getActiveWebEngineVersion(), ArkWebEngineVersion::PLAYGROUND);
+    EXPECT_EQ(getActiveWebEngineType(), ArkWebEngineType::PLAYGROUND);
+}
+
+/**
+ * @brief ProcessDataMigrateAppParam rejects a non-array value; g_dataMigrateApp unchanged.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessDataMigrateAppParam_001, TestSize.Level1)
+{
+    Json::Value value = "com.example.app";
+    ProcessDataMigrateAppParam(value);
+    EXPECT_EQ(g_dataMigrateApp, nullptr);
+}
+
+/**
+ * @brief ProcessDataMigrateAppParam rejects an array exceeding MAX_ARRAY_SIZE.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessDataMigrateAppParam_002, TestSize.Level1)
+{
+    Json::Value value(Json::arrayValue);
+    for (size_t i = 0; i <= MAX_ARRAY_SIZE; ++i) {
+        value.append("app" + std::to_string(i));
+    }
+    ProcessDataMigrateAppParam(value);
+    EXPECT_EQ(g_dataMigrateApp, nullptr);
+}
+
+/**
+ * @brief ProcessDataMigrateAppParam skips non-string items in the array.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessDataMigrateAppParam_003, TestSize.Level1)
+{
+    std::string appBundleName = "com.example.migrate";
+    Json::Value value(Json::arrayValue);
+    value.append(2);
+    value.append(appBundleName);
+    ProcessDataMigrateAppParam(value);
+    ASSERT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(g_dataMigrateApp->find(appBundleName) != g_dataMigrateApp->end(), true);
+}
+
+/**
+ * @brief ProcessDataMigrateAppParam stores an empty array (no entries).
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessDataMigrateAppParam_004, TestSize.Level1)
+{
+    Json::Value value(Json::arrayValue);
+    ProcessDataMigrateAppParam(value);
+    ASSERT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(g_dataMigrateApp->empty(), true);
+}
+
+/**
+ * @brief ProcessParamItem dispatches web.engine.dataMigrateApp.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessParamItem_006, TestSize.Level1)
+{
+    std::string appBundleName = "com.example.migrate2";
+    Json::Value value(Json::arrayValue);
+    value.append(appBundleName);
+    ProcessParamItem("web.engine.dataMigrateApp", value);
+    ASSERT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(g_dataMigrateApp->find(appBundleName) != g_dataMigrateApp->end(), true);
+}
+
+/**
+ * @brief ProcessJsonConfig rejects a non-object root element.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessJsonConfig_001, TestSize.Level1)
+{
+    Json::Value nonObject = 42;
+    ProcessJsonConfig(nonObject);
+    // No parameter should be changed; this is a no-op smoke test.
+    SUCCEED();
+}
+
+/**
+ * @brief ProcessJsonConfig dispatches each member of an object root.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ProcessJsonConfig_002, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    int webEngineDefault = OHOS::system::GetIntParameter("web.engine.default", 0);
+    Json::Value root(Json::objectValue);
+    root["web.engine.default"] = static_cast<int>(ArkWebEngineType::EVERGREEN);
+    root["web.engine.enforce"] = static_cast<int>(ArkWebEngineType::EVERGREEN);
+    Json::Value arr(Json::arrayValue);
+    arr.append("com.example.legacy");
+    root["web.engine.legacyApp"] = arr;
+    Json::Value arr2(Json::arrayValue);
+    arr2.append("com.example.migrate");
+    root["web.engine.dataMigrateApp"] = arr2;
+    root["web.engine.unknown"] = 1;
+    ProcessJsonConfig(root);
+    EXPECT_NE(g_legacyApp, nullptr);
+    EXPECT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(g_legacyApp->find("com.example.legacy") != g_legacyApp->end(), true);
+    EXPECT_EQ(g_dataMigrateApp->find("com.example.migrate") != g_dataMigrateApp->end(), true);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+    OHOS::system::SetParameter("web.engine.default", std::to_string(webEngineDefault));
+}
+
+/**
+ * @brief IsDataMigrate returns false when g_dataMigrateApp is null.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsDataMigrate_001, TestSize.Level1)
+{
+    g_dataMigrateApp.reset();
+    EXPECT_EQ(IsDataMigrate("com.example.app"), false);
+}
+
+/**
+ * @brief IsDataMigrate returns false when DATA_MIGRATE_APP_NONE is present.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsDataMigrate_002, TestSize.Level1)
+{
+    Json::Value value(Json::arrayValue);
+    value.append(DATA_MIGRATE_APP_NONE);
+    ProcessDataMigrateAppParam(value);
+    ASSERT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(IsDataMigrate("com.example.app"), false);
+}
+
+/**
+ * @brief IsDataMigrate returns true when DATA_MIGRATE_APP_ALL is present.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsDataMigrate_003, TestSize.Level1)
+{
+    Json::Value value(Json::arrayValue);
+    value.append(DATA_MIGRATE_APP_ALL);
+    ProcessDataMigrateAppParam(value);
+    ASSERT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(IsDataMigrate("com.example.anything"), true);
+}
+
+/**
+ * @brief IsDataMigrate returns true for an exact bundle match, false for a non-match.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsDataMigrate_004, TestSize.Level1)
+{
+    std::string appBundleName = "com.example.exact";
+    Json::Value value(Json::arrayValue);
+    value.append(appBundleName);
+    ProcessDataMigrateAppParam(value);
+    ASSERT_NE(g_dataMigrateApp, nullptr);
+    EXPECT_EQ(IsDataMigrate(appBundleName), true);
+    EXPECT_EQ(IsDataMigrate("com.example.other"), false);
+}
+
+/**
+ * @brief SelectWebcoreBeforeProcessRun sets g_cloudEnableAppVersion to LEGACY when the
+ *        bundle is in the legacy app list.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SelectWebcoreBeforeProcessRun_003, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    std::string appBundleName = "com.example.legacy.app";
+    Json::Value legacyArray(Json::arrayValue);
+    legacyArray.append(appBundleName);
+    ProcessLegacyAppParam(legacyArray);
+    ASSERT_NE(g_legacyApp, nullptr);
+    SelectWebcoreBeforeProcessRun(appBundleName);
+    // g_cloudEnableAppVersion is now LEGACY; with SYSTEM_DEFAULT app version and
+    // enforce != LEGACY/EVERGREEN, CalculateActiveWebEngineVersion returns LEGACY.
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
+    EXPECT_EQ(CalculateActiveWebEngineVersion(),
+        static_cast<ArkWebEngineVersion>(ArkWebEngineType::LEGACY));
+    // g_legacyApp should be reset after SelectWebcoreBeforeProcessRun.
+    EXPECT_EQ(g_legacyApp, nullptr);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief SelectWebcoreBeforeProcessRun with a null g_legacyApp does not crash and
+ *        leaves g_cloudEnableAppVersion unchanged.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SelectWebcoreBeforeProcessRun_004, TestSize.Level1)
+{
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    g_legacyApp.reset();
+    SelectWebcoreBeforeProcessRun("com.example.noop");
+    EXPECT_EQ(g_legacyApp, nullptr);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief CheckTargetExists returns true for an existing path, false for a non-existing
+ *        path, and false on error.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CheckTargetExists_001, TestSize.Level1)
+{
+    EXPECT_EQ(CheckTargetExists("/data"), true);
+    EXPECT_EQ(CheckTargetExists("/this/path/does/not/exist/arkweb_test"), false);
+}
+
+/**
+ * @brief HandleVersionString parses a valid "version=a.b.c.d" string directly.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_HandleVersionString_001, TestSize.Level1)
+{
+    long long num = 0;
+    EXPECT_EQ(HandleVersionString("version=1.10.25.100", num), true);
+    EXPECT_EQ(num, 110025100LL);
+    EXPECT_EQ(HandleVersionString("version = 2.3.4.5", num), true);
+    EXPECT_EQ(num, 20304005LL);
+}
+
+/**
+ * @brief HandleVersionString rejects an invalid version string.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_HandleVersionString_002, TestSize.Level1)
+{
+    long long num = 0;
+    EXPECT_EQ(HandleVersionString("not a version", num), false);
+    EXPECT_EQ(HandleVersionString("version=1000.00.0.0", num), false);
+}
+
+/**
+ * @brief GetVersionString returns true and fills the string for a file with content,
+ *        false for an empty file.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetVersionString_002, TestSize.Level1)
+{
+    std::string nonEmptyFile = "version_tmp_nonempty.txt";
+    FileProcessor::WriteFile(nonEmptyFile, "version=1.0.0.0");
+    std::string out;
+    EXPECT_EQ(GetVersionString(nonEmptyFile, out), true);
+    EXPECT_EQ(out, "version=1.0.0.0");
+
+    std::string emptyFile = "version_tmp_empty.txt";
+    FileProcessor::WriteFile(emptyFile, "");
+    std::string out2;
+    EXPECT_EQ(GetVersionString(emptyFile, out2), false);
+}
+
+/**
+ * @brief ExtractAndRemoveParam with a trailing separator returns the param value
+ *        and leaves an empty trailing segment (edge case for eraseLength branch).
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_ExtractAndRemoveParam_007, TestSize.Level1)
+{
+    std::string renderCmd = "#prefix=value#";
+    std::string prefix = "#prefix=";
+    std::string result = ExtractAndRemoveParam(renderCmd, prefix);
+    EXPECT_EQ(result, "value");
+    EXPECT_EQ(renderCmd, "#");
+}
+
+/**
+ * @brief UpdateAppInfoFromCmdline with all parameters present and a trailing separator.
+ */
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_UpdateAppInfoFromCmdline_001, TestSize.Level1)
+{
+    // UpdateAppInfoFromCmdline does not parse #--appEngineVersion; set it
+    // explicitly so the assertion is deterministic.
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    setActiveWebEngineVersion(ArkWebEngineVersion::M132);
+    std::string renderCmd = "#--appEngineVersion=2#--appBundleName=myapp#--appApiVersion=10#--appVersion=5#";
+    UpdateAppInfoFromCmdline(renderCmd);
+    EXPECT_EQ(GetBundleName(), "myapp");
+    EXPECT_EQ(GetApiVersion(), "10");
+    EXPECT_EQ(GetAppVersion(), "5");
+    EXPECT_EQ(getActiveWebEngineVersion(), ArkWebEngineVersion::M132);
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
 } // namespace OHOS::NWeb

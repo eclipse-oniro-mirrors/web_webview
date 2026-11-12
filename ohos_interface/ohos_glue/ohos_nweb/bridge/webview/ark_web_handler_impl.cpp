@@ -347,6 +347,11 @@ void ArkWebHandlerImpl::UpdateDragCursor(unsigned char op)
     nweb_handler_->UpdateDragCursor(static_cast<ArkWebDragOperation>(op));
 }
 
+void ArkWebHandlerImpl::OnDragCancel()
+{
+    nweb_handler_->OnDragCancel();
+}
+
 bool ArkWebHandlerImpl::FilterScrollEvent(const float x, const float y, const float x_velocity, const float y_velocity)
 {
     return nweb_handler_->FilterScrollEvent(x, y, x_velocity, y_velocity);

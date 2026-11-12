@@ -940,6 +940,11 @@ public:
     void OnContextMenuUpdate(
         int32_t itemId, std::shared_ptr<OHOS::NWeb::NWebContextMenuOptions> options) override;
 
+    /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    void OnDragCancel() override;
+
     void OnMonitoredBlankScreen(
         const std::string& url, int32_t reason,
         const std::string& extraMsg) override;
