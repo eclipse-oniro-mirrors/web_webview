@@ -1264,6 +1264,12 @@ public:
 
     /*--ark web()--*/
     virtual void OnColorChooserClose() = 0;
+
+    /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    /*--ark web()--*/
+    virtual void OnDragCancel() = 0;
 };
 
 } // namespace OHOS::ArkWeb
