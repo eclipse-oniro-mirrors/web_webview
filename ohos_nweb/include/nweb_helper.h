@@ -31,6 +31,7 @@
 #include "nweb_remove_visited_links_callback.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
+#include "nweb_web_site_config_callback.h"
 #include "application_state_change_callback.h"
 
 namespace OHOS::NWeb {
@@ -124,6 +125,8 @@ public:
 
     void SetWebDebuggingAccess(bool isEnableDebug);
     void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
+
+    void SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback);
 
     bool HasLoadWebEngine();
 

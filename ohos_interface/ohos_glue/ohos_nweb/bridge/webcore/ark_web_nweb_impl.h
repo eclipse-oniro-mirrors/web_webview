@@ -1937,7 +1937,7 @@ public:
      */
     void PutVaultPlainTextCallback(
         ArkWebRefPtr<ArkWebVaultPlainTextCallback> callback) override;
-    
+
     /**
      * @brief fill autofill data.
      *

@@ -60,6 +60,8 @@ const std::string WEB_SOFT_KEYBOARD_BEHAVIOR_MODE_ENUM_NAME = "WebSoftKeyboardBe
 const std::string WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME = "WebHttpCookieSameSitePolicy";
 const std::string WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME = "NavigationThrottleAction";
 const std::string WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME = "WebNavigationConfigMode";
+const std::string WEB_SITE_SOURCE_ENUM_NAME = "WebSiteSource";
+const std::string PAGE_TRANSITION_ENUM_NAME = "PageTransition";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
 
@@ -362,6 +364,10 @@ private:
     static napi_value ClearPrefetchedResource(napi_env env, napi_callback_info info);
 
     static napi_value OnCreateNativeMediaPlayer(napi_env env, napi_callback_info info);
+
+    static napi_value SetWebSiteConfigCallback(napi_env env, napi_callback_info info);
+
+    static napi_value SetGlobalWebSiteConfigCallback(napi_env env, napi_callback_info info);
 
     static napi_value SetRenderProcessMode(napi_env env, napi_callback_info info);
 

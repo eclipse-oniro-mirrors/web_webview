@@ -49,6 +49,7 @@
 #include "ohos_nweb/bridge/ark_web_stylus_touch_point_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_impl.h"
 #include "ohos_nweb/bridge/ark_web_vault_plain_text_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_blankless_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/bridge/ark_web_print_document_adapter_adapter_wrapper.h"

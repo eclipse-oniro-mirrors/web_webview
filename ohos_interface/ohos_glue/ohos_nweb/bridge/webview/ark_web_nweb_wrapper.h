@@ -1950,7 +1950,7 @@ public:
      */
     void PutVaultPlainTextCallback(
         std::shared_ptr<OHOS::NWeb::NWebVaultPlainTextCallback> callback) override;
-    
+
     /**
      * @brief fill autofill data.
      *

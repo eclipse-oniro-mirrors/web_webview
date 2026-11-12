@@ -59,6 +59,7 @@
 #include "ohos_nweb/include/ark_web_command_action_manager.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata_ack.h"
+#include "ohos_nweb/include/ark_web_web_site_config_callback.h"
 #include "ohos_nweb/include/ark_web_image_info_callback.h"
 
 namespace OHOS::ArkWeb {
@@ -2507,6 +2508,7 @@ public:
      */
     /*--ark web()--*/
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
+
     /*--ark web()--*/
     virtual void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) = 0;
 

@@ -48,6 +48,7 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
+#include "nweb_web_site_config_callback.h"
 
 namespace OHOS::NWeb {
 
@@ -2449,7 +2450,7 @@ public:
      */
     virtual void PutVaultPlainTextCallback(
         std::shared_ptr<NWebVaultPlainTextCallback> callback) {}
-    
+
     /**
      * @brief fill autofill data.
      *

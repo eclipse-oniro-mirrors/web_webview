@@ -45,6 +45,7 @@
 #include "nweb_init_params.h"
 #include "nweb_log.h"
 #include "nweb_user_agent_metadata_impl.h"
+#include "nweb_web_site_config_params.h"
 #include "ohos_adapter_helper.h"
 #include "parameters.h"
 #include "pixel_map.h"
@@ -54,6 +55,7 @@
 #include "webview_createpdf_execute_callback.h"
 #include "web_history_list.h"
 #include "web_message_port.h"
+#include "web_site_config_callback_impl.h"
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
@@ -714,6 +716,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("initializeWebEngine", NapiWebviewController::InitializeWebEngine),
         DECLARE_NAPI_STATIC_FUNCTION("setHttpDns", NapiWebviewController::SetHttpDns),
         DECLARE_NAPI_STATIC_FUNCTION("setWebDebuggingAccess", NapiWebviewController::SetWebDebuggingAccess),
+        DECLARE_NAPI_STATIC_FUNCTION("setGlobalWebSiteConfigCallback",
+                                     NapiWebviewController::SetGlobalWebSiteConfigCallback),
         DECLARE_NAPI_STATIC_FUNCTION("setServiceWorkerWebSchemeHandler",
                                      NapiWebviewController::SetServiceWorkerWebSchemeHandler),
         DECLARE_NAPI_STATIC_FUNCTION("clearServiceWorkerWebSchemeHandler",
@@ -843,6 +847,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getMediaPlaybackState", NapiWebviewController::GetMediaPlaybackState),
         DECLARE_NAPI_FUNCTION("onCreateNativeMediaPlayer", NapiWebviewController::OnCreateNativeMediaPlayer),
         DECLARE_NAPI_FUNCTION("onQueryNavigationConfig", NapiWebviewController::OnQueryNavigationConfig),
+        DECLARE_NAPI_FUNCTION("setWebSiteConfigCallback", NapiWebviewController::SetWebSiteConfigCallback),
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
         DECLARE_NAPI_STATIC_FUNCTION("clearPrefetchedResource", NapiWebviewController::ClearPrefetchedResource),
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
@@ -1316,6 +1321,73 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         webHttpCookieSameSitePolicyProperties, &webHttpCookieSameSitePolicyEnum);
     napi_set_named_property(env, exports, WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME.c_str(),
         webHttpCookieSameSitePolicyEnum);
+
+    napi_value webSiteSourceEnum = nullptr;
+    napi_property_descriptor webSiteSourceProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "WEB_PAGE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebWebSiteSource::WEB_PAGE))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "SERVICE_WORKER", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebWebSiteSource::SERVICE_WORKER))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "DOWNLOAD", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebWebSiteSource::DOWNLOAD))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "EXTENSIONS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebWebSiteSource::EXTENSIONS))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "OTHER", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebWebSiteSource::OTHER))),
+    };
+    napi_define_class(env, WEB_SITE_SOURCE_ENUM_NAME.c_str(), WEB_SITE_SOURCE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(webSiteSourceProperties) / sizeof(webSiteSourceProperties[0]),
+        webSiteSourceProperties, &webSiteSourceEnum);
+    napi_set_named_property(env, exports, WEB_SITE_SOURCE_ENUM_NAME.c_str(), webSiteSourceEnum);
+
+    napi_value pageTransitionEnum = nullptr;
+    napi_property_descriptor pageTransitionProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("LINK", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::LINK))),
+        DECLARE_NAPI_STATIC_PROPERTY("TYPED", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::TYPED))),
+        DECLARE_NAPI_STATIC_PROPERTY("AUTO_SUBFRAME", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::AUTO_SUBFRAME))),
+        DECLARE_NAPI_STATIC_PROPERTY("MANUAL_SUBFRAME", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::MANUAL_SUBFRAME))),
+        DECLARE_NAPI_STATIC_PROPERTY("AUTO_TOPLEVEL", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::AUTO_TOPLEVEL))),
+        DECLARE_NAPI_STATIC_PROPERTY("FORM_SUBMIT", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::FORM_SUBMIT))),
+        DECLARE_NAPI_STATIC_PROPERTY("RELOAD", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::RELOAD))),
+        DECLARE_NAPI_STATIC_PROPERTY("CORE_MASK", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::CORE_MASK))),
+        DECLARE_NAPI_STATIC_PROPERTY("FORWARD_BACK", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::FORWARD_BACK))),
+        DECLARE_NAPI_STATIC_PROPERTY("FROM_ADDRESS_BAR", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::FROM_ADDRESS_BAR))),
+        DECLARE_NAPI_STATIC_PROPERTY("FROM_API", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::FROM_API))),
+        DECLARE_NAPI_STATIC_PROPERTY("CHAIN_START", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::CHAIN_START))),
+        DECLARE_NAPI_STATIC_PROPERTY("CHAIN_END", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::CHAIN_END))),
+        DECLARE_NAPI_STATIC_PROPERTY("CLIENT_REDIRECT", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::CLIENT_REDIRECT))),
+        DECLARE_NAPI_STATIC_PROPERTY("SERVER_REDIRECT", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::SERVER_REDIRECT))),
+        DECLARE_NAPI_STATIC_PROPERTY("IS_REDIRECT_MASK", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::IS_REDIRECT_MASK))),
+        DECLARE_NAPI_STATIC_PROPERTY("QUALIFIER_MASK", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(NWebPageTransition::QUALIFIER_MASK))),
+    };
+    napi_define_class(env, PAGE_TRANSITION_ENUM_NAME.c_str(), PAGE_TRANSITION_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(pageTransitionProperties) / sizeof(pageTransitionProperties[0]),
+        pageTransitionProperties, &pageTransitionEnum);
+    napi_set_named_property(env, exports, PAGE_TRANSITION_ENUM_NAME.c_str(), pageTransitionEnum);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
@@ -6652,6 +6724,100 @@ napi_value NapiWebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_c
 
     webviewController->OnCreateNativeMediaPlayer(env, std::move(callback));
     return nullptr;
+}
+
+napi_value NapiWebviewController::SetWebSiteConfigCallback(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("put website config callback");
+
+    size_t argc = INTEGER_ONE;
+    napi_value value = nullptr;
+    napi_value argv[INTEGER_ONE];
+    napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_function && valueType != napi_null) {
+        WVLOG_E("arg type is invalid");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController || !webviewController->IsInit()) {
+        WVLOG_E("webview controller is null or not init");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    if (valueType == napi_null) {
+        // Clear the callback by passing nullptr.
+        auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+        if (nweb_ptr) {
+            nweb_ptr->PutWebSiteConfigCallback(nullptr);
+        }
+        return nullptr;
+    }
+
+    napi_ref callback = nullptr;
+    napi_status status = napi_create_reference(env, argv[INTEGER_ZERO], INTEGER_ONE, &callback);
+    if (status != napi_ok || !callback) {
+        WVLOG_E("failed to create reference for callback");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    webviewController->PutWebSiteConfigCallback(env, std::move(callback));
+    return nullptr;
+}
+
+napi_value NapiWebviewController::SetGlobalWebSiteConfigCallback(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("set global website config callback");
+
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    size_t argc = INTEGER_ONE;
+    napi_value thisVar = nullptr;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_function && valueType != napi_null) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function | null"));
+        return result;
+    }
+
+    if (valueType == napi_null) {
+        // Clear the global callback by passing nullptr.
+        NWebHelper::Instance().SetGlobalWebSiteConfigCallback(nullptr);
+        return result;
+    }
+
+    napi_ref callback = nullptr;
+    napi_status status = napi_create_reference(env, argv[INTEGER_ZERO], INTEGER_ONE, &callback);
+    if (status != napi_ok || !callback) {
+        WVLOG_E("failed to create reference for global callback");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    auto callbackImpl = std::make_shared<NWebWebSiteConfigCallbackImpl>(env, callback);
+    NWebHelper::Instance().SetGlobalWebSiteConfigCallback(callbackImpl);
+    return result;
 }
 
 napi_value NapiWebviewController::SetRenderProcessMode(

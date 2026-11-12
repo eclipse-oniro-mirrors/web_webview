@@ -153,6 +153,8 @@ public:
     void RemoveVisitedLinksSince(int64_t time_ms,
                                  ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback) override;
 
+    void SetGlobalWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };
