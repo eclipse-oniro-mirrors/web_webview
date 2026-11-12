@@ -2805,4 +2805,3 @@ TEST_F(AniWebviewControllerTest, StsNavigationThrottleInit_EnvIsNull)
 {
     EXPECT_EQ(OHOS::NWeb::StsNavigationThrottleInit(nullptr), ANI_ERROR);
 }
-
