@@ -41,6 +41,7 @@
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_print_document_adapter_adapter.h"
+#include "ohos_nweb/include/ark_web_query_navigation_config_callback.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_rom_value.h"
 #include "ohos_nweb/include/ark_web_rom_value_vector.h"
@@ -58,6 +59,7 @@
 #include "ohos_nweb/include/ark_web_command_action_manager.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata_ack.h"
+#include "ohos_nweb/include/ark_web_web_site_config_callback.h"
 #include "ohos_nweb/include/ark_web_image_info_callback.h"
 
 namespace OHOS::ArkWeb {
@@ -2506,6 +2508,28 @@ public:
      */
     /*--ark web()--*/
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
+
+    /*--ark web()--*/
+    virtual void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) = 0;
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result, Empty result means failure.
+     */
+    /*--ark web()--*/
+    virtual void GetElementInfoForSecurityHitTest(
+        double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) = 0;
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    /*--ark web()--*/
+    virtual void PutWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

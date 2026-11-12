@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <functional>
+#include "base/include/ark_web_types.h"
 
 typedef struct {
     int32_t year;

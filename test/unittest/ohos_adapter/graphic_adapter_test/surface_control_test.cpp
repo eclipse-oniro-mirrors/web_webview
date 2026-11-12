@@ -987,7 +987,8 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetBufferAlpha_NegativeAlpha_052, Te
 
 /**
  * @tc.name: SurfaceControl_SetBufferAlpha_ValidAlpha_053.
- * @tc.desc: Test SetBufferAlpha with valid alpha (line 358 else: SetAlpha called).
+ * @tc.desc: Test SetBufferAlpha with valid alpha: SetAlpha and the NG alpha modifier
+ *           both apply the value; the staging alpha composes them multiplicatively.
  * @tc.type: FUNC
  * @tc.require: issue#5183
  */
@@ -1002,8 +1003,9 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetBufferAlpha_ValidAlpha_053, TestS
 
         sc->SetBufferAlpha(0.5f);
 
+        // Staging alpha = node alpha (SetAlpha) * NG modifier alpha: 0.5 * 0.5.
         float alpha = sc->surfaceNode_->GetStagingProperties().GetAlpha();
-        EXPECT_FLOAT_EQ(alpha, 0.5f);
+        EXPECT_FLOAT_EQ(alpha, 0.5f * 0.5f);
     }
 }
 
@@ -1672,6 +1674,192 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetZOrder_AfterParentSet_080, TestSi
         childSc->SetZOrder(5);
         EXPECT_EQ(childSc->zOrder_, 5);
     }
+}
+
+/**
+ * @tc.name: SurfaceControl_Setters_SurfaceNodeNull_ModifiersUntouched_081.
+ * @tc.desc: Test all modifier-managing setters when surfaceNode is null: early return
+ *           via CHECK_NULL_POINTER and none of the modifiers is created.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_Setters_SurfaceNodeNull_ModifiersUntouched_081, TestSize.Level1)
+{
+    sptr<SurfaceControl> sc = new SurfaceControl(nullptr, nullptr, false, 0);
+    sc->SetVisibility(true);
+    sc->SetPivot(1.0f, 1.0f);
+    sc->SetBufferAlpha(0.5f);
+    sc->SetBounds(0.0f, 0.0f, 100.0f, 200.0f);
+    sc->SetDisplayRect(0.0f, 0.0f, 100.0f, 200.0f);
+    EXPECT_EQ(sc->visibilityModifier_.get(), nullptr);
+    EXPECT_EQ(sc->pivotModifier_.get(), nullptr);
+    EXPECT_EQ(sc->bufferAlphaModifier_.get(), nullptr);
+    EXPECT_EQ(sc->boundsModifier_.get(), nullptr);
+}
+
+/**
+ * @tc.name: SurfaceControl_SetVisibility_AddsAndReplacesVisibilityModifier_082.
+ * @tc.desc: Test SetVisibility adds a visibility modifier on each call and replaces
+ *           the previous one (RemoveModifier + AddModifier), keeping the visible
+ *           staging property in sync.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetVisibility_AddsAndReplacesVisibilityModifier_082, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "visibility_modifier_node";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+
+    EXPECT_EQ(sc->visibilityModifier_.get(), nullptr);
+    sc->SetVisibility(true);
+    EXPECT_NE(sc->visibilityModifier_.get(), nullptr);
+    EXPECT_TRUE(sc->surfaceNode_->GetStagingProperties().GetVisible());
+    auto* firstModifier = sc->visibilityModifier_.get();
+
+    sc->SetVisibility(false);
+    EXPECT_NE(sc->visibilityModifier_.get(), firstModifier);
+    EXPECT_FALSE(sc->surfaceNode_->GetStagingProperties().GetVisible());
+}
+
+/**
+ * @tc.name: SurfaceControl_SetPivot_AddsAndReplacesPivotModifier_083.
+ * @tc.desc: Test SetPivot replaces the constructor-created pivot modifier on each
+ *           call and keeps the pivot staging property in sync.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetPivot_AddsAndReplacesPivotModifier_083, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "pivot_modifier_node";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+
+    // Constructor-created pivot modifier is asserted in
+    // SurfaceControl_Constructor_InitializesPivotModifierOnly_090; capture it for replacement.
+    auto* ctorModifier = sc->pivotModifier_.get();
+
+    sc->SetPivot(0.25f, 0.75f);
+    EXPECT_NE(sc->pivotModifier_.get(), ctorModifier);
+    EXPECT_FLOAT_EQ(sc->surfaceNode_->GetStagingProperties().GetPivot()[0], 0.25f);
+    EXPECT_FLOAT_EQ(sc->surfaceNode_->GetStagingProperties().GetPivot()[1], 0.75f);
+}
+
+/**
+ * @tc.name: SurfaceControl_SetBufferAlpha_AddsAndReplacesAlphaModifier_085.
+ * @tc.desc: Test SetBufferAlpha with valid alpha adds an alpha modifier on each call
+ *           and replaces the previous one; the staging alpha composes the node alpha
+ *           with the NG modifier alpha multiplicatively.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetBufferAlpha_AddsAndReplacesAlphaModifier_085, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "alpha_modifier_node";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+
+    EXPECT_EQ(sc->bufferAlphaModifier_.get(), nullptr);
+    // Staging alpha composes the node alpha with the NG modifier alpha (base * modifier).
+    sc->SetBufferAlpha(0.5f);
+    EXPECT_NE(sc->bufferAlphaModifier_.get(), nullptr);
+    EXPECT_FLOAT_EQ(sc->surfaceNode_->GetStagingProperties().GetAlpha(), 0.5f * 0.5f);
+    auto* firstModifier = sc->bufferAlphaModifier_.get();
+
+    sc->SetBufferAlpha(0.8f);
+    EXPECT_NE(sc->bufferAlphaModifier_.get(), firstModifier);
+    EXPECT_FLOAT_EQ(sc->surfaceNode_->GetStagingProperties().GetAlpha(), 0.8f * 0.8f);
+}
+
+/**
+ * @tc.name: SurfaceControl_SetDisplayRect_AddsAndReplacesBoundsModifier_086.
+ * @tc.desc: Test SetDisplayRect adds a bounds modifier via SetBoundsInner on each call
+ *           and replaces the previous one, keeping the bounds staging property in sync.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetDisplayRect_AddsAndReplacesBoundsModifier_086, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "displayrect_modifier_node";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+
+    EXPECT_EQ(sc->boundsModifier_.get(), nullptr);
+    sc->SetDisplayRect(1.0f, 2.0f, 100.0f, 200.0f);
+    EXPECT_NE(sc->boundsModifier_.get(), nullptr);
+    auto bounds = sc->surfaceNode_->GetStagingProperties().GetBounds();
+    EXPECT_FLOAT_EQ(bounds[0], 1.0f);
+    EXPECT_FLOAT_EQ(bounds[1], 2.0f);
+    EXPECT_FLOAT_EQ(bounds[2], 100.0f);
+    EXPECT_FLOAT_EQ(bounds[3], 200.0f);
+    auto* firstModifier = sc->boundsModifier_.get();
+
+    sc->SetDisplayRect(5.0f, 6.0f, 300.0f, 400.0f);
+    EXPECT_NE(sc->boundsModifier_.get(), firstModifier);
+    bounds = sc->surfaceNode_->GetStagingProperties().GetBounds();
+    EXPECT_FLOAT_EQ(bounds[2], 300.0f);
+    EXPECT_FLOAT_EQ(bounds[3], 400.0f);
+}
+
+/**
+ * @tc.name: SurfaceControl_SetBounds_AddsAndReplacesBoundsModifier_089.
+ * @tc.desc: Test SetBounds on a delegate_container node with valid w/h adds a bounds
+ *           modifier via SetBoundsInner on each call and replaces the previous one,
+ *           keeping the bounds staging property in sync.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_SetBounds_AddsAndReplacesBoundsModifier_089, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "delegate_container";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+
+    EXPECT_EQ(sc->boundsModifier_.get(), nullptr);
+    sc->SetBounds(0.0f, 0.0f, 100.0f, 200.0f);
+    EXPECT_NE(sc->boundsModifier_.get(), nullptr);
+    auto bounds = sc->surfaceNode_->GetStagingProperties().GetBounds();
+    EXPECT_FLOAT_EQ(bounds[2], 100.0f);
+    EXPECT_FLOAT_EQ(bounds[3], 200.0f);
+    auto* firstModifier = sc->boundsModifier_.get();
+
+    sc->SetBounds(0.0f, 0.0f, 300.0f, 400.0f);
+    EXPECT_NE(sc->boundsModifier_.get(), firstModifier);
+    bounds = sc->surfaceNode_->GetStagingProperties().GetBounds();
+    EXPECT_FLOAT_EQ(bounds[2], 300.0f);
+    EXPECT_FLOAT_EQ(bounds[3], 400.0f);
+}
+
+/**
+ * @tc.name: SurfaceControl_Constructor_InitializesPivotModifierOnly_090.
+ * @tc.desc: Test the constructor calls SetPivot(0, 0), which creates only the pivot
+ *           modifier; the other three modifiers must stay empty.
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceControlTest, SurfaceControl_Constructor_InitializesPivotModifierOnly_090, TestSize.Level1)
+{
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "ctor_modifier_node";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+    ASSERT_NE(sc, nullptr);
+
+    EXPECT_NE(sc->pivotModifier_.get(), nullptr);
+    EXPECT_EQ(sc->visibilityModifier_.get(), nullptr);
+    EXPECT_EQ(sc->boundsModifier_.get(), nullptr);
+    EXPECT_EQ(sc->bufferAlphaModifier_.get(), nullptr);
 }
 
 }

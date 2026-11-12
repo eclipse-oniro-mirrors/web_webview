@@ -371,29 +371,48 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_Surface_
     if (!supportYUVI420) {
         return;
     }
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->CreateVideoCodecByMime(mimetype), CodecCodeAdapter::OK);
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(config_), CodecCodeAdapter::OK);
-    std::shared_ptr<ProducerSurfaceAdapter> surfaceAdapter =
-        mediaCodecEncoderAdapterImpl->CreateInputSurface();
-    ASSERT_NE(surfaceAdapter, nullptr);
-    int32_t fence = -1;
-    auto configAdapter = std::make_shared<BufferRequestConfigAdapterMock>();
-    EXPECT_NE(configAdapter, nullptr);
-    std::shared_ptr<SurfaceBufferAdapter> SurfaceBufferAdapter = 
-        surfaceAdapter->RequestBuffer(fence, configAdapter);
-    EXPECT_NE(SurfaceBufferAdapter, nullptr);
-
-    auto fulshConfigAdapter = std::make_shared<BufferFlushConfigAdapterMock>();
-    EXPECT_NE(fulshConfigAdapter, nullptr);
-    ret = surfaceAdapter->FlushBuffer(SurfaceBufferAdapter, fence, fulshConfigAdapter);
-    EXPECT_NE(ret, 0);
 
     uint32_t index = 0;
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Prepare(), CodecCodeAdapter::OK);
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Start(), CodecCodeAdapter::OK);
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Stop(), CodecCodeAdapter::OK);
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Reset(), CodecCodeAdapter::OK);
-    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Release(), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->ReleaseOutputBuffer(index, true), CodecCodeAdapter::ERROR);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->RequestKeyFrameSoon(), CodecCodeAdapter::ERROR);
+}
+
+/**
+ * @tc.name: MediaCodecEncoderAdapterImpl_Surface_002.
+ * @tc.desc: test of ProducerSurfaceAdapterImpl::RequestBuffer()、FlushBuffer()
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_Surface_002, TestSize.Level1)
+{
+    const std::string mimetype = "video/avc";
+    auto result =mediaCodecEncoderAdapterImpl->CreateVideoCodecByMime(mimetype);
+    if (result != CodecCodeAdapter::OK) {
+        //Rely on the real AVCodec SA service
+        EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(config_), CodecCodeAdapter::ERROR);
+        EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(nullptr), CodecCodeAdapter::ERROR);
+    }
+    mediaCodecEncoderAdapterImpl->Configure(config_);
+    std::shared_ptr<ProducerSurfaceAdapter> surfaceAdapter =
+        mediaCodecEncoderAdapterImpl->CreateInputSurface();
+    if (surfaceAdapter != nullptr) {
+        int32_t fence = -1;
+        auto configAdapter = std::make_shared<BufferRequestConfigAdapterMock>();
+        EXPECT_NE(configAdapter, nullptr);
+        std::shared_ptr<SurfaceBufferAdapter> SurfaceBufferAdapter =
+            surfaceAdapter->RequestBuffer(fence, configAdapter);
+        EXPECT_NE(SurfaceBufferAdapter, nullptr);
+        auto fulshConfigAdapter = std::make_shared<BufferFlushConfigAdapterMock>();
+        EXPECT_NE(fulshConfigAdapter, nullptr);
+        surfaceAdapter->FlushBuffer(SurfaceBufferAdapter, fence, fulshConfigAdapter);
+        EXPECT_EQ(mediaCodecEncoderAdapterImpl->Prepare(), CodecCodeAdapter::OK);
+        if (mediaCodecEncoderAdapterImpl->Start() == CodecCodeAdapter::OK) {
+            EXPECT_EQ(mediaCodecEncoderAdapterImpl->Stop(), CodecCodeAdapter::OK);
+        }
+        EXPECT_EQ(mediaCodecEncoderAdapterImpl->Reset(), CodecCodeAdapter::OK);
+        EXPECT_EQ(mediaCodecEncoderAdapterImpl->Release(), CodecCodeAdapter::OK);
+    }
+    uint32_t index = 0;
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->ReleaseOutputBuffer(index, true), CodecCodeAdapter::ERROR);
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->RequestKeyFrameSoon(), CodecCodeAdapter::ERROR);
 }

@@ -2770,6 +2770,32 @@ TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearThenHasCallback)
 }
 
 /**
+ * @tc.name: GetDefaultUserAgentLite_001
+ * @tc.desc: GetDefaultUserAgentLite returns a string created via the mock env and
+ *           degrades safely when the env is null or string creation fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetDefaultUserAgentLite_001)
+{
+    // env is nullptr
+    ani_string result = OHOS::NWeb::GetDefaultUserAgentLite(nullptr, nullptr);
+    EXPECT_EQ(result, nullptr);
+
+    // mock env: returns the pooled mock ani_string
+    ani_env* env = CreateMockAniEnv();
+    g_stringNewUTF8ShouldFail = false;
+    result = OHOS::NWeb::GetDefaultUserAgentLite(env, nullptr);
+    EXPECT_EQ(result, reinterpret_cast<ani_string>(GetMockObject(POOL_INDEX_STRING)));
+
+    // String_NewUTF8 fails
+    g_stringNewUTF8ShouldFail = true;
+    result = OHOS::NWeb::GetDefaultUserAgentLite(env, nullptr);
+    EXPECT_EQ(result, nullptr);
+    g_stringNewUTF8ShouldFail = false;
+}
+
+/**
  * @tc.name: StsNavigationThrottleInit_EnvIsNull
  * @tc.desc: StsNavigationThrottleInit with a null env returns ANI_ERROR.
  * @tc.type: FUNC

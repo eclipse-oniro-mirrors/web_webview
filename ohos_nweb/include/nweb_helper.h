@@ -28,8 +28,10 @@
 #include "nweb_data_base.h"
 #include "nweb_engine.h"
 #include "nweb_export.h"
+#include "nweb_remove_visited_links_callback.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
+#include "nweb_web_site_config_callback.h"
 #include "application_state_change_callback.h"
 
 namespace OHOS::NWeb {
@@ -94,6 +96,10 @@ public:
 
     void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts);
 
+    void SetWebNavigationConfigMode(int32_t mode);
+
+    int32_t GetWebNavigationConfigMode();
+
     void WarmupServiceWorker(const std::string& url);
 
     void EnableWholeWebPageDrawing();
@@ -106,6 +112,9 @@ public:
 
     void RemoveAllCache(bool includeDiskFiles);
 
+    void RemoveVisitedLinksSince(int64_t timeMs,
+                                 std::shared_ptr<NWebRemoveVisitedLinksCallback> callback);
+
     void SetProxyOverride(const std::vector<std::string>& proxyUrls,
                           const std::vector<std::string>& proxySchemeFilters,
                           const std::vector<std::string>& bypassRules,
@@ -116,6 +125,8 @@ public:
 
     void SetWebDebuggingAccess(bool isEnableDebug);
     void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
+
+    void SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback);
 
     bool HasLoadWebEngine();
 
@@ -172,6 +183,10 @@ public:
 
     void DumpArkWebJSHeap(
         int32_t fd = -1, int32_t renderPid = -1, bool needSnapshot = false, bool needGC = false, bool needRaw = false);
+
+    // Returns the default UA assembled without any web engine initialization.
+    // Empty string when the ArkWeb version cannot be resolved from the engine.
+    std::string GetDefaultUserAgentLite();
 
 private:
     NWebHelper() = default;

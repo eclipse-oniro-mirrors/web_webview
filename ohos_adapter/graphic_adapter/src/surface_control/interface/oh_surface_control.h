@@ -133,8 +133,6 @@ public:
         static void SetHardwareEnableHint(OH_SurfaceTransaction* transaction, OH_SurfaceControl* surfaceControl,
             bool enable);
 
-        static void SetName(OH_SurfaceTransaction* transaction, OH_SurfaceControl* surfaceControl, const char* name);
-
         static void SetSrcRect(
             OH_SurfaceTransaction* transaction, OH_SurfaceControl* surfaceControl, float x, float y, float w, float h);
 

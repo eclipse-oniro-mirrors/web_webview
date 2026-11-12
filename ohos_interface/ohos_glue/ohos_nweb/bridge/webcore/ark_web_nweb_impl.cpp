@@ -27,6 +27,7 @@
 #include "ohos_nweb/bridge/ark_web_cache_options_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_core_struct_utils.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_query_navigation_config_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_wrapper.h"
@@ -50,6 +51,7 @@
 #include "ohos_nweb/bridge/ark_web_stylus_touch_point_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_vault_plain_text_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_print_document_adapter_adapter_impl.h"
 #include "ohos_nweb/ctocpp/ark_web_js_proxy_callback_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_rom_value_vector_ctocpp.h"
@@ -971,6 +973,16 @@ void ArkWebNWebImpl::OnCreateNativeMediaPlayer(ArkWebRefPtr<ArkWebCreateNativeMe
     }
 
     nweb_nweb_->OnCreateNativeMediaPlayer(std::make_shared<ArkWebCreateNativeMediaPlayerCallbackWrapper>(callback));
+}
+
+void ArkWebNWebImpl::OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->OnQueryNavigationConfig(nullptr);
+        return;
+    }
+
+    nweb_nweb_->OnQueryNavigationConfig(std::make_shared<ArkWebQueryNavigationConfigCallbackWrapper>(callback));
 }
 
 void ArkWebNWebImpl::DragResize(uint32_t width, uint32_t height, uint32_t pre_height, uint32_t pre_width)
@@ -1957,4 +1969,25 @@ void ArkWebNWebImpl::ResolveNavigationDefer(uint64_t deferId, bool proceed)
     nweb_nweb_->ResolveNavigationDefer(deferId, proceed);
 }
 
+void ArkWebNWebImpl::GetElementInfoForSecurityHitTest(double x, double y,
+    ArkWebRefPtr<ArkWebStringValueCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->GetElementInfoForSecurityHitTest(x, y, nullptr);
+        return;
+    }
+    nweb_nweb_->GetElementInfoForSecurityHitTest(
+        x, y, std::make_shared<ArkWebStringValueCallbackWrapper>(callback));
+}
+
+void ArkWebNWebImpl::PutWebSiteConfigCallback(
+    ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->PutWebSiteConfigCallback(nullptr);
+        return;
+    }
+    nweb_nweb_->PutWebSiteConfigCallback(
+        std::make_shared<ArkWebWebSiteConfigCallbackWrapper>(callback));
+}
 } // namespace OHOS::ArkWeb

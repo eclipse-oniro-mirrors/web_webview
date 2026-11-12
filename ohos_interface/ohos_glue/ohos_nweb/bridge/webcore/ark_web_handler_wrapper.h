@@ -17,6 +17,8 @@
 #define ARK_WEB_HANDLER_WRAPPER_H_
 #pragma once
 
+#include <vector>
+
 #include "include/nweb_handler.h"
 #include "ohos_nweb/include/ark_web_handler.h"
 
@@ -437,6 +439,12 @@ public:
         std::shared_ptr<OHOS::NWeb::NWebDateTimeChooserCallback> callback) override;
 
     void OnDateTimeChooserClose() override;
+
+    void OnColorChooserPopup(const std::string& color,
+        const std::vector<OHOS::NWeb::NWebColorSuggestion>& suggestions,
+        std::shared_ptr<OHOS::NWeb::NWebColorChooserCallback> callback) override;
+
+    void OnColorChooserClose() override;
 
     /**
      * @brief Ask for the screen capture permission.

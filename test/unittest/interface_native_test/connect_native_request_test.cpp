@@ -15,6 +15,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <unistd.h>
 #include "want.h"
 #include "int_wrapper.h"
 #include "string_wrapper.h"
@@ -76,7 +77,8 @@ public:
         return req;
     }
 
-    AAFwk::Want CreateValidWant()
+    AAFwk::Want CreateValidWant(int32_t readPipeFd = DEFAULT_READ_PIPE_FD,
+                                int32_t writePipeFd = DEFAULT_WRITE_PIPE_FD)
     {
         AAFwk::Want want;
         want.SetBundle("target.bundle");
@@ -88,12 +90,12 @@ public:
 
         AAFwk::WantParams readFd;
         readFd.SetParam("type", AAFwk::String::Box("FD"));
-        readFd.SetParam("value", AAFwk::Integer::Box(DEFAULT_READ_PIPE_FD));
+        readFd.SetParam("value", AAFwk::Integer::Box(readPipeFd));
         params.SetParam("ohos.arkweb.messageReadPipe", AAFwk::WantParamWrapper::Box(readFd));
 
         AAFwk::WantParams writeFd;
         writeFd.SetParam("type", AAFwk::String::Box("FD"));
-        writeFd.SetParam("value", AAFwk::Integer::Box(DEFAULT_WRITE_PIPE_FD));
+        writeFd.SetParam("value", AAFwk::Integer::Box(writePipeFd));
         params.SetParam("ohos.arkweb.messageWritePipe",  AAFwk::WantParamWrapper::Box(writeFd));
 
         want.SetParams(params);
@@ -158,11 +160,14 @@ HWTEST_F(ConnectionNativeRequestAllTest, FillRequestWithWant_AllFailureBranches,
     want.SetParams(topParams);
     EXPECT_EQ(req.FillRequestWithWant(want), ConnectNativeRet::WANT_FORMAT_ERROR);
 
+    int validReadFd[2] = {-1, -1};
+    EXPECT_EQ(pipe(validReadFd), 0);
     readFd.SetParam("type", AAFwk::String::Box("FD"));
-    readFd.SetParam("value", AAFwk::Integer::Box(1));
+    readFd.SetParam("value", AAFwk::Integer::Box(validReadFd[0]));
     topParams.SetParam(WANT_READ_PIPE_PARAM_KEY, AAFwk::WantParamWrapper::Box(readFd));
     want.SetParams(topParams);
     EXPECT_EQ(req.FillRequestWithWant(want), ConnectNativeRet::WANT_FORMAT_ERROR);
+    close(validReadFd[1]);
 
     readFd.SetParam("type", AAFwk::String::Box("FD"));
     readFd.SetParam("value", AAFwk::Integer::Box(-1));
@@ -189,8 +194,10 @@ HWTEST_F(ConnectionNativeRequestAllTest, FillRequestWithWant_AllFailureBranches,
 
 HWTEST_F(ConnectionNativeRequestAllTest, FillRequestWithWant_Success, testing::ext::TestSize.Level0)
 {
+    int pipeFd[2] = {-1, -1};
+    EXPECT_EQ(pipe(pipeFd), 0);
     ConnectionNativeRequest req;
-    auto want = CreateValidWant();
+    auto want = CreateValidWant(pipeFd[0], pipeFd[1]);
     EXPECT_EQ(req.FillRequestWithWant(want), ConnectNativeRet::SUCCESS);
 }
 

@@ -66,6 +66,11 @@ public:
     void KeyboardUpperRightCornerHide() override;
 
     void WebSetImeShow(bool visible) override;
+
+    int32_t SetPreviewTextWithStyle(const std::u16string& text, int32_t start, int32_t end,
+        std::shared_ptr<OHOS::NWeb::IMFPreviewTextStyleAdapter> style) override;
+
+    bool IsSupportPreviewTextWithStyle() override;
 private:
     ArkWebRefPtr<ArkIMFTextListenerAdapter> ctocpp_;
 };

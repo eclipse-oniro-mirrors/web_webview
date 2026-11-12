@@ -180,10 +180,42 @@ export default namespace webview {
         PARTIAL = 0,
         STRICT = 1
     }
+    export enum WebSiteSource {
+        WEB_PAGE = 1,
+        SERVICE_WORKER = 2,
+        DOWNLOAD = 3,
+        EXTENSIONS = 4,
+        OTHER = 5
+    }
+
+    export enum PageTransition {
+        LINK = 0,
+        TYPED = 1,
+        AUTO_SUBFRAME = 3,
+        MANUAL_SUBFRAME = 4,
+        AUTO_TOPLEVEL = 6,
+        FORM_SUBMIT = 7,
+        RELOAD = 8,
+        CORE_MASK = 0xFF,
+        FORWARD_BACK = 0x01000000,
+        FROM_ADDRESS_BAR = 0x02000000,
+        FROM_API = 0x08000000,
+        CHAIN_START = 0x10000000,
+        CHAIN_END = 0x20000000,
+        CLIENT_REDIRECT = 0x40000000,
+        SERVER_REDIRECT = -2147483648,  // 0x80000000
+        IS_REDIRECT_MASK = -1073741824, // 0xC0000000
+        QUALIFIER_MASK = -256           // 0xFFFFFF00
+    }
 
     export enum PressureLevel {
         MEMORY_PRESSURE_LEVEL_MODERATE = 1,
         MEMORY_PRESSURE_LEVEL_CRITICAL = 2
+    }
+
+    export enum WebNavigationConfigMode {
+        SET = 0,
+        QUERY = 1
     }
 
     export enum PlaybackStatus {
@@ -503,6 +535,40 @@ export default namespace webview {
         headers: Record<string, string>;
         attributes: Record<string, string>;
     }
+
+    export interface WebSiteConfigParams {
+        url: string;
+        source: WebSiteSource;
+        isMainFrame?: boolean;
+        topFrameUrl?: string;
+        redirectChain?: string[];
+        referrer?: string;
+        pageTransition?: int;
+    }
+
+    export class WebSiteConfigParamsInner implements WebSiteConfigParams {
+        url: string = "";
+        source: WebSiteSource = WebSiteSource.OTHER;
+        isMainFrame?: boolean;
+        topFrameUrl?: string;
+        redirectChain?: string[];
+        referrer?: string;
+        pageTransition?: int;
+        constructor() {};
+    }
+
+    export interface WebSiteConfigResult {
+        userAgent: string;
+        viewportWidth: int;
+    }
+
+    export class WebSiteConfigResultInner implements WebSiteConfigResult {
+        userAgent: string = "";
+        viewportWidth: int = 0;
+        constructor() {};
+    }
+
+    export type OnQueryWebSiteConfigCallback = (params: WebSiteConfigParams) => WebSiteConfigResult;
 
     export class MediaInfoinner implements MediaInfo {
         embedID: string = "";
@@ -853,13 +919,26 @@ export default namespace webview {
         native clearMatches(): void;
         native startDownload(url: string): void;
         native setDownloadDelegate(delegate: WebDownloadDelegate): void;
+        native onQueryNavigationConfig(callback: (params: NavigationConfigParams) => NavigationConfigResult): void;
         native getBackForwardEntries(): BackForwardList;
         native setUrlTrustList(urlTrustList: string): void;
         native setUrlTrustList(urlTrustList: string, allowOpaqueOrigin: boolean, supportWildcard: boolean): void;
         native enableIntelligentTrackingPrevention(enable: boolean): void;
         native searchNext(forward: boolean): void;
         native static getDefaultUserAgent(): string;
+        native static getDefaultUserAgentLite(): string;
         native static removeAllCache(clearRom: boolean): void;
+        native static removeVisitedLinksSincePromise(timeMs: double): Promise<void>;
+        static removeVisitedLinksSince(date: Date, callback: Callback<void>): void {
+            WebviewController.removeVisitedLinksSincePromise(date.getTime()).then((): undefined => {
+                callback(undefined);
+                return undefined;
+            });
+            return;
+        }
+        static removeVisitedLinksSince(date: Date): Promise<void> {
+            return WebviewController.removeVisitedLinksSincePromise(date.getTime());
+        }
         native accessStep(step: int): boolean;
         native isAdsBlockEnabled(): boolean;
         native enableAdsBlock(enable: boolean): void;
@@ -898,9 +977,15 @@ export default namespace webview {
         static setWebDebuggingAccess(webDebuggingAccess: boolean, port: int): void {
             WebviewController.setWebDebuggingAccessAndPort(webDebuggingAccess, port);
         }
+        native static SetGlobalWebSiteConfigCallback(callback: OnQueryWebSiteConfigCallback | null): void;
+        static setGlobalWebSiteConfigCallback(callback: OnQueryWebSiteConfigCallback | null): void {
+            WebviewController.SetGlobalWebSiteConfigCallback(callback);
+        }
         native enableSafeBrowsing(enable: boolean): void;
         native static setRenderProcessMode(mode: RenderProcessMode): void;
         native static getRenderProcessMode(): RenderProcessMode;
+        native static setWebNavigationConfigMode(mode: WebNavigationConfigMode): void;
+        native static getWebNavigationConfigMode(): WebNavigationConfigMode;
         native static pauseAllTimers(): void;
         native static resumeAllTimers(): void;
         native setCustomUserAgent(userAgent: string): void;
@@ -918,6 +1003,7 @@ export default namespace webview {
         native static trimMemoryByPressureLevel(level: PressureLevel): void;
         native setPathAllowingUniversalAccess(pathList: Array<string>): void;
         native onCreateNativeMediaPlayer(callback: (handler: NativeMediaPlayerHandler, mediaInfo: MediaInfo) => NativeMediaPlayerBridge): void;
+        native setWebSiteConfigCallback(callback: OnQueryWebSiteConfigCallback | null): void;
 
         native getSurfaceId(): string;
         native static enableWholeWebPageDrawing(): void;
@@ -1457,6 +1543,24 @@ export default namespace webview {
             let item = WebDownloadItem.deserializeInternal(buffer);
             return item;
         }
+    }
+
+    export class NavigationConfigParams {
+        url: string = "";
+        redirectChain: Array<string> = [];
+        referrer: string = "";
+        // pageTransition is a bitmask combination (core type | qualifier flags).
+        // The combined value is not necessarily an enum member and cannot be boxed as an enum;
+        // use int to carry the raw bitmask value directly.
+        pageTransition: int = 0;
+        isMainFrame: boolean = false;
+        constructor() {};
+    }
+
+    export class NavigationConfigResult {
+        userAgent: string = "";
+        viewportWidth: number = 0;
+        constructor() {};
     }
 
     export class WebDownloadDelegate {

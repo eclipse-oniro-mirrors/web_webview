@@ -104,6 +104,11 @@ enum class SecureDnsModeType : int {
     SECURE_ONLY = 2,
 };
 
+enum class WebNavigationConfigModeType : int {
+    SET = 0,
+    QUERY = 1,
+};
+
 struct OfflineResourceValueAni {
     ani_ref urlListArray;
     ani_ref resourceArrayBuffer;
@@ -880,6 +885,11 @@ public:
     }
 
     void OnCreateNativeMediaPlayer(ani_vm* vm, ani_fn_object callback)
+    {
+        // Mock implementation
+    }
+
+    void PutWebSiteConfigCallback(ani_vm* vm, ani_fn_object callback)
     {
         // Mock implementation
     }

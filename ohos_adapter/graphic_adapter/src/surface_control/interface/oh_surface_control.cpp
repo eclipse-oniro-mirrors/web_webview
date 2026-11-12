@@ -228,15 +228,6 @@ void SurfaceControlUtils::Transaction::SetHardwareEnableHint(OH_SurfaceTransacti
     txn->SetHardwareEnableHint(surface, enable);
 }
 
-void SurfaceControlUtils::Transaction::SetName(
-    OH_SurfaceTransaction* transaction, OH_SurfaceControl* surfaceControl, const char* name)
-{
-    auto* txn = reinterpret_cast<SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<SurfaceControl*>(surfaceControl);
-    CHECK_NULL_POINTER(txn);
-    txn->SetName(surface, name);
-}
-
 void SurfaceControlUtils::Transaction::SetSrcRect(
     OH_SurfaceTransaction* transaction, OH_SurfaceControl* surfaceControl, float x, float y, float w, float h)
 {

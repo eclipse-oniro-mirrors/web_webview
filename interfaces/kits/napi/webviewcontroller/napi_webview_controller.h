@@ -24,11 +24,13 @@
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "uv.h"
+
 #ifdef WEBVIEW_UNIT_TEST
 #include "test_mock_webview_controller.h"
 #else
 #include "webview_controller.h"
 #endif
+#include "nweb_remove_visited_links_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -57,6 +59,9 @@ const std::string WEB_SCROLLBAR_MODE_ENUM_NAME = "ScrollbarMode";
 const std::string WEB_SOFT_KEYBOARD_BEHAVIOR_MODE_ENUM_NAME = "WebSoftKeyboardBehaviorMode";
 const std::string WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME = "WebHttpCookieSameSitePolicy";
 const std::string WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME = "NavigationThrottleAction";
+const std::string WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME = "WebNavigationConfigMode";
+const std::string WEB_SITE_SOURCE_ENUM_NAME = "WebSiteSource";
+const std::string PAGE_TRANSITION_ENUM_NAME = "PageTransition";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
 
@@ -360,6 +365,10 @@ private:
 
     static napi_value OnCreateNativeMediaPlayer(napi_env env, napi_callback_info info);
 
+    static napi_value SetWebSiteConfigCallback(napi_env env, napi_callback_info info);
+
+    static napi_value SetGlobalWebSiteConfigCallback(napi_env env, napi_callback_info info);
+
     static napi_value SetRenderProcessMode(napi_env env, napi_callback_info info);
 
     static napi_value GetRenderProcessMode(napi_env env, napi_callback_info info);
@@ -389,6 +398,12 @@ private:
     static napi_value SetAppCustomUserAgent(napi_env env, napi_callback_info info);
 
     static napi_value SetUserAgentForHosts(napi_env env, napi_callback_info info);
+
+    static napi_value SetWebNavigationConfigMode(napi_env env, napi_callback_info info);
+
+    static napi_value GetWebNavigationConfigMode(napi_env env, napi_callback_info info);
+
+    static napi_value OnQueryNavigationConfig(napi_env env, napi_callback_info info);
 
     static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
 
@@ -423,6 +438,8 @@ private:
     static napi_value TrimMemoryByPressureLevel(napi_env env, napi_callback_info info);
 
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
+
+    static napi_value RemoveVisitedLinksSince(napi_env env, napi_callback_info info);
 
     static napi_value GetBlanklessInfoWithKey(napi_env env, napi_callback_info info);
 
@@ -472,6 +489,7 @@ private:
     static napi_value GetLastPostMessageURL(napi_env env, napi_callback_info info);
     static napi_value SetZoomFactor(napi_env env, napi_callback_info info);
     static napi_value GetZoomFactor(napi_env env, napi_callback_info info);
+    static napi_value GetDefaultUserAgentLite(napi_env env, napi_callback_info info);
 };
 
 class ArkWebTransfer {
@@ -573,6 +591,28 @@ public:
     static napi_value OnStartLayoutWrite(napi_env env, napi_callback_info info);
 
     static napi_value OnJobStateChanged(napi_env env, napi_callback_info info);
+};
+
+class NWebRemoveVisitedLinksCallbackImpl : public NWebRemoveVisitedLinksCallback {
+public:
+    NWebRemoveVisitedLinksCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
+        : env_(env), callback_(callback), deferred_(deferred) {}
+    ~NWebRemoveVisitedLinksCallbackImpl() = default;
+
+    void OnRemoveComplete() override;
+
+    static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
+
+    struct RemoveVisitedLinksParam {
+        napi_env env_ = nullptr;
+        napi_ref callback_ = nullptr;
+        napi_deferred deferred_ = nullptr;
+    };
+
+private:
+    napi_env env_;
+    napi_ref callback_;
+    napi_deferred deferred_;
 };
 } // namespace NWeb
 } // namespace OHOS

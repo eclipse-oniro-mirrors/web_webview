@@ -25,7 +25,9 @@
 #include "ohos_nweb/bridge/ark_web_nweb_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_web_storage_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_proxy_changed_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_remove_visited_links_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_user_agent_metadata_impl.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_user_agent_metadata_ack_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
@@ -438,5 +440,37 @@ void ArkWebEngineWrapper::SetWholeWebDrawing()
 void ArkWebEngineWrapper::DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw)
 {
     ark_web_engine_->DumpArkWebJSHeap(fd, renderPid, needSnapshot, needGC, needRaw);
+}
+
+void ArkWebEngineWrapper::SetWebNavigationConfigMode(int32_t mode)
+{
+    ark_web_engine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t ArkWebEngineWrapper::GetWebNavigationConfigMode()
+{
+    return ark_web_engine_->GetWebNavigationConfigMode();
+}
+
+void ArkWebEngineWrapper::RemoveVisitedLinksSince(
+    int64_t time_ms, std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> callback)
+{
+    ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> ark_web_remove_visited_links_callback =
+        new ArkWebRemoveVisitedLinksCallbackImpl(callback);
+    if (ark_web_engine_) {
+        ark_web_engine_->RemoveVisitedLinksSince(time_ms, ark_web_remove_visited_links_callback);
+    }
+}
+
+void ArkWebEngineWrapper::SetGlobalWebSiteConfigCallback(
+    std::shared_ptr<OHOS::NWeb::NWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_engine_->SetGlobalWebSiteConfigCallback(nullptr);
+        return;
+    }
+
+    ark_web_engine_->SetGlobalWebSiteConfigCallback(
+        new ArkWebWebSiteConfigCallbackImpl(callback));
 }
 } // namespace OHOS::ArkWeb

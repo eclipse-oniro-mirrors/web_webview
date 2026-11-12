@@ -999,6 +999,8 @@ public:
 
     void OnCreateNativeMediaPlayer(ArkWebRefPtr<ArkWebCreateNativeMediaPlayerCallback> callback) override;
 
+    void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) override;
+
     /**
      * @brief Web drag resize optimize.
      */
@@ -1935,7 +1937,7 @@ public:
      */
     void PutVaultPlainTextCallback(
         ArkWebRefPtr<ArkWebVaultPlainTextCallback> callback) override;
-    
+
     /**
      * @brief fill autofill data.
      *
@@ -2171,6 +2173,24 @@ public:
      */
     /*--ark web()--*/
     void ResolveNavigationDefer(uint64_t deferId, bool proceed) override;
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result, Empty result means failure.
+     */
+    void GetElementInfoForSecurityHitTest(
+        double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) override;
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    /*--ark web()--*/
+    void PutWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;

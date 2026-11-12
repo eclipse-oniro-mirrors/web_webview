@@ -765,6 +765,17 @@ public:
      */
     void SetTransformRotateAndSkewEnabled(bool enable) override;
 
+    /**
+     * @brief Set whether to persist visited link records to the local database.
+     *        The default is false.
+     */
+    void PutVisitedLinkPersistEnabled(bool enabled) override;
+
+    /**
+     * @brief Get whether visited link persistence is enabled.
+     */
+    bool IsVisitedLinkPersistEnabled() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

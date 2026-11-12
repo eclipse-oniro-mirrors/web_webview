@@ -23,12 +23,14 @@
 #include "ohos_nweb/include/ark_web_download_manager.h"
 #include "ohos_nweb/include/ark_web_engine_init_args.h"
 #include "ohos_nweb/include/ark_web_engine_prefetch_args.h"
+#include "ohos_nweb/include/ark_web_remove_visited_links_callback.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_nweb_create_info.h"
 #include "ohos_nweb/include/ark_web_web_storage.h"
 #include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata_ack.h"
+#include "ohos_nweb/include/ark_web_web_site_config_callback.h"
 
 namespace OHOS::ArkWeb {
 
@@ -235,6 +237,23 @@ public:
 
     /*--ark web()--*/
     virtual void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) = 0;
+
+    /*--ark web()--*/
+    virtual void SetWebNavigationConfigMode(int32_t mode) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetWebNavigationConfigMode() = 0;
+
+    /**
+     * @brief Remove the visited link records of the current application that
+     *        changed at or after the specified time point (inclusive).
+     */
+    /*--ark web()--*/
+    virtual void RemoveVisitedLinksSince(
+        int64_t time_ms, ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetGlobalWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

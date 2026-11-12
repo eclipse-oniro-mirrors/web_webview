@@ -29,6 +29,7 @@
 #include "nweb_controller_handler.h"
 #include "nweb_custom_keyboard_handler.h"
 #include "nweb_data_resubmission_callback.h"
+#include "nweb_color_chooser.h"
 #include "nweb_date_time_chooser.h"
 #include "nweb_drag_data.h"
 #include "nweb_file_selector_params.h"
@@ -1559,6 +1560,27 @@ public:
      */
     virtual void OnMonitoredBlankScreen(
         const std::string& url, int32_t reason, const std::string& extraMsg) {}
+
+    /**
+     * @brief Called when a color chooser popup should be shown.
+     *
+     * @param color The initial color value in HEX format (e.g. "#ff0000").
+     * @param suggestions The list of suggested colors.
+     * @param callback The callback to receive color selection results.
+     */
+    virtual void OnColorChooserPopup(const std::string& color,
+        const std::vector<NWebColorSuggestion>& suggestions,
+        std::shared_ptr<NWebColorChooserCallback> callback) {}
+
+    /**
+     * @brief Called when the color chooser popup should be closed.
+     */
+    virtual void OnColorChooserClose() {}
+
+    /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    virtual void OnDragCancel() {}
 };
 
 } // namespace OHOS::NWeb

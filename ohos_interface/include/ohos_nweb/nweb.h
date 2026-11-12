@@ -37,6 +37,7 @@
 #include "nweb_javascript_result_callback.h"
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
+#include "nweb_query_navigation_config_callback.h"
 #include "nweb_release_surface_callback.h"
 #include "nweb_rom_value.h"
 #include "nweb_snapshot_callback.h"
@@ -47,6 +48,7 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
+#include "nweb_web_site_config_callback.h"
 
 namespace OHOS::NWeb {
 
@@ -2448,7 +2450,7 @@ public:
      */
     virtual void PutVaultPlainTextCallback(
         std::shared_ptr<NWebVaultPlainTextCallback> callback) {}
-    
+
     /**
      * @brief fill autofill data.
      *
@@ -2837,6 +2839,32 @@ public:
      * @param proceed true to resume the navigation, false to cancel it.
      */
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) {}
+    
+    virtual void OnQueryNavigationConfig(std::shared_ptr<NWebQueryNavigationConfigCallback> callback) {}
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result
+     */
+    virtual void GetElementInfoForSecurityHitTest(
+        double x, double y, std::shared_ptr<NWebStringValueCallback> callback)
+    {
+        (void)x;
+        (void)y;
+        if (callback) {
+            callback->OnReceiveValue("");
+        }
+    }
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    virtual void PutWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
 };
 } // namespace OHOS::NWeb
 

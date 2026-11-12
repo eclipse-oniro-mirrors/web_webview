@@ -33,6 +33,7 @@
 #include "nweb_hisysevent.h"
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
+#include "nweb_user_agent_builder.h"
 #include "parameter.h"
 #include "parameters.h"
 #include "arkweb_utils.h"
@@ -1130,6 +1131,11 @@ std::string NWebHelper::GetDefaultUserAgent()
     return nwebEngine_->GetDefaultUserAgent();
 }
 
+std::string NWebHelper::GetDefaultUserAgentLite()
+{
+    return UserAgentBuilder::BuildDefaultUserAgentLite();
+}
+
 void NWebHelper::PauseAllTimers()
 {
     if (nwebEngine_ == nullptr) {
@@ -1279,6 +1285,26 @@ void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::v
     nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
 }
 
+void NWebHelper::SetWebNavigationConfigMode(int32_t mode)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t NWebHelper::GetWebNavigationConfigMode()
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return 0;
+    }
+
+    return nwebEngine_->GetWebNavigationConfigMode();
+}
+
 void NWebHelper::WarmupServiceWorker(const std::string& url)
 {
     if (!initFlag_) {
@@ -1335,6 +1361,27 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     }
 
     nwebEngine_->RemoveAllCache(includeDiskFiles);
+}
+
+void NWebHelper::RemoveVisitedLinksSince(
+    int64_t timeMs, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback)
+{
+    if (!LoadWebEngine(true, true)) {
+        WVLOG_E("failed to load web engine");
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+        return;
+    }
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+        return;
+    }
+
+    nwebEngine_->RemoveVisitedLinksSince(timeMs, std::move(callback));
 }
 
 void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
@@ -1544,6 +1591,19 @@ void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
         return;
     }
     nwebEngine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
+}
+
+void NWebHelper::SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback)
+{
+    if (!initFlag_) {
+        WVLOG_E("SetGlobalWebSiteConfigCallback, not initialized");
+        return;
+    }
+    if (!nwebEngine_) {
+        WVLOG_E("SetGlobalWebSiteConfigCallback, nweb engine is nullptr");
+        return;
+    }
+    nwebEngine_->SetGlobalWebSiteConfigCallback(callback);
 }
 
 std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)

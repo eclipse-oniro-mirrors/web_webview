@@ -128,6 +128,14 @@ enum class PressureLevel : int {
     MEMORY_PRESSURE_LEVEL_CRITICAL = 2,
 };
 
+// WebNavigationConfigMode: navigation config query mode.
+// SET = 0 (existing interface, uses preset UA/viewport config during navigation),
+// QUERY = 1 (queries the app via callback for UA and viewport width during navigation).
+enum class WebNavigationConfigModeType : int {
+    SET = 0,
+    QUERY = 1,
+};
+
 enum class ScrollType : int {
     EVENT = 0,
 };
@@ -463,6 +471,8 @@ public:
     std::shared_ptr<HitTestResult> GetLastHitTest();
 
     void OnCreateNativeMediaPlayer(ani_vm *vm, ani_fn_object callback);
+
+    void PutWebSiteConfigCallback(ani_vm *vm, ani_fn_object callback);
 
     int32_t GetNWebId();
 
