@@ -2359,4 +2359,25 @@ void ArkWebNWebWrapper::PutWebSiteConfigCallback(
     ark_web_nweb_->PutWebSiteConfigCallback(
         new ArkWebWebSiteConfigCallbackImpl(callback));
 }
+
+bool ArkWebNWebWrapper::GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                        std::string& state)
+{
+    ArkWebString stState;
+    bool ok = ark_web_nweb_->GetWindowBounds(x, y, w, h, stState);
+    if (ok) {
+        state = ArkWebStringStructToClass(stState);
+        ArkWebStringStructRelease(stState);
+    }
+    return ok;
+}
+
+bool ArkWebNWebWrapper::SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                        const std::string& state)
+{
+    ArkWebString stState = ArkWebStringClassToStruct(state);
+    bool ok = ark_web_nweb_->SetWindowBounds(x, y, w, h, stState);
+    ArkWebStringStructRelease(stState);
+    return ok;
+}
 } // namespace OHOS::ArkWeb

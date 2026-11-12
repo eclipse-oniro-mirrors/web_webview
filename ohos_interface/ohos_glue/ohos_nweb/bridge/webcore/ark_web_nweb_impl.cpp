@@ -1990,4 +1990,22 @@ void ArkWebNWebImpl::PutWebSiteConfigCallback(
     nweb_nweb_->PutWebSiteConfigCallback(
         std::make_shared<ArkWebWebSiteConfigCallbackWrapper>(callback));
 }
+
+bool ArkWebNWebImpl::GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                     ArkWebString& state)
+{
+    std::string state_str;
+    bool ok = nweb_nweb_->GetWindowBounds(x, y, w, h, state_str);
+    if (ok) {
+        state = ArkWebStringClassToStruct(state_str);
+    }
+    return ok;
+}
+
+bool ArkWebNWebImpl::SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                     const ArkWebString& state)
+{
+    return nweb_nweb_->SetWindowBounds(x, y, w, h, ArkWebStringStructToClass(state));
+}
+
 } // namespace OHOS::ArkWeb

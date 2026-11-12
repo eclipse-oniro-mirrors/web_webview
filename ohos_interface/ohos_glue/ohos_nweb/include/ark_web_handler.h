@@ -1270,6 +1270,14 @@ public:
      */
     /*--ark web()--*/
     virtual void OnDragCancel() = 0;
+
+    /*--ark web()--*/
+    virtual bool OnGetWindowBounds(int32_t& x, int32_t& y,
+                                   uint32_t& w, uint32_t& h, ArkWebString& state) = 0;
+
+    /*--ark web()--*/
+    virtual bool OnSetWindowBounds(int32_t x, int32_t y,
+                                   uint32_t w, uint32_t h, const ArkWebString& state) = 0;
 };
 
 } // namespace OHOS::ArkWeb

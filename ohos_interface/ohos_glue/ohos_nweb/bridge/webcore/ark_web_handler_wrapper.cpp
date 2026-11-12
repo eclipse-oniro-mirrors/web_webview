@@ -1514,4 +1514,25 @@ void ArkWebHandlerWrapper::OnMonitoredBlankScreen(
     ArkWebStringStructRelease(stUrl);
     ArkWebStringStructRelease(stExtraMsg);
 }
+
+bool ArkWebHandlerWrapper::OnGetWindowBounds(int32_t& x, int32_t& y,
+                                             uint32_t& w, uint32_t& h, std::string& state)
+{
+    ArkWebString stState;
+    bool ok = ark_web_handler_->OnGetWindowBounds(x, y, w, h, stState);
+    if (ok) {
+        state = ArkWebStringStructToClass(stState);
+        ArkWebStringStructRelease(stState);
+    }
+    return ok;
+}
+
+bool ArkWebHandlerWrapper::OnSetWindowBounds(int32_t x, int32_t y,
+                                             uint32_t w, uint32_t h, const std::string& state)
+{
+    ArkWebString stState = ArkWebStringClassToStruct(state);
+    bool ok = ark_web_handler_->OnSetWindowBounds(x, y, w, h, stState);
+    ArkWebStringStructRelease(stState);
+    return ok;
+}
 } // namespace OHOS::ArkWeb

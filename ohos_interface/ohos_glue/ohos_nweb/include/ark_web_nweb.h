@@ -2530,6 +2530,36 @@ public:
      */
     /*--ark web()--*/
     virtual void PutWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) = 0;
+
+    /**
+     * @brief Get the window bounds and state for CDP Browser domain.
+     *        Reads left/top/width/height and windowState of the ArkUI window
+     *        hosting this NWeb.
+     * @param x      Out: window left.
+     * @param y      Out: window top.
+     * @param w      Out: window width.
+     * @param h      Out: window height.
+     * @param state  Out: window state string.
+     * @return true on success, false if window unavailable or ownership mismatch.
+     */
+    /*--ark web()--*/
+    virtual bool GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                 ArkWebString& state) = 0;
+
+    /**
+     * @brief Set the window bounds and state for CDP Browser domain.
+     *        Applies left/top/width/height and/or windowState to the ArkUI
+     *        window hosting this NWeb.
+     * @param x      In: target window left.
+     * @param y      In: target window top.
+     * @param w      In: target window width.
+     * @param h      In: target window height.
+     * @param state  In: target window state. Empty means no state change.
+     * @return true on success, false if window unavailable or call failed.
+     */
+    /*--ark web()--*/
+    virtual bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                 const ArkWebString& state) = 0;
 };
 
 } // namespace OHOS::ArkWeb

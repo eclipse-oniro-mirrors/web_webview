@@ -948,6 +948,32 @@ public:
     void OnMonitoredBlankScreen(
         const std::string& url, int32_t reason,
         const std::string& extraMsg) override;
+
+    /**
+     * @brief Synchronous callback to get window bounds from the NWeb host.
+     *
+     * @param x output: x coordinate.
+     * @param y output: y coordinate.
+     * @param w output: width.
+     * @param h output: height.
+     * @param state output: window state ("normal"|"minimized"|"maximized"|"fullscreen").
+     * @return true if the host provided bounds.
+     */
+    bool OnGetWindowBounds(int32_t& x, int32_t& y,
+                           uint32_t& w, uint32_t& h, std::string& state) override;
+
+    /**
+     * @brief Synchronous callback to set window bounds on the NWeb host.
+     *
+     * @param x x coordinate.
+     * @param y y coordinate.
+     * @param w width.
+     * @param h height.
+     * @param state window state ("normal"|"minimized"|"maximized"|"fullscreen").
+     * @return true if the host accepted the request.
+     */
+    bool OnSetWindowBounds(int32_t x, int32_t y,
+                           uint32_t w, uint32_t h, const std::string& state) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

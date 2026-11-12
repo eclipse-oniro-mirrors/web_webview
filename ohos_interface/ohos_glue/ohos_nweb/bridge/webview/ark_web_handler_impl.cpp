@@ -1318,4 +1318,21 @@ void ArkWebHandlerImpl::OnColorChooserClose()
 {
     nweb_handler_->OnColorChooserClose();
 }
+
+bool ArkWebHandlerImpl::OnGetWindowBounds(int32_t& x, int32_t& y,
+                                          uint32_t& w, uint32_t& h, ArkWebString& state)
+{
+    std::string state_str;
+    bool ok = nweb_handler_->OnGetWindowBounds(x, y, w, h, state_str);
+    if (ok) {
+        state = ArkWebStringClassToStruct(state_str);
+    }
+    return ok;
+}
+
+bool ArkWebHandlerImpl::OnSetWindowBounds(int32_t x, int32_t y,
+                                          uint32_t w, uint32_t h, const ArkWebString& state)
+{
+    return nweb_handler_->OnSetWindowBounds(x, y, w, h, ArkWebStringStructToClass(state));
+}
 } // namespace OHOS::ArkWeb
