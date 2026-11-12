@@ -146,6 +146,10 @@ public:
 
     void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) override;
 
+    void SetOutputFdCallback(ArkWebOutputFdCallback callback) override;
+
+    void SetOOMDumpDecisionCallback(ArkWebOOMDumpDecisionCallback cb) override;
+
     /**
      * @brief Remove the visited link records of the current application that
      *        changed at or after the specified time point (inclusive).

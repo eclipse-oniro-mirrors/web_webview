@@ -191,6 +191,8 @@ public:
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);
+    bool InitBundlePath();
+    void RegisterOOMDumpCallbacks();
     void InitAppInfo();
     bool InitWebEngine();
 

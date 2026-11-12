@@ -29,6 +29,12 @@
 
 namespace OHOS::NWeb {
 
+// OOM dump decision callback (appkit provides; engine stores and invokes).
+// Called synchronously on the browser thread and serialized by the engine:
+// no locking is needed, but the implementation must not block.
+typedef bool (*OOMDumpDecisionCallback)(int32_t pid, bool needDecreaseQuota,
+                                        std::string& eventConfig);
+
 class OHOS_NWEB_EXPORT NWebEngine {
 public:
     virtual ~NWebEngine() = default;
@@ -165,6 +171,14 @@ public:
     virtual void SetWholeWebDrawing() = 0;
 
     virtual void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) {}
+
+    // OOM dump fd provider registration (webview implements; browser dump
+    // flow calls on demand, pull mode, one fd per event).
+    virtual void SetOutputFdCallback(int (*callback)(int32_t render_pid)) {}
+
+    // OOM dump decision callback registration. The callback is provided by
+    // appkit and injected here during engine initialization (NWebHelper::GetWebEngine).
+    virtual void SetOOMDumpDecisionCallback(OOMDumpDecisionCallback cb) {}
 
     /**
      * Remove the visited link records of the current application that changed
