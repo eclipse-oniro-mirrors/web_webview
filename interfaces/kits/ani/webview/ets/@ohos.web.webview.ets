@@ -926,6 +926,7 @@ export default namespace webview {
         native enableIntelligentTrackingPrevention(enable: boolean): void;
         native searchNext(forward: boolean): void;
         native static getDefaultUserAgent(): string;
+        native static getDefaultUserAgentLite(): string;
         native static removeAllCache(clearRom: boolean): void;
         native static removeVisitedLinksSincePromise(timeMs: double): Promise<void>;
         static removeVisitedLinksSince(date: Date, callback: Callback<void>): void {

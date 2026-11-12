@@ -18,8 +18,10 @@
 #include "parameters.h"
 #include "nweb_log.h"
 #include "json/json.h"
+#include <atomic>
 #include <cerrno>
 #include <cstring>
+#include <dlfcn.h>
 #include <dlfcn_ext.h>
 #include <fcntl.h>
 #include <fstream>
@@ -800,6 +802,173 @@ void* ArkWebBridgeHelperSharedInit(bool runMode, const std::string& mockBundlePa
     }
 
     return libFileHandler;
+}
+
+namespace {
+
+using ArkWebVersionSymbolFunc = const char* (*)();
+
+const char* const ARK_WEB_VERSION_SYMBOL_NAME = "GetArkWebVersionString";
+const char* const CHROME_COMPATIBLE_VERSION_SYMBOL_NAME = "GetChromeCompatibleVersionString";
+
+void* g_engineVersionLibHandler = nullptr;
+ArkWebVersionSymbolFunc g_engineVersionSymbolFunc = nullptr;
+ArkWebVersionResolveResult g_engineVersionCacheResult = ArkWebVersionResolveResult::OK;
+std::atomic<bool> g_engineVersionResolved { false };
+std::mutex g_engineVersionMutex;
+
+ArkWebVersionSymbolFunc g_chromeVersionSymbolFunc = nullptr;
+ArkWebVersionResolveResult g_chromeVersionCacheResult = ArkWebVersionResolveResult::OK;
+std::atomic<bool> g_chromeVersionResolved { false };
+
+// Injectable seams for unit tests: when non-null they replace the real
+// dlopen/dlsym path. Production code never assigns them.
+void* (*g_engineVersionLibOpener)() = nullptr;
+void* (*g_engineVersionSymbolResolver)(void* libHandler) = nullptr;
+void* (*g_chromeVersionSymbolResolver)(void* libHandler) = nullptr;
+
+void* OpenEngineLibForVersion()
+{
+    std::string libDirPath = GetArkwebLibPath();
+    std::string libNsName = GetArkwebNameSpace();
+#ifdef __MUSL__
+    // Same namespace inheritance and open mode as engine loading, so a later
+    // engine initialization re-uses the same mapping instead of loading twice.
+    return ArkWebBridgeHelperLoadLibFile(
+        RTLD_NOW | RTLD_GLOBAL, libNsName, libDirPath, ARK_WEB_ENGINE_LIB_NAME);
+#else
+    return ArkWebBridgeHelperLoadLibFile(RTLD_NOW, libDirPath + "/" + ARK_WEB_ENGINE_LIB_NAME);
+#endif
+}
+
+void* ResolveEngineVersionSymbol(void* libHandler)
+{
+    return dlsym(libHandler, ARK_WEB_VERSION_SYMBOL_NAME);
+}
+
+void* ResolveChromeVersionSymbol(void* libHandler)
+{
+    return dlsym(libHandler, CHROME_COMPATIBLE_VERSION_SYMBOL_NAME);
+}
+
+void ResolveEngineVersionLocked()
+{
+    void* libHandler = g_engineVersionLibOpener != nullptr ? g_engineVersionLibOpener()
+                                                           : OpenEngineLibForVersion();
+    if (libHandler == nullptr) {
+        WVLOG_E("failed to open %{public}s for version string", ARK_WEB_ENGINE_LIB_NAME.c_str());
+        g_engineVersionLibHandler = nullptr;
+        g_engineVersionSymbolFunc = nullptr;
+        g_engineVersionCacheResult = ArkWebVersionResolveResult::LIB_OPEN_FAILURE;
+        g_engineVersionResolved.store(true, std::memory_order_release);
+        return;
+    }
+
+    g_engineVersionLibHandler = libHandler;
+    void* symbol = g_engineVersionSymbolResolver != nullptr
+        ? g_engineVersionSymbolResolver(libHandler)
+        : ResolveEngineVersionSymbol(libHandler);
+    if (symbol == nullptr) {
+        WVLOG_E("failed to resolve %{public}s from %{public}s",
+            ARK_WEB_VERSION_SYMBOL_NAME, ARK_WEB_ENGINE_LIB_NAME.c_str());
+        g_engineVersionSymbolFunc = nullptr;
+        g_engineVersionCacheResult = ArkWebVersionResolveResult::SYMBOL_NOT_FOUND;
+        g_engineVersionResolved.store(true, std::memory_order_release);
+        return;
+    }
+
+    g_engineVersionSymbolFunc = reinterpret_cast<ArkWebVersionSymbolFunc>(symbol);
+    g_engineVersionCacheResult = ArkWebVersionResolveResult::OK;
+    g_engineVersionResolved.store(true, std::memory_order_release);
+}
+
+void ResolveChromeVersionLocked()
+{
+    // Reuse the library handle resolved by the ArkWeb version path when it is
+    // already open, to avoid a second dlopen of libarkweb_engine.so. When the
+    // handle is not yet available, open the library here; on success the handle
+    // is published so the ArkWeb version path can reuse it as well.
+    void* libHandler = g_engineVersionLibHandler;
+    if (libHandler == nullptr) {
+        libHandler = g_engineVersionLibOpener != nullptr ? g_engineVersionLibOpener()
+                                                         : OpenEngineLibForVersion();
+    }
+    if (libHandler == nullptr) {
+        WVLOG_E("failed to open %{public}s for chrome version string",
+            ARK_WEB_ENGINE_LIB_NAME.c_str());
+        g_chromeVersionSymbolFunc = nullptr;
+        g_chromeVersionCacheResult = ArkWebVersionResolveResult::LIB_OPEN_FAILURE;
+        g_chromeVersionResolved.store(true, std::memory_order_release);
+        return;
+    }
+
+    g_engineVersionLibHandler = libHandler;
+    void* symbol = g_chromeVersionSymbolResolver != nullptr
+        ? g_chromeVersionSymbolResolver(libHandler)
+        : ResolveChromeVersionSymbol(libHandler);
+    if (symbol == nullptr) {
+        WVLOG_E("failed to resolve %{public}s from %{public}s",
+            CHROME_COMPATIBLE_VERSION_SYMBOL_NAME, ARK_WEB_ENGINE_LIB_NAME.c_str());
+        g_chromeVersionSymbolFunc = nullptr;
+        g_chromeVersionCacheResult = ArkWebVersionResolveResult::SYMBOL_NOT_FOUND;
+        g_chromeVersionResolved.store(true, std::memory_order_release);
+        return;
+    }
+
+    g_chromeVersionSymbolFunc = reinterpret_cast<ArkWebVersionSymbolFunc>(symbol);
+    g_chromeVersionCacheResult = ArkWebVersionResolveResult::OK;
+    g_chromeVersionResolved.store(true, std::memory_order_release);
+}
+
+} // namespace
+
+std::string GetArkWebVersionStringFromEngine()
+{
+    std::string versionString;
+    GetArkWebVersionStringFromEngine(versionString);
+    return versionString;
+}
+
+ArkWebVersionResolveResult GetArkWebVersionStringFromEngine(std::string& versionString)
+{
+    versionString.clear();
+    if (!g_engineVersionResolved.load(std::memory_order_acquire)) {
+        std::lock_guard<std::mutex> lock(g_engineVersionMutex);
+        if (!g_engineVersionResolved.load(std::memory_order_relaxed)) {
+            ResolveEngineVersionLocked();
+        }
+    }
+    if (g_engineVersionSymbolFunc == nullptr) {
+        return g_engineVersionCacheResult;
+    }
+    versionString = g_engineVersionSymbolFunc();
+    return ArkWebVersionResolveResult::OK;
+}
+
+std::string GetChromeCompatibleVersionStringFromEngine()
+{
+    std::string versionString;
+    GetChromeCompatibleVersionStringFromEngine(versionString);
+    return versionString;
+}
+
+ArkWebVersionResolveResult GetChromeCompatibleVersionStringFromEngine(std::string& versionString)
+{
+    versionString.clear();
+    if (!g_chromeVersionResolved.load(std::memory_order_acquire)) {
+        // Share g_engineVersionMutex with ResolveEngineVersionLocked so that
+        // g_engineVersionLibHandler (written by both resolve paths) is always
+        // accessed under the same lock, eliminating a cross-mutex data race.
+        std::lock_guard<std::mutex> lock(g_engineVersionMutex);
+        if (!g_chromeVersionResolved.load(std::memory_order_relaxed)) {
+            ResolveChromeVersionLocked();
+        }
+    }
+    if (g_chromeVersionSymbolFunc == nullptr) {
+        return g_chromeVersionCacheResult;
+    }
+    versionString = g_chromeVersionSymbolFunc();
+    return ArkWebVersionResolveResult::OK;
 }
 
 #if (defined(webview_arm64) && !defined(ASAN_DETECTOR))
