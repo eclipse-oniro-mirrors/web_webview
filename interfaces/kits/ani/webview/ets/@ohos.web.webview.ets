@@ -933,6 +933,9 @@ export default namespace webview {
             WebviewController.removeVisitedLinksSincePromise(date.getTime()).then((): undefined => {
                 callback(undefined);
                 return undefined;
+            }).catch((error: Error): undefined => {
+                console.error(`removeVisitedLinksSince failed: ${error.message}`);
+                return undefined;
             });
             return;
         }
