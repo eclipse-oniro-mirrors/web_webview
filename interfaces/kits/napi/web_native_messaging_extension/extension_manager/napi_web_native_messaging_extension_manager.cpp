@@ -153,13 +153,13 @@ static void TransformOnFailedErrorCode(int32_t innerErrorCode, int32_t& jsCode, 
 
 static bool InvokeConnectNativeCallback(NapiExtensionConnectionCallbackParam* param)
 {
+    if (!param) {
+        WNMLOG_E("param is invalid");
+        return false;
+    }
     NApiScope scope(param->env_);
     if (!scope.IsVaild()) {
         WNMLOG_E("scope is null");
-        return false;
-    }
-    if (!param) {
-        WNMLOG_E("param is invalid");
         return false;
     }
     int32_t paramNum = INTEGER_ONE;
