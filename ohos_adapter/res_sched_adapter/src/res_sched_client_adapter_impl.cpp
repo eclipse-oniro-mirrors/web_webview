@@ -116,7 +116,7 @@ constexpr int32_t PRELOAD_RENDER_SCENE_ID = 1010;
 
 std::string GetUidString()
 {
-    static std::string uidString = std::to_string(getuid());
+    static std::string uidString = std::to_string(getappuid());
     return uidString;
 }
 
@@ -292,7 +292,7 @@ bool ResSchedClientAdapter::ReportKeyThread(
     // Report process creation event first when render process is created
     if (pid == tid) {
         mapPayload["processType"] = std::to_string(static_cast<uint32_t>(AppExecFwk::ProcessType::RENDER));
-        mapPayload["bundleName"] = GetBundleNameByUid(getuid());
+        mapPayload["bundleName"] = GetBundleNameByUid(getappuid());
     }
 
     ResSchedClient::GetInstance().ReportData(ResType::RES_TYPE_REPORT_KEY_THREAD, status, mapPayload);
@@ -326,7 +326,7 @@ bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter,
         return false;
     }
 
-    uid_t uid = getuid();
+    uid_t uid = getappuid();
     std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
         { PID, std::to_string(pid) }, { TID, std::to_string(tid) } };
     WVLOG_D("ReportAudioData status: %{public}d, uid: %{public}d, pid: %{public}d, tid:%{public}d",
@@ -476,7 +476,7 @@ bool ResSchedClientAdapter::ReportScreenCapture(ResSchedStatusAdapter statusAdap
         return false;
     }
 
-    uid_t uid = getuid();
+    uid_t uid = getappuid();
     std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
         { PID, std::to_string(pid) } };
     WVLOG_D("ReportScreenCapture status: %{public}d, uid: %{public}d, pid: %{public}d",
@@ -495,7 +495,7 @@ bool ResSchedClientAdapter::ReportVideoPlaying(ResSchedStatusAdapter statusAdapt
         return false;
     }
 
-    uid_t uid = getuid();
+    uid_t uid = getappuid();
     std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
         { PID, std::to_string(pid) } };
     WVLOG_D("ReportVideoPlaying status: %{public}d, uid: %{public}d, pid: %{public}d",
@@ -514,7 +514,7 @@ bool ResSchedClientAdapter::ReportSubwindowCall(ResSchedStatusAdapter statusAdap
         return false;
     }
 
-    uid_t uid = getuid();
+    uid_t uid = getappuid();
     std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
         { PID, std::to_string(pid) }, { TID, std::to_string(tid) } };
     WVLOG_D("ReportSubwindowCall status: %{public}d, uid: %{public}d, pid: %{public}d, tid:%{public}d",

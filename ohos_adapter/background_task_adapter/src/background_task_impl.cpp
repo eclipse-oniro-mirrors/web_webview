@@ -53,7 +53,7 @@ BackgroundMode::Type ConvertBackgroundMode(BackgroundModeAdapter mode)
 
 bool BackgroundTaskAdapter::RequestBackgroundRunning(bool running, BackgroundModeAdapter bgMode)
 {
-    auto uid = getuid();
+    auto uid = getappuid();
     WVLOG_I("RequestBackgroundRunning uid: %{public}d, running: %{public}d", uid, running);
     ContinuousTaskParamForInner taskParam { uid, ConvertBackgroundMode(bgMode), running };
     ErrCode errCode = BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam);
@@ -97,7 +97,7 @@ BackgroundTaskAdapterImpl::BackgroundTaskAdapterImpl()
 
 bool BackgroundTaskAdapterImpl::RequestBackgroundTaskRunning(bool running, BackgroundModeAdapter bgMode)
 {
-    auto uid = getuid();
+    auto uid = getappuid();
     WVLOG_I("RequestBackgroundTaskRunning uid: %{public}d, running: %{public}d", uid, running);
     ContinuousTaskParamForInner taskParam { uid, ConvertBackgroundMode(bgMode), running };
     ErrCode errCode = BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam);
