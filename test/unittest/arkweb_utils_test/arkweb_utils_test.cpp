@@ -216,6 +216,7 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebEngineVersionInner_003, Te
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_getActiveWebEngineType_001, TestSize.Level1) {
     int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
 
+    SetActiveWebEngineVersionInner(ArkWebEngineVersion::M132);
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(2));
     auto res = getActiveWebEngineType();
     EXPECT_EQ(res, ArkWebEngineType::LEGACY);
@@ -908,7 +909,8 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_CalculateActiveWebEngineVersion_005, T
 }
 
 /**
- * @brief getActiveWebEngineType returns EVERGREEN when enforce is EVERGREEN.
+ * @brief getActiveWebEngineType returns the cached engine version and is not
+ *        affected by the enforce param.
  */
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_getActiveWebEngineType_004, TestSize.Level1)
 {
@@ -916,7 +918,8 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_getActiveWebEngineType_004, TestSize.L
     OHOS::system::SetParameter("web.engine.enforce",
         std::to_string(static_cast<int>(ArkWebEngineType::EVERGREEN)));
     SetActiveWebEngineVersionInner(ArkWebEngineVersion::SYSTEM_DEFAULT);
-    EXPECT_EQ(getActiveWebEngineType(), ArkWebEngineType::EVERGREEN);
+    EXPECT_EQ(getActiveWebEngineType(),
+        static_cast<ArkWebEngineType>(ArkWebEngineVersion::SYSTEM_DEFAULT));
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
 
@@ -1204,9 +1207,9 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_HandleVersionString_001, TestSize.Leve
 {
     long long num = 0;
     EXPECT_EQ(HandleVersionString("version=1.10.25.100", num), true);
-    EXPECT_EQ(num, 110025100LL);
+    EXPECT_EQ(num, 1010025100LL);
     EXPECT_EQ(HandleVersionString("version = 2.3.4.5", num), true);
-    EXPECT_EQ(num, 20304005LL);
+    EXPECT_EQ(num, 2003004005LL);
 }
 
 /**

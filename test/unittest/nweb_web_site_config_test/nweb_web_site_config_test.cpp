@@ -197,9 +197,14 @@ TEST_F(WebSiteConfigCallbackImplTest, Query_NormalResult_002)
     EXPECT_CALL(*mock_callback, QueryWebSiteConfig(_))
         .WillOnce(Return(mock_result));
 
+    ArkWebRefPtr<ArkWebWebSiteConfigParams> params(new FakeArkWebWebSiteConfigParams(
+        TEST_URL, static_cast<int32_t>(NWebWebSiteSource::WEB_PAGE), true,
+        TEST_TOP_FRAME_URL, std::vector<std::string>{"https://a.com", "https://b.com"},
+        TEST_REFERRER, TEST_PAGE_TRANSITION));
+
     ArkWebWebSiteConfigCallbackImpl impl(mock_callback);
     ArkWebRefPtr<ArkWebWebSiteConfigResult> ark_result =
-        impl.QueryWebSiteConfig(nullptr);
+        impl.QueryWebSiteConfig(params);
     ASSERT_NE(ark_result.get(), nullptr);
     ArkWebString ua = ark_result->UserAgent();
     std::string ua_str = ArkWebStringStructToClass(ua);
@@ -220,9 +225,13 @@ TEST_F(WebSiteConfigCallbackImplTest, Query_NullResult_003)
     EXPECT_CALL(*mock_callback, QueryWebSiteConfig(_))
         .WillOnce(Return(nullptr));
 
+    ArkWebRefPtr<ArkWebWebSiteConfigParams> params(new FakeArkWebWebSiteConfigParams(
+        std::string(), static_cast<int32_t>(NWebWebSiteSource::OTHER), false,
+        std::string(), std::vector<std::string>(), std::string(), 0));
+
     ArkWebWebSiteConfigCallbackImpl impl(mock_callback);
     ArkWebRefPtr<ArkWebWebSiteConfigResult> ark_result =
-        impl.QueryWebSiteConfig(nullptr);
+        impl.QueryWebSiteConfig(params);
     EXPECT_EQ(ark_result.get(), nullptr);
 }
 
