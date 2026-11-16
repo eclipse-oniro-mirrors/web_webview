@@ -47,6 +47,10 @@ public:
 
     bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue) override;
 
+    bool IsQuickTranslateAvailable() override;
+
+    bool RequestQuickTranslate() override;
+
 private:
     ArkWebRefPtr<ArkIMFAdapter> ctocpp_;
 };

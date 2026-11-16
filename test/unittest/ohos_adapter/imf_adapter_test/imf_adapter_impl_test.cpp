@@ -810,4 +810,38 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_019, TestSize.Lev
     g_imf->OnCursorUpdate(abnormalCursorInfo);
     EXPECT_TRUE(true);
 }
+/**
+ * @tc.name: PanelStatusPreservesVisibilityAndManualHide
+ * @tc.desc: Only an IME-app hide is treated as a manual close; all status updates preserve visibility.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebIMFAdapterTest, PanelStatusPreservesVisibilityAndManualHide, TestSize.Level1)
+{
+    class PanelListener final : public IMFTextListenerTest {
+    public:
+        void WebSetImeShow(bool visible) override { visible_ = visible; ++updates_; }
+        void KeyboardUpperRightCornerHide() override { ++manualHides_; }
+        bool visible_ = false;
+        int32_t updates_ = 0;
+        int32_t manualHides_ = 0;
+    };
+    auto listener = std::make_shared<PanelListener>();
+    IMFTextListenerAdapterImpl adapter(listener);
+    MiscServices::PanelStatusInfo info;
+    info.trigger = MiscServices::Trigger::IME_APP;
+    info.visible = true;
+    adapter.NotifyPanelStatusInfo(info);
+    EXPECT_TRUE(listener->visible_);
+    EXPECT_EQ(listener->manualHides_, 0);
+    info.visible = false;
+    adapter.NotifyPanelStatusInfo(info);
+    EXPECT_FALSE(listener->visible_);
+    EXPECT_EQ(listener->manualHides_, 1);
+    info.trigger = MiscServices::Trigger::IMF;
+    adapter.NotifyPanelStatusInfo(info);
+    EXPECT_FALSE(listener->visible_);
+    EXPECT_EQ(listener->manualHides_, 1);
+    EXPECT_EQ(listener->updates_, 3);
+}
+
 } // namespace OHOS::NWeb

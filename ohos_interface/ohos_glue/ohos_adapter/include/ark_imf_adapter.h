@@ -206,6 +206,13 @@ public:
 
     /*--ark web()--*/
     virtual bool SendPrivateCommand(const ArkWebString& commandKey, const ArkWebString& commandValue) = 0;
+
+    /*--ark web()--*/
+    virtual bool IsQuickTranslateAvailable() = 0;
+
+    /*--ark web()--*/
+    virtual bool RequestQuickTranslate() = 0;
+
 };
 
 } // namespace OHOS::ArkWeb

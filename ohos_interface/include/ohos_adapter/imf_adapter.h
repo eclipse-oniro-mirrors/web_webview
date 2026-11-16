@@ -246,6 +246,19 @@ public:
     {
         return false;
     }
+
+    // Query the current IME for this adapter. Older implementations hide the entry.
+    virtual bool IsQuickTranslateAvailable()
+    {
+        return false;
+    }
+
+    // Use the input session owned by this adapter; IMF performs final validation.
+    virtual bool RequestQuickTranslate()
+    {
+        return false;
+    }
+
 };
 
 } // namespace OHOS::NWeb
