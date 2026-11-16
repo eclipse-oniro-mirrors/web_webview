@@ -114,6 +114,12 @@ const DialogComponentType = {
   SeekComponent: 1
 }
 
+// HandednessFollowMode enum, aligned with @ohos.arkui.dialog since API 26.1.0.
+const HandednessFollowMode = {
+  NONE: 0,
+  FOLLOW_ANCHOR: 1
+}
+
 // Component display type enum.
 const VideoPlayerComponentDisplayType = {
   HIDDEN: 0, // Hide all components.
@@ -2818,7 +2824,17 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
     onShowFileSelectorEvent = callback;
     let currentDevice = deviceinfo.deviceType.toLowerCase();
     if (needShowDialog(callback.fileparam)) {
-      promptAction.openCustomDialog({
+      let webHandednessMode = callback.adaptToHandedness;
+      if (webHandednessMode !== HandednessFollowMode.FOLLOW_ANCHOR) {
+        webHandednessMode = HandednessFollowMode.NONE;
+      }
+      let focusedElementRect = callback.focusedElementRect;
+      if (webHandednessMode === HandednessFollowMode.FOLLOW_ANCHOR &&
+        (!focusedElementRect || !(focusedElementRect.width > 0) || !(focusedElementRect.height > 0))) {
+        webHandednessMode = HandednessFollowMode.NONE;
+      }
+      let dialogOptions = {
+        adaptToHandedness: webHandednessMode,
         builder: () => {
           ViewPU.create(new SelectorDialog(undefined, { callback: callback }));
         },
@@ -2835,7 +2851,8 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
           }
           onShowFileSelectorEvent = undefined;
         }
-      }).then((dialogId) => {
+      };
+      promptAction.openCustomDialog(dialogOptions).then((dialogId) => {
         customDialogComponentId = dialogId;
       })
         .catch((error) => {

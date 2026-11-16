@@ -156,6 +156,7 @@ enum ArkWebBridgeType {
     ARK_WEB_WEB_SITE_CONFIG_PARAMS = 135,
     ARK_WEB_WEB_SITE_CONFIG_RESULT = 136,
     ARK_WEB_WEB_SITE_CONFIG_CALLBACK = 137,
+    ARK_WEB_RECT = 138,
     /*Note: The end of nweb interface bridge type*/
     ARK_WEB_NWEB_INTERFACE_BUTT,
 
