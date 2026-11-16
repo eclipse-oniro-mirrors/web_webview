@@ -34,7 +34,6 @@
 #include "hisysevent_adapter_impl.h"
 #include "hitrace_adapter_impl.h"
 #include "hiviewdfx_adapter_impl.h"
-#include "perf_monitor_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
 #if defined(NWEB_MEDIA_AVSESSION_ENABLE)
@@ -416,10 +415,6 @@ SurfaceTransactionAdapter& OhosAdapterHelperImpl::GetSurfaceTransactionAdapter()
 {
     return SurfaceTransactionAdapterImpl::GetInstance();
 }
-
-PerfMonitorAdapter& OhosAdapterHelperImpl::GetPerfMonitorAdapterInstance()
-{
-    return PerfMonitorAdapterImpl::GetInstance();
 
 std::unique_ptr<VpeVideoAdapter> OhosAdapterHelperImpl::CreateVpeVideoAdapter()
 {

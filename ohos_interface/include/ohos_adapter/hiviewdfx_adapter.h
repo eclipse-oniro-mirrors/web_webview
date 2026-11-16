@@ -30,6 +30,10 @@ public:
 
     virtual uint64_t DfxCollectAsyncStack() = 0;
 
+    virtual void WebComponentLoad(int64_t navigationId) = 0;
+
+    virtual void WebContentPaintComplete(int64_t navigationId,
+							             int64_t largestContentPaintTime) = 0;
 protected:
     HiViewDfxAdapter() = default;
 

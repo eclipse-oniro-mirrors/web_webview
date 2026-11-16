@@ -65,7 +65,6 @@
 #include "vpe_video_adapter.h"
 #include "sensor_adapter.h"
 #include "background_task_adapter.h"
-#include "perf_monitor_adapter.h"
 
 namespace OHOS::NWeb {
 
@@ -185,8 +184,6 @@ public:
     virtual std::unique_ptr<VpeVideoAdapter> CreateVpeVideoAdapter() { return nullptr; }
 
     virtual HiViewDfxAdapter& GetHiViewDfxAdapterInstance() = 0;
-    
-    virtual PerfMonitorAdapter& GetPerfMonitorAdapterInstance() = 0;
 };
 
 } // namespace OHOS::NWeb

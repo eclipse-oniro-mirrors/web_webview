@@ -106,7 +106,8 @@
                 "ace_engine",
                 "egl",
                 "opengles",
-                "faultloggerd"
+                "faultloggerd",
+                "hiview"
             ]
         },
         "build": {
