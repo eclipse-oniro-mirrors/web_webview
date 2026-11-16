@@ -258,7 +258,6 @@ public:
     {
         return false;
     }
-
 };
 
 } // namespace OHOS::NWeb

@@ -212,7 +212,6 @@ public:
 
     /*--ark web()--*/
     virtual bool RequestQuickTranslate() = 0;
-
 };
 
 } // namespace OHOS::ArkWeb
