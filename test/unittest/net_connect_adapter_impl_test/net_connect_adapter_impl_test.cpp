@@ -42,10 +42,29 @@ int32_t g_getNetProp = 0;
 int32_t g_getAllNets = 0;
 int32_t g_specified_net_id = 100;
 int32_t g_vpnCount = 0;
+int32_t g_bearerMode = 0;
+bool g_emptyDns = false;
+bool g_networkStateValid = false;
+bool g_subscribeCommonEventRet = true;
+bool g_unSubscribeCommonEventRet = true;
 using Want = OHOS::AAFwk::Want;
 const int32_t DEFAULT_VALUE = -1;
 const int32_t TEST_BEARER_VPN = 4;
+const int32_t BEARER_MODE_MIXED = 0;
+const int32_t BEARER_MODE_EMPTY = 1;
+const int32_t BEARER_MODE_WIFI_ONLY = 2;
 }
+
+namespace EventFwk {
+bool CommonEventManager::SubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber>& subscriber)
+{
+    return g_subscribeCommonEventRet;
+}
+bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber>& subscriber)
+{
+    return g_unSubscribeCommonEventRet;
+}
+} // namespace EventFwk
 
 namespace NetManagerStandard {
 int32_t NetConnClient::RegisterNetConnCallback(const sptr<INetConnCallback> callback)
@@ -62,8 +81,12 @@ int32_t NetConnClient::GetDefaultNet(NetHandle &nethamdle)
 }
 int32_t NetConnClient::GetNetCapabilities(const NetHandle &nethamdle, NetAllCapabilities &netAllCap)
 {
-    netAllCap.bearerTypes_.insert(NetBearType::BEARER_WIFI);
-    netAllCap.bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
+    if (g_bearerMode == BEARER_MODE_MIXED) {
+        netAllCap.bearerTypes_.insert(NetBearType::BEARER_WIFI);
+        netAllCap.bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
+    } else if (g_bearerMode == BEARER_MODE_WIFI_ONLY) {
+        netAllCap.bearerTypes_.insert(NetBearType::BEARER_WIFI);
+    }
     if (g_vpnCount != 0) {
         netAllCap.bearerTypes_.insert(NetBearType::BEARER_VPN);
     }
@@ -71,7 +94,7 @@ int32_t NetConnClient::GetNetCapabilities(const NetHandle &nethamdle, NetAllCapa
 }
 int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLinkInfo &netLinkInfo)
 {
-    if (g_getNetProp != 0) {
+    if (g_getNetProp != 0 || g_emptyDns) {
         return g_getNetProp;
     }
     INetAddr dns;
@@ -101,6 +124,15 @@ namespace Telephony {
 int32_t CellularDataClient::GetDefaultCellularDataSlotId()
 {
     return g_slotId;
+}
+int32_t CoreServiceClient::GetNetworkState(int32_t slotId, sptr<NetworkState>& networkState)
+{
+    if (g_networkStateValid) {
+        networkState = sptr<NetworkState>(new NetworkState);
+        return 0;
+    }
+    networkState = nullptr;
+    return -1;
 }
 }
 
@@ -387,6 +419,143 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_008, TestSize.Leve
     EventFwk::CommonEventData data4(want);
     data4.SetCode(NetManagerStandard::NetConnState::NET_CONN_STATE_DISCONNECTED);
     subscribe->OnReceiveEvent(data4);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_009.
+ * @tc.desc: test OnReceiveEvent with null listener and unknown code.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_009, TestSize.Level1)
+{
+    EventFwk::CommonEventSubscribeInfo in;
+    std::shared_ptr<NetVPNEventSubscriber> subscribeNullCb = std::make_shared<NetVPNEventSubscriber>(in, nullptr);
+    EXPECT_NE(subscribeNullCb, nullptr);
+    Want want;
+    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_CONNECTIVITY_CHANGE);
+    want.SetParam("NetType", TEST_BEARER_VPN);
+    EventFwk::CommonEventData data(want);
+    data.SetCode(NetManagerStandard::NetConnState::NET_CONN_STATE_CONNECTED);
+    subscribeNullCb->OnReceiveEvent(data);
+
+    std::shared_ptr<VpnListenerTest> cb = std::make_shared<VpnListenerTest>();
+    std::shared_ptr<NetVPNEventSubscriber> subscribe = std::make_shared<NetVPNEventSubscriber>(in, cb);
+    EventFwk::CommonEventData data1(want);
+    data1.SetCode(static_cast<int32_t>(NetManagerStandard::NetConnState::NET_CONN_STATE_IDLE));
+    subscribe->OnReceiveEvent(data1);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_010.
+ * @tc.desc: test RegisterNetConnCallback when netmanager register failed.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_010, TestSize.Level1)
+{
+    std::shared_ptr<NetConnCallbackTest> cb = std::make_shared<NetConnCallbackTest>();
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    EXPECT_NE(netConnectAdapterImpl, nullptr);
+    g_regNetConnCallback = -1;
+    EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(cb), -1);
+    g_regNetConnCallback = static_cast<int32_t>(NETMANAGER_SUCCESS);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_011.
+ * @tc.desc: test GetDefaultNetConnect with empty/wifi-only bearer and valid network state.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_011, TestSize.Level1)
+{
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    NetConnectType type = NetConnectType::CONNECTION_UNKNOWN;
+    NetConnectSubtype subtype = NetConnectSubtype::SUBTYPE_UNKNOWN;
+    g_getDefaultNet = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetCap = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_slotId = 0;
+
+    g_bearerMode = BEARER_MODE_EMPTY;
+    EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), 0);
+
+    g_bearerMode = BEARER_MODE_WIFI_ONLY;
+    EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), 0);
+
+    g_bearerMode = BEARER_MODE_MIXED;
+    g_networkStateValid = true;
+    EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), 0);
+    g_networkStateValid = false;
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_012.
+ * @tc.desc: test GetDnsServers with empty dns list.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_012, TestSize.Level1)
+{
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    g_getDefaultNet = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetProp = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_emptyDns = true;
+    std::vector<std::string> dns_servers = netConnectAdapterImpl->GetDnsServers();
+    EXPECT_EQ(dns_servers.size(), 0);
+    g_emptyDns = false;
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_013.
+ * @tc.desc: test HasVpnTransport and GetDnsServersForVpn when GetNetCapabilities failed.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_013, TestSize.Level1)
+{
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    g_getAllNets = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetCap = -1;
+    EXPECT_FALSE(netConnectAdapterImpl->HasVpnTransport());
+    std::vector<std::string> dns_servers = netConnectAdapterImpl->GetDnsServersForVpn();
+    EXPECT_EQ(dns_servers.size(), 0);
+    g_getNetCap = static_cast<int32_t>(NETMANAGER_SUCCESS);
+
+    g_getAllNets = -1;
+    dns_servers = netConnectAdapterImpl->GetDnsServersByNetId(100);
+    EXPECT_EQ(dns_servers.size(), 0);
+    g_getAllNets = static_cast<int32_t>(NETMANAGER_SUCCESS);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_014.
+ * @tc.desc: test RegisterVpnListener/UnRegisterVpnListener subscribe result branches.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_014, TestSize.Level1)
+{
+    std::shared_ptr<VpnListenerTest> cb = std::make_shared<VpnListenerTest>();
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    EXPECT_NE(netConnectAdapterImpl, nullptr);
+    g_getAllNets = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetProp = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetCap = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_vpnCount = 1;
+
+    g_subscribeCommonEventRet = false;
+    netConnectAdapterImpl->RegisterVpnListener(cb);
+    g_subscribeCommonEventRet = true;
+
+    // commonEventSubscriber_ is already registered.
+    netConnectAdapterImpl->RegisterVpnListener(cb);
+
+    g_unSubscribeCommonEventRet = false;
+    netConnectAdapterImpl->UnRegisterVpnListener();
+    g_unSubscribeCommonEventRet = true;
+    netConnectAdapterImpl->UnRegisterVpnListener();
+    g_vpnCount = 0;
 }
 }
 }

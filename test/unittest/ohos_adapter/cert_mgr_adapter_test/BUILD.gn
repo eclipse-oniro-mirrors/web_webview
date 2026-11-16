@@ -44,6 +44,7 @@ ohos_unittest("cert_mgr_adapter_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "init:libbegetutil",
+    "netmanager_base:net_security_config_if",
     "netstack:net_ssl",
     "cJSON:cjson",
   ]

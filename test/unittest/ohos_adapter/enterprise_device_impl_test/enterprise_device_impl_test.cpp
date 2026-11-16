@@ -148,5 +148,24 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, 
     result->OnReceiveEvent(test);
 }
 #endif
+
+/**
+ * @tc.name: EnterpriseDeviceImplTest_OnReceiveEvent_003
+ * @tc.desc: OnReceiveEvent with null event callback.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
+HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_003, TestSize.Level2)
+{
+    Want want;
+    want.SetAction("com.ohos.edm.browserpolicychanged");
+    OHOS::EventFwk::CommonEventData data(want);
+    OHOS::EventFwk::CommonEventSubscribeInfo in;
+    std::shared_ptr<NWebEdmEventSubscriber> result = std::make_shared<NWebEdmEventSubscriber>(in, nullptr);
+    EXPECT_NE(result, nullptr);
+    result->OnReceiveEvent(data);
+}
+#endif
 }
 } // namespace OHOS
