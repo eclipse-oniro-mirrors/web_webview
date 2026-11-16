@@ -108,6 +108,13 @@ public:
 
     MOCK_METHOD(int, Write, (const std::string&, EventType,
     (const std::tuple<const int32_t, const int32_t>&)), (override));
+
+    MOCK_METHOD(int, WriteMixedTypes, (const std::string&, EventType,
+    (const std::tuple<const std::string, const std::string, const std::string, const int32_t,
+    const std::string, const int32_t, const std::string, const std::string,
+    const std::string, const std::string, const std::string, const std::string,
+    const std::string, const std::string, const std::string, const std::string,
+    const std::string, const std::string, const std::string, const std::string>&)), (override));
 };
 
 class ArkHiSysEventAdapterImplTest : public testing::Test
@@ -516,5 +523,44 @@ TEST_F(ArkHiSysEventAdapterImplTest, Write15)
         testing::A<const std::tuple<const int32_t, const int32_t>&>()))
         .WillOnce(testing::Return(0));
     int result = adapterImpl->Write(eventName, type, reason, count);
+    EXPECT_EQ(result, 0);
+}
+TEST_F(ArkHiSysEventAdapterImplTest, Write16)
+{
+    ArkWebString eventName = ArkWebStringClassToStruct("testEvent");
+    uint32_t type = 2;
+    ArkWebString key1 = ArkWebStringClassToStruct("TYPE");
+    ArkWebString value1 = ArkWebStringClassToStruct("OOM");
+    ArkWebString key2 = ArkWebStringClassToStruct("PID");
+    int32_t value2 = 12345;
+    ArkWebString key3 = ArkWebStringClassToStruct("TID");
+    int32_t value3 = 12346;
+    ArkWebString key4 = ArkWebStringClassToStruct("RSS");
+    ArkWebString value4 = ArkWebStringClassToStruct("1024");
+    ArkWebString key5 = ArkWebStringClassToStruct("PSS");
+    ArkWebString value5 = ArkWebStringClassToStruct("2048");
+    ArkWebString key6 = ArkWebStringClassToStruct("JS_HEAP_TOTAL");
+    ArkWebString value6 = ArkWebStringClassToStruct("512");
+    ArkWebString key7 = ArkWebStringClassToStruct("JS_HEAP_USED");
+    ArkWebString value7 = ArkWebStringClassToStruct("256");
+    ArkWebString key8 = ArkWebStringClassToStruct("GPU_MEM");
+    ArkWebString value8 = ArkWebStringClassToStruct("0");
+    ArkWebString key9 = ArkWebStringClassToStruct("URL");
+    ArkWebString value9 = ArkWebStringClassToStruct("https://test");
+    ArkWebString key10 = ArkWebStringClassToStruct("EVENT_CONFIG");
+    ArkWebString value10 = ArkWebStringClassToStruct("");
+    EXPECT_CALL(*mockAdapter, WriteMixedTypes(
+        testing::_,
+        testing::_,
+        testing::A<const std::tuple<const std::string, const std::string, const std::string, const int32_t,
+            const std::string, const int32_t, const std::string, const std::string,
+            const std::string, const std::string, const std::string, const std::string,
+            const std::string, const std::string, const std::string, const std::string,
+            const std::string, const std::string, const std::string, const std::string>&>()))
+        .WillOnce(testing::Return(0));
+    int result = adapterImpl->WriteMixedTypes(eventName, type,
+        key1, value1, key2, value2, key3, value3, key4, value4,
+        key5, value5, key6, value6, key7, value7, key8, value8,
+        key9, value9, key10, value10);
     EXPECT_EQ(result, 0);
 }
