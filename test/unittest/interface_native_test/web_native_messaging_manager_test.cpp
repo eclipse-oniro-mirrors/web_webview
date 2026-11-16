@@ -887,6 +887,28 @@ HWTEST_F(WebNativeMessagingManagerTest, Init, testing::ext::TestSize.Level0)
 }
 
 /**
+ * @tc.name: DelayExitTaskAfterManagerReset
+ * @tc.desc: Delay exit task does not access manager after it is destroyed
+ * @tc.type: Func
+ * @tc.require:
+ */
+HWTEST_F(WebNativeMessagingManagerTest, DelayExitTaskAfterManagerReset, testing::ext::TestSize.Level0)
+{
+    auto testManager = std::make_shared<WebNativeMessagingManager>();
+    ASSERT_TRUE(testManager->Init());
+    ASSERT_NE(testManager->delayExitTask_, nullptr);
+    testManager->delayExitTask_->Stop();
+
+    auto exitTask = testManager->delayExitTask_->exitTask_;
+    ASSERT_TRUE(exitTask);
+    std::weak_ptr<WebNativeMessagingManager> weakManager = testManager;
+    testManager.reset();
+
+    ASSERT_TRUE(weakManager.expired());
+    EXPECT_NO_FATAL_FAILURE(exitTask());
+}
+
+/**
  * @tc.name: ConnectWebNativeMessagingExtension002
  * @tc.desc: ConnectWebNativeMessagingExtension() - test retry logic
  * @tc.type: Func
