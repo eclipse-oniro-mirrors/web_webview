@@ -16,7 +16,7 @@
 #include "ohos_adapter/bridge/ark_imf_text_listener_adapter_impl.h"
 
 #include "ohos_adapter/bridge/ark_imf_adapter_function_key_adapter_wrapper.h"
-
+#include "ohos_adapter/bridge/ark_imf_preview_text_style_adapter_wrapper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -106,6 +106,21 @@ ArkWebU16String ArkIMFTextListenerAdapterImpl::GetRightTextOfCursor(int32_t numb
 int32_t ArkIMFTextListenerAdapterImpl::SetPreviewText(const ArkWebU16String& text, int32_t start, int32_t end)
 {
     return real_->SetPreviewText(ArkWebU16StringStructToClass(text), start, end);
+}
+
+int32_t ArkIMFTextListenerAdapterImpl::SetPreviewTextWithStyle(const ArkWebU16String& text, int32_t start,
+    int32_t end, ArkWebRefPtr<ArkIMFPreviewTextStyleAdapter> style)
+{
+    std::shared_ptr<OHOS::NWeb::IMFPreviewTextStyleAdapter> stylePtr = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(style)) {
+        stylePtr = std::make_shared<ArkIMFPreviewTextStyleAdapterWrapper>(style);
+    }
+    return real_->SetPreviewTextWithStyle(ArkWebU16StringStructToClass(text), start, end, stylePtr);
+}
+
+bool ArkIMFTextListenerAdapterImpl::IsSupportPreviewTextWithStyle()
+{
+    return real_->IsSupportPreviewTextWithStyle();
 }
 
 void ArkIMFTextListenerAdapterImpl::FinishTextPreview()

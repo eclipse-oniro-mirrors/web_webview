@@ -253,6 +253,14 @@ public:
     {
         return nullptr;
     }
+    void SetNavigationEntryUserData(const std::string& key, const std::string& value) override
+    {}
+    std::string GetNavigationEntryUserData(const std::string& key) override
+    {
+        return "";
+    }
+    void RemoveNavigationEntryUserData(const std::string& key) override
+    {}
     std::vector<uint8_t> SerializeWebState() override
     {
         std::vector<uint8_t> empty;

@@ -100,10 +100,12 @@ bool BatteryMgrClientAdapterImpl::StartListen()
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
     skill.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED);
     EventFwk::CommonEventSubscribeInfo info(skill);
+    std::lock_guard<std::mutex> lock(stop_mutex_);
     this->commonEventSubscriber_ = std::make_shared<NWebBatteryEventSubscriber>(info, this->cb_);
     bool ret = EventFwk::CommonEventManager::SubscribeCommonEvent(this->commonEventSubscriber_);
     if (ret == false) {
         WVLOG_E("start battery listen fail");
+        this->commonEventSubscriber_ = nullptr;
         return false;
     } else {
         return true;

@@ -37,9 +37,11 @@
 #include "ohos_nweb/include/ark_web_keyboard_event.h"
 #include "ohos_nweb/include/ark_web_message_value_callback.h"
 #include "ohos_nweb/include/ark_web_mouse_event.h"
+#include "ohos_nweb/include/ark_web_navigation_throttle_handler.h"
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_print_document_adapter_adapter.h"
+#include "ohos_nweb/include/ark_web_query_navigation_config_callback.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_rom_value.h"
 #include "ohos_nweb/include/ark_web_rom_value_vector.h"
@@ -57,6 +59,7 @@
 #include "ohos_nweb/include/ark_web_command_action_manager.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata.h"
 #include "ohos_nweb/include/ark_web_user_agent_metadata_ack.h"
+#include "ohos_nweb/include/ark_web_web_site_config_callback.h"
 #include "ohos_nweb/include/ark_web_image_info_callback.h"
 
 namespace OHOS::ArkWeb {
@@ -2457,6 +2460,106 @@ public:
     /*--ark web()--*/
     virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
         const ArkWebString& h5_method_name, const ArkWebRomValueVector& args) = 0;
+
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    /*--ark web()--*/
+    virtual void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) = 0;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetNavigationEntryUserData(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    /*--ark web()--*/
+    virtual void RemoveNavigationEntryUserData(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Set the navigation throttle handler. Only one handler takes
+     *        effect; setting a new one overwrites the previous one, and
+     *        setting nullptr clears it.
+     *
+     * @param handler The navigation throttle handler to set, or nullptr to clear.
+     */
+    /*--ark web()--*/
+    virtual void SetNavigationThrottle(ArkWebRefPtr<ArkWebNavigationThrottleHandler> handler) = 0;
+
+    /**
+     * @brief Check whether a navigation throttle handler is registered.
+     *
+     * @return bool: true if a handler is registered, false otherwise.
+     */
+    /*--ark web()--*/
+    virtual bool HasThrottleCallback() = 0;
+
+    /**
+     * @brief Resume or cancel a deferred navigation.
+     *
+     * @param deferId The defer identifier passed to
+     *        ArkWebNavigationThrottleHandler::OnThrottleEvent.
+     * @param proceed true to resume the navigation, false to cancel it.
+     */
+    /*--ark web()--*/
+    virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
+
+    /*--ark web()--*/
+    virtual void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) = 0;
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result, Empty result means failure.
+     */
+    /*--ark web()--*/
+    virtual void GetElementInfoForSecurityHitTest(
+        double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) = 0;
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    /*--ark web()--*/
+    virtual void PutWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) = 0;
+
+    /**
+     * @brief Get the window bounds and state for CDP Browser domain.
+     *        Reads left/top/width/height and windowState of the ArkUI window
+     *        hosting this NWeb.
+     * @param x      Out: window left.
+     * @param y      Out: window top.
+     * @param w      Out: window width.
+     * @param h      Out: window height.
+     * @param state  Out: window state string.
+     * @return true on success, false if window unavailable or ownership mismatch.
+     */
+    /*--ark web()--*/
+    virtual bool GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                 ArkWebString& state) = 0;
+
+    /**
+     * @brief Set the window bounds and state for CDP Browser domain.
+     *        Applies left/top/width/height and/or windowState to the ArkUI
+     *        window hosting this NWeb.
+     * @param x      In: target window left.
+     * @param y      In: target window top.
+     * @param w      In: target window width.
+     * @param h      In: target window height.
+     * @param state  In: target window state. Empty means no state change.
+     * @return true on success, false if window unavailable or call failed.
+     */
+    /*--ark web()--*/
+    virtual bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                 const ArkWebString& state) = 0;
 };
 
 } // namespace OHOS::ArkWeb

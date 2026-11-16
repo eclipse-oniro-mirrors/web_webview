@@ -999,6 +999,8 @@ public:
 
     void OnCreateNativeMediaPlayer(ArkWebRefPtr<ArkWebCreateNativeMediaPlayerCallback> callback) override;
 
+    void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) override;
+
     /**
      * @brief Web drag resize optimize.
      */
@@ -1935,7 +1937,7 @@ public:
      */
     void PutVaultPlainTextCallback(
         ArkWebRefPtr<ArkWebVaultPlainTextCallback> callback) override;
-    
+
     /**
      * @brief fill autofill data.
      *
@@ -2128,6 +2130,95 @@ public:
     bool GetAutoReloadEnabled() override;
 
     void SetFlingSpeedLimit(float speed_limit) override;
+
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) override;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    ArkWebString GetNavigationEntryUserData(const ArkWebString& key) override;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    void RemoveNavigationEntryUserData(const ArkWebString& key) override;
+
+    /**
+     * @brief Set the navigation throttle handler. Only one handler takes
+     *        effect; setting a new one overwrites the previous one, and
+     *        setting nullptr clears it.
+     *
+     * @param handler The navigation throttle handler to set, or nullptr to clear.
+     */
+    /*--ark web()--*/
+    void SetNavigationThrottle(ArkWebRefPtr<ArkWebNavigationThrottleHandler> handler) override;
+
+    /**
+     * @brief Check whether a navigation throttle handler is registered.
+     */
+    /*--ark web()--*/
+    bool HasThrottleCallback() override;
+
+    /**
+     * @brief Resume or cancel a deferred navigation.
+     *
+     * @param deferId The defer identifier passed to
+     *        ArkWebNavigationThrottleHandler::OnThrottleEvent.
+     * @param proceed true to resume the navigation, false to cancel it.
+     */
+    /*--ark web()--*/
+    void ResolveNavigationDefer(uint64_t deferId, bool proceed) override;
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result, Empty result means failure.
+     */
+    void GetElementInfoForSecurityHitTest(
+        double x, double y, ArkWebRefPtr<ArkWebStringValueCallback> callback) override;
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    /*--ark web()--*/
+    void PutWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) override;
+
+    /**
+     * @brief Get the window bounds and state for CDP Browser domain.
+     *        Reads left/top/width/height and windowState of the ArkUI window
+     *        hosting this NWeb.
+     * @param x      Out: window left.
+     * @param y      Out: window top.
+     * @param w      Out: window width.
+     * @param h      Out: window height.
+     * @param state  Out: window state string.
+     * @return true on success, false if window unavailable or ownership mismatch.
+     */
+    bool GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                         ArkWebString& state) override;
+
+    /**
+     * @brief Set the window bounds and state for CDP Browser domain.
+     *        Applies left/top/width/height and/or windowState to the ArkUI
+     *        window hosting this NWeb.
+     * @param x      In: target window left.
+     * @param y      In: target window top.
+     * @param w      In: target window width.
+     * @param h      In: target window height.
+     * @param state  In: target window state. Empty means no state change.
+     * @return true on success, false if window unavailable or call failed.
+     */
+    bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                         const ArkWebString& state) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;

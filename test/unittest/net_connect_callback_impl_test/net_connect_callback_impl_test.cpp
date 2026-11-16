@@ -31,11 +31,22 @@ namespace OHOS {
 namespace Telephony {
 namespace {
 int32_t g_slotId = 0;
+bool g_networkStateValid = false;
 }
 
 int32_t CellularDataClient::GetDefaultCellularDataSlotId()
 {
     return g_slotId;
+}
+
+int32_t CoreServiceClient::GetNetworkState(int32_t slotId, sptr<NetworkState>& networkState)
+{
+    if (g_networkStateValid) {
+        networkState = sptr<NetworkState>(new NetworkState);
+        return 0;
+    }
+    networkState = nullptr;
+    return -1;
 }
 }
 namespace NWeb {
@@ -149,6 +160,31 @@ HWTEST_F(NetConnectCallbackImplTest, NetConnectCallbackImplTest_002, TestSize.Le
     sptr<NetAllCapabilities> netAllCap(new NetAllCapabilities);
     netAllCap->bearerTypes_.insert(NetBearType::BEARER_WIFI);
     EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandle, netAllCap), 0);
+}
+
+/**
+ * @tc.name: NetConnectCallbackImplTest_003.
+ * @tc.desc: test null netHandle for NetLost and NetBlockStatusChange, and non-null networkState.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectCallbackImplTest, NetConnectCallbackImplTest_003, TestSize.Level1)
+{
+    std::shared_ptr<NetConnCallbackTest> cb = std::make_shared<NetConnCallbackTest>();
+    std::shared_ptr<NetConnectCallbackImpl> netConnectCallbackImpl = std::make_shared<NetConnectCallbackImpl>(cb);
+    EXPECT_NE(netConnectCallbackImpl, nullptr);
+    sptr<NetHandle> netHandle(new NetHandle);
+    sptr<NetHandle> netHandleNull(nullptr);
+
+    EXPECT_EQ(netConnectCallbackImpl->NetLost(netHandleNull), 0);
+    EXPECT_EQ(netConnectCallbackImpl->NetBlockStatusChange(netHandleNull, true), 0);
+    EXPECT_EQ(netConnectCallbackImpl->NetBlockStatusChange(netHandle, true), 0);
+
+    g_networkStateValid = true;
+    sptr<NetAllCapabilities> netAllCap(new NetAllCapabilities);
+    netAllCap->bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
+    EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandle, netAllCap), 0);
+    g_networkStateValid = false;
 }
 }
 }

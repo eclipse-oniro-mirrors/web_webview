@@ -93,7 +93,7 @@ public:
 
     void SetHardwareEnableHint(void* transaction, void* surfaceControl, bool enable) override;
 
-    void SetName(void* transaction, void* surfaceControl, const char* name) override;
+    void SetName(void* transaction, void* surfaceControl, const char* name) override {}
 
     void SetFrameGravity(void* transaction, void* surfaceControl, int32_t gravity) override {}
 

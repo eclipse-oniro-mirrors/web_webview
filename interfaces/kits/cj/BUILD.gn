@@ -68,6 +68,7 @@ ohos_shared_library("cj_webview_ffi") {
     ]
 
     deps = [
+      "../../../arkweb_utils:libarkweb_utils",
       "../../../ohos_adapter:nweb_ohos_adapter",
       "../../../ohos_glue:ohos_base_glue_source",
       "../../../ohos_nweb:libnweb",

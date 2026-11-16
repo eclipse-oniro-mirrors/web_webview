@@ -262,8 +262,7 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Reparent_IsRootSurfaceFalse_
  * @tc.desc: Test all setter functions with null surfaceControl (unified null-check test
  *           covering SetVisibility, SetZOrder, SetBuffer, SetBounds,
  *           SetPivot, SetBufferTransform, SetTranslate, SetDamageRegion, SetBufferAlpha,
- *           SetBackgroundColor, SetName, SetHardwareEnableHint, SetSrcRect, SetDisplayRect,
- *           ClearBufferQueueCache)
+ *           SetName, SetHardwareEnableHint, SetSrcRect, SetDisplayRect, ClearBufferQueueCache)
  * @tc.type: FUNC
  * @tc.require: issueNumber
  */
@@ -281,7 +280,6 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Setters_NullSurfaceControl_0
     transaction_->SetDamageRegion(nullptr, nullptr, 0);
     transaction_->SetBufferAlpha(nullptr, 0);
     transaction_->SetBackgroundColor(nullptr, 0, 0, 0, 0);
-    transaction_->SetName(nullptr, "test");
     transaction_->SetHardwareEnableHint(nullptr, true);
     transaction_->SetSrcRect(nullptr, 0, 0, 0, 0);
     transaction_->SetDisplayRect(nullptr, 0, 0, 0, 0);
@@ -321,17 +319,14 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Setters_ValidSurfaceControl_
     transaction_->SetBackgroundColor(ctrl.GetRefPtr(), 0.0f, 1.0f, 0.0f, 1.0f);
     EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 6);
 
-    transaction_->SetName(ctrl.GetRefPtr(), "test_name");
+    transaction_->SetHardwareEnableHint(ctrl.GetRefPtr(), true);
     EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 7);
 
-    transaction_->SetHardwareEnableHint(ctrl.GetRefPtr(), true);
+    transaction_->SetSrcRect(ctrl.GetRefPtr(), 1.0f, 2.0f, 3.0f, 4.0f);
     EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 8);
 
-    transaction_->SetSrcRect(ctrl.GetRefPtr(), 1.0f, 2.0f, 3.0f, 4.0f);
-    EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 9);
-
     transaction_->SetDisplayRect(ctrl.GetRefPtr(), 1.0f, 2.0f, 3.0f, 4.0f);
-    EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 10);
+    EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 9);
 
     transaction_->ClearBufferQueueCache(ctrl.GetRefPtr(), true);
 }
@@ -787,6 +782,104 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_ScopedTransaction_AddCommand
     // Null handler: AddCommand hits the error branch and must not crash
     scopedTransaction.AddCommand(nullptr);
     EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: SurfaceTransaction_SetVisibility_Commit_031
+ * @tc.desc: Test SetVisibility command execution via Commit with a valid bound
+ *           uiContext: the lambda calls SurfaceControl::SetVisibility, which must
+ *           also add the RSVisibilityModifier (delegate composite white-screen fix).
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_SetVisibility_Commit_031, TestSize.Level1)
+{
+    SurfaceControl::connectToRender_ = nullptr;
+    SurfaceControl::rsUIDirector_ = nullptr;
+
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "txn_visibility_commit_node";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> ctrl = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+    ASSERT_NE(ctrl, nullptr);
+    EXPECT_EQ(ctrl->visibilityModifier_.get(), nullptr);
+
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    transaction_->uiContext_ = uiContext;
+    transaction_->SetBindSurfaceControl(true);
+
+    transaction_->SetVisibility(ctrl.GetRefPtr(), true);
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 1u);
+    transaction_->Commit();
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 0u);
+
+    // Commit executed the lambda: SurfaceControl::SetVisibility ran and added the modifier
+    EXPECT_NE(ctrl->visibilityModifier_.get(), nullptr);
+    EXPECT_TRUE(ctrl->surfaceNode_->GetStagingProperties().GetVisible());
+
+    transaction_->uiContext_ = nullptr;
+    transaction_->SetBindSurfaceControl(false);
+    manager.isMultiInstanceOpen_ = false;
+}
+
+/**
+ * @tc.name: SurfaceTransaction_Setters_Commit_032
+ * @tc.desc: Test SetBufferAlpha and SetBounds command execution via Commit with a valid
+ *           bound uiContext: the lambdas call SurfaceControl::SetBufferAlpha/SetBounds,
+ *           which must also add the corresponding modifiers (delegate composite
+ *           white-screen fix).
+ * @tc.type: FUNC
+ * @tc.require: issueNumber
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Setters_Commit_032, TestSize.Level1)
+{
+    SurfaceControl::connectToRender_ = nullptr;
+    SurfaceControl::rsUIDirector_ = nullptr;
+
+    OHOS::Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "delegate_container";
+    auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
+    ASSERT_NE(surfaceNode, nullptr);
+    sptr<SurfaceControl> ctrl = new SurfaceControl(std::move(surfaceNode), nullptr, false, 0);
+    ASSERT_NE(ctrl, nullptr);
+    // Pivot modifier is created by the constructor; alpha/bounds are not
+    EXPECT_NE(ctrl->pivotModifier_.get(), nullptr);
+    EXPECT_EQ(ctrl->bufferAlphaModifier_.get(), nullptr);
+    EXPECT_EQ(ctrl->boundsModifier_.get(), nullptr);
+
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    transaction_->uiContext_ = uiContext;
+    transaction_->SetBindSurfaceControl(true);
+
+    transaction_->SetBufferAlpha(ctrl.GetRefPtr(), 0.5f);
+    transaction_->SetBounds(ctrl.GetRefPtr(), 0.0f, 0.0f, 100.0f, 200.0f);
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 2u);
+    transaction_->Commit();
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 0u);
+
+    // Commit executed the lambdas: both modifiers were added by the setters.
+    // Staging alpha composes the node alpha with the NG modifier alpha (0.5 * 0.5).
+    EXPECT_NE(ctrl->bufferAlphaModifier_.get(), nullptr);
+    EXPECT_FLOAT_EQ(ctrl->surfaceNode_->GetStagingProperties().GetAlpha(), 0.5f * 0.5f);
+    EXPECT_NE(ctrl->boundsModifier_.get(), nullptr);
+    auto bounds = ctrl->surfaceNode_->GetStagingProperties().GetBounds();
+    EXPECT_FLOAT_EQ(bounds[2], 100.0f);
+    EXPECT_FLOAT_EQ(bounds[3], 200.0f);
+
+    transaction_->uiContext_ = nullptr;
+    transaction_->SetBindSurfaceControl(false);
+    manager.isMultiInstanceOpen_ = false;
 }
 
 } // namespace OHOS::NWeb

@@ -17,6 +17,7 @@
 #define NWEB_H
 
 #include <functional>
+#include <vector>
 #include <list>
 #include <map>
 #include <memory>
@@ -36,6 +37,7 @@
 #include "nweb_javascript_result_callback.h"
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
+#include "nweb_query_navigation_config_callback.h"
 #include "nweb_release_surface_callback.h"
 #include "nweb_rom_value.h"
 #include "nweb_snapshot_callback.h"
@@ -46,6 +48,7 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
+#include "nweb_web_site_config_callback.h"
 
 namespace OHOS::NWeb {
 
@@ -286,6 +289,68 @@ enum class NestedScrollMode : int32_t {
     SELF_FIRST = 1,
     PARENT_FIRST = 2,
     PARALLEL = 3,
+};
+
+/**
+ * @brief Defines the actions that can be taken on a navigation intercepted by a navigation throttle.
+ */
+enum class NWebThrottleAction : int32_t {
+    PROCEED = 0,
+    CANCEL = 1,
+    DEFER = 2,
+};
+
+/**
+ * @brief Defines the stages at which a navigation is intercepted by a navigation throttle.
+ */
+enum class NWebThrottleStage : int32_t {
+    WILL_START_REQUEST = 0,
+    WILL_REDIRECT_REQUEST = 1,
+    WILL_PROCESS_RESPONSE = 2,
+    WILL_FAIL_REQUEST = 3,
+};
+
+/**
+ * @brief Navigation information passed to a navigation throttle callback.
+ *
+ * Field availability varies by stage: status_code, mime_type, and content_disposition are valid only for
+ * WILL_REDIRECT_REQUEST and WILL_PROCESS_RESPONSE; error_code and error_description are valid only for
+ * WILL_FAIL_REQUEST. Inapplicable fields keep their default values.
+ */
+struct NWebNavigationThrottleInfo {
+    std::string url;
+    bool isMainFrame = false;
+    bool hasUserGesture = false;
+    bool isRendererInitiated = false;
+    bool isRedirect = false;
+    int32_t pageTransition = 0;
+    std::string requestMethod;
+    int32_t statusCode = 0;
+    std::string mimeType;
+    std::string contentDisposition;
+    int32_t errorCode = 0;
+    std::string errorDescription;
+};
+
+/**
+ * @brief Callback interface for receiving navigation throttle events. Implemented by the NAPI layer.
+ *
+ * OnThrottleEvent is invoked synchronously on the UI thread and must return as quickly as possible.
+ */
+class OHOS_NWEB_EXPORT NWebNavigationThrottleHandler {
+public:
+    virtual ~NWebNavigationThrottleHandler() = default;
+
+    /**
+     * @brief Called when a navigation reaches an intercepted stage.
+     * @param stage The stage of the navigation.
+     * @param info The navigation information for the current stage.
+     * @param deferId The identifier of the defer handle. It is valid only when NWebThrottleAction::DEFER is
+     *        returned; pass it to NWeb::ResolveNavigationDefer to resume or cancel the deferred navigation.
+     * @return The action to take on the navigation.
+     */
+    virtual NWebThrottleAction OnThrottleEvent(NWebThrottleStage stage,
+        const NWebNavigationThrottleInfo& info, uint64_t deferId) = 0;
 };
 
 class NWebScreenLockCallback {
@@ -2385,7 +2450,7 @@ public:
      */
     virtual void PutVaultPlainTextCallback(
         std::shared_ptr<NWebVaultPlainTextCallback> callback) {}
-    
+
     /**
      * @brief fill autofill data.
      *
@@ -2721,7 +2786,118 @@ public:
     {
         return false;
     }
+
+    /**
+     * Set user data for the current navigation entry. The user data is session
+     * scoped, kept in memory only, and retained when the navigation entry is
+     * cloned for back/forward navigation history. Setting the same key again
+     * overwrites the previous value. Empty key or value is silently ignored.
+     *
+     * @param key the key of the user data.
+     * @param value the value of the user data.
+     */
+    virtual void SetNavigationEntryUserData(const std::string& key, const std::string& value) {}
+
+    /**
+     * Get the user data of the current navigation entry matching the key, or
+     * an empty string if no value exists for the key.
+     *
+     * @param key the key of the user data.
+     *
+     * @return the value of the user data, or an empty string if not exist.
+     */
+    virtual std::string GetNavigationEntryUserData(const std::string& key) { return ""; }
+
+    /**
+     * Remove the user data of the current navigation entry matching the key.
+     * Does nothing if no value exists for the key.
+     *
+     * @param key the key of the user data to remove.
+     */
+    virtual void RemoveNavigationEntryUserData(const std::string& key) {}
+
+    /**
+     * @brief Set the navigation throttle for this NWeb instance. Only one throttle takes effect; setting a new
+     *        one overwrites the previous one, and setting nullptr clears it.
+     *
+     * @param handler The navigation throttle handler to set, or nullptr to clear.
+     */
+    virtual void SetNavigationThrottle(std::shared_ptr<NWebNavigationThrottleHandler> handler) {}
+
+    /**
+     * @brief Check whether a navigation throttle handler is registered.
+     *
+     * @return true if a handler is registered, false otherwise.
+     */
+    virtual bool HasThrottleCallback() { return false; }
+
+    /**
+     * @brief Resume or cancel a deferred navigation. Safely ignored if deferId is invalid, already resolved,
+     *        or the NWeb instance has been destroyed.
+     *
+     * @param deferId The defer identifier passed to NWebNavigationThrottleHandler::OnThrottleEvent.
+     * @param proceed true to resume the navigation, false to cancel it.
+     */
+    virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) {}
+    
+    virtual void OnQueryNavigationConfig(std::shared_ptr<NWebQueryNavigationConfigCallback> callback) {}
+
+    /**
+     * @brief Get element info at the touch-event local position for security hit test.
+     *
+     * @param x Touch event local x coordinate.
+     * @param y Touch event local y coordinate.
+     * @param callback NWebStringValueCallback receiving JSOON result
+     */
+    virtual void GetElementInfoForSecurityHitTest(
+        double x, double y, std::shared_ptr<NWebStringValueCallback> callback)
+    {
+        (void)x;
+        (void)y;
+        if (callback) {
+            callback->OnReceiveValue("");
+        }
+    }
+
+    /**
+     * @brief Put the instance-level website configuration query callback.
+     *
+     * @param callback website configuration query callback, pass nullptr to clear.
+     */
+    virtual void PutWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
+
+    /**
+     * @brief Get the window bounds and state for CDP Browser domain.
+     *        Reads left/top/width/height and windowState ("normal"/"minimized"/
+     *        "maximized"/"fullscreen") of the ArkUI window hosting this NWeb.
+     * @param x      Out: window left (screen coordinate).
+     * @param y      Out: window top (screen coordinate).
+     * @param w      Out: window width.
+     * @param h      Out: window height.
+     * @param state  Out: window state string.
+     * @return true on success, false if window unavailable or ownership mismatch.
+     */
+    virtual bool GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                 std::string& state) { return false; }
+
+    /**
+     * @brief Set the window bounds and state for CDP Browser domain.
+     *        Applies left/top/width/height and/or windowState to the ArkUI window
+     *        hosting this NWeb. Per CDP protocol, windowState != "normal" cannot
+     *        be combined with left/top/width/height; caller enforces this.
+     * @param x      In: target window left.
+     * @param y      In: target window top.
+     * @param w      In: target window width.
+     * @param h      In: target window height.
+     * @param state  In: target window state ("normal"/"minimized"/"maximized"/
+     *               "fullscreen"). Empty means no state change.
+     * @return true on success, false if window unavailable, ownership mismatch,
+     *         or window call failed.
+     */
+    virtual bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                 const std::string& state) { return false; }
 };
 } // namespace OHOS::NWeb
 
 #endif
+

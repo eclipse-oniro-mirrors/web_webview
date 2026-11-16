@@ -20,6 +20,8 @@
         </renderConfig>
         <mediaConfig>
             <backgroundMediaShouldSuspend>true</backgroundMediaShouldSuspend>
+            <enable_speechSynthesis>true</enable_speechSynthesis>
+            <enable_speechRecognition>true</enable_speechRecognition>
         </mediaConfig>
         <loadurlSocPerfConfig>
             <loadurlSocPerfParam>false</loadurlSocPerfParam>

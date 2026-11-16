@@ -378,17 +378,6 @@ HWTEST(SurfaceControlAdapterImplTest, SurfaceTransactionAdapter_SetHardwareEnabl
     adapter.DeleteTransaction(transaction);
 }
 
-HWTEST(SurfaceControlAdapterImplTest, SurfaceTransactionAdapter_SetName_NullParams, TestSize.Level1)
-{
-    auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceTransactionAdapter();
-    adapter.SetName(nullptr, nullptr, "test");
-    EXPECT_EQ(&adapter, &OhosAdapterHelper::GetInstance().GetSurfaceTransactionAdapter());
-    void* transaction = adapter.CreateSurfaceTransaction(nullptr);
-    ASSERT_NE(transaction, nullptr);
-    adapter.SetName(transaction, nullptr, "test");
-    adapter.DeleteTransaction(transaction);
-}
-
 HWTEST(SurfaceControlAdapterImplTest, SurfaceTransactionAdapter_SetFrameGravity_NullParams, TestSize.Level1)
 {
     auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceTransactionAdapter();

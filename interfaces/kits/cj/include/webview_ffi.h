@@ -29,6 +29,8 @@ FFI_EXPORT int32_t FfiOHOSWebviewOnce(char* type, void (*callbackRef)(void));
 FFI_EXPORT int64_t FfiOHOSWebviewCtlConstructor();
 FFI_EXPORT int64_t FfiOHOSWebviewCtlConstructorWithWebTag(char* webTag);
 FFI_EXPORT void FfiOHOSWebviewCtlInitializeWebEngine();
+FFI_EXPORT int32_t FfiOHOSWebviewCtlSetDataDirectorySuffix(char* suffix);
+FFI_EXPORT char* FfiOHOSWebviewCtlGetDataDirectorySuffix(int32_t* errCode);
 FFI_EXPORT void FfiOHOSWebviewCtlSetHttpDns(int32_t secureDnsMode, char* secureDnsConfig);
 FFI_EXPORT void FfiOHOSWebviewCtlSetWebDebuggingAccess(bool webDebuggingAccess);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlLoadUrl(int64_t id, char* url);

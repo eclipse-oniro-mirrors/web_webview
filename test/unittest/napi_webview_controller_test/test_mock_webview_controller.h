@@ -292,6 +292,21 @@ public:
         return 0;
     }
 
+    ErrCode SetNavigationEntryUserData(const std::string& key, const std::string& value)
+    {
+        return 0;
+    }
+
+    ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value)
+    {
+        return 0;
+    }
+
+    ErrCode RemoveNavigationEntryUserData(const std::string& key)
+    {
+        return 0;
+    }
+
     std::string GetTitle()
     {
         return "";
@@ -624,6 +639,9 @@ public:
 
     void OnCreateNativeMediaPlayer(napi_env env, napi_ref callback) {}
 
+    void OnQueryNavigationConfig(napi_env env, napi_ref callback) {}
+    void PutWebSiteConfigCallback(napi_env env, napi_ref callback) {}
+
     bool ParseScriptContent(napi_env env, napi_value value, std::string &script)
     {
         return true;
@@ -833,6 +851,16 @@ public:
         return autoReloadEnabled_;
     }
 
+    ErrCode SetNavigationThrottle(std::shared_ptr<NWebNavigationThrottleHandler> handler)
+    {
+        if (setNavigationThrottleShouldFail_) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        setNavigationThrottleCalled_ = true;
+        lastThrottleHandler_ = handler;
+        return 0;
+    }
+
     void SetUserAgentMetadata(const std::string& userAgent, std::shared_ptr<NWebUserAgentMetadata> metaData) {}
 
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent)
@@ -867,9 +895,25 @@ public:
         setAutoReloadShouldFail_ = shouldFail;
     }
 
+    static void SetNavigationThrottleShouldFail(bool shouldFail)
+    {
+        setNavigationThrottleShouldFail_ = shouldFail;
+    }
+
+    bool WasSetNavigationThrottleCalled() const
+    {
+        return setNavigationThrottleCalled_;
+    }
+
+    std::shared_ptr<NWebNavigationThrottleHandler> GetLastThrottleHandler() const
+    {
+        return lastThrottleHandler_;
+    }
+
     static void ResetMock()
     {
         setAutoReloadShouldFail_ = false;
+        setNavigationThrottleShouldFail_ = false;
     }
 
     // 生产代码引用的类静态成员（真实定义位于 webview_controller.cpp，单测不编译该文件）
@@ -893,6 +937,9 @@ private:
     bool isInitialized_ = false;
     bool autoReloadEnabled_ = false;
     static bool setAutoReloadShouldFail_;
+    bool setNavigationThrottleCalled_ = false;
+    std::shared_ptr<NWebNavigationThrottleHandler> lastThrottleHandler_ = nullptr;
+    static bool setNavigationThrottleShouldFail_;
 };
 
 std::string WebviewController::customeSchemeCmdLine_ = "";
@@ -902,6 +949,7 @@ int32_t WebviewController::webDebuggingPort_ = 0;
 std::set<std::string> WebviewController::webTagSet_;
 std::mutex WebviewController::webTagMtx_;
 bool WebviewController::setAutoReloadShouldFail_ = false;
+bool WebviewController::setNavigationThrottleShouldFail_ = false;
 
 class WebMessageExt {
 public:

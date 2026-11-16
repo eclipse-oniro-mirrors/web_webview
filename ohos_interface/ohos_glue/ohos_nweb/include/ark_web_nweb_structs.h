@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <functional>
+#include "base/include/ark_web_types.h"
 
 typedef struct {
     int32_t year;
@@ -39,6 +40,10 @@ typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 
 typedef char* (*NativeArkWebOnJavaScriptProxyCallback)(const char**, int32_t);
+
+typedef int (*ArkWebOutputFdCallback)(int32_t render_pid);
+
+typedef bool (*ArkWebOOMDumpDecisionCallback)(int32_t pid, bool needDecreaseQuota, ArkWebString* eventConfig);
 
 using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
 

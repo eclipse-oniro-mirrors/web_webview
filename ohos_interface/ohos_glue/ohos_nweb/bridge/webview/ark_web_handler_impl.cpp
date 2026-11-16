@@ -26,6 +26,7 @@
 #include "ohos_nweb/bridge/ark_web_cursor_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_custom_keyboard_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_data_resubmission_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_color_chooser_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
@@ -61,9 +62,11 @@
 #include "ohos_nweb/bridge/ark_web_url_resource_response_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_suggestion_vector_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_color_suggestion_vector_ctocpp.h"
 #include "ohos_nweb/bridge/ark_web_native_message_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_runtime_connect_info_wrapper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "base/include/ark_web_types.h"
 #include "ohos_nweb/bridge/ark_web_window_new_event_info_wrapper.h"
 
 namespace OHOS::ArkWeb {
@@ -342,6 +345,11 @@ bool ArkWebHandlerImpl::RunContextMenu(
 void ArkWebHandlerImpl::UpdateDragCursor(unsigned char op)
 {
     nweb_handler_->UpdateDragCursor(static_cast<ArkWebDragOperation>(op));
+}
+
+void ArkWebHandlerImpl::OnDragCancel()
+{
+    nweb_handler_->OnDragCancel();
 }
 
 bool ArkWebHandlerImpl::FilterScrollEvent(const float x, const float y, const float x_velocity, const float y_velocity)
@@ -1289,5 +1297,42 @@ void ArkWebHandlerImpl::OnMonitoredBlankScreen(
     nweb_handler_->OnMonitoredBlankScreen(
         ArkWebStringStructToClass(url), reason,
         ArkWebStringStructToClass(extraMsg));
+}
+
+void ArkWebHandlerImpl::OnColorChooserPopup(const ArkWebString& color,
+    const ArkWebColorSuggestionVector& suggestions, ArkWebRefPtr<ArkWebColorChooserCallback> callback)
+{
+    std::string nweb_color = ArkWebStringStructToClass(color);
+    std::vector<OHOS::NWeb::NWebColorSuggestion> nweb_suggestions =
+        ArkWebColorSuggestionVectorStructToClass(suggestions);
+
+    std::shared_ptr<OHOS::NWeb::NWebColorChooserCallback> nweb_callback = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_callback = std::make_shared<ArkWebColorChooserCallbackWrapper>(callback);
+    }
+
+    nweb_handler_->OnColorChooserPopup(nweb_color, nweb_suggestions, nweb_callback);
+}
+
+void ArkWebHandlerImpl::OnColorChooserClose()
+{
+    nweb_handler_->OnColorChooserClose();
+}
+
+bool ArkWebHandlerImpl::OnGetWindowBounds(int32_t& x, int32_t& y,
+                                          uint32_t& w, uint32_t& h, ArkWebString& state)
+{
+    std::string state_str;
+    bool ok = nweb_handler_->OnGetWindowBounds(x, y, w, h, state_str);
+    if (ok) {
+        state = ArkWebStringClassToStruct(state_str);
+    }
+    return ok;
+}
+
+bool ArkWebHandlerImpl::OnSetWindowBounds(int32_t x, int32_t y,
+                                          uint32_t w, uint32_t h, const ArkWebString& state)
+{
+    return nweb_handler_->OnSetWindowBounds(x, y, w, h, ArkWebStringStructToClass(state));
 }
 } // namespace OHOS::ArkWeb

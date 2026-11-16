@@ -23,6 +23,7 @@
 #include "napi_web_adsblock_manager.h"
 #include "napi_web_async_controller.h"
 #include "napi_webview_controller.h"
+#include "napi_web_site_config.h"
 #include "napi_webview_function.h"
 #include "napi_web_cookie_manager.h"
 #include "napi_web_data_base.h"
@@ -48,6 +49,8 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     NapiWebStorage::Init(env, exports);
     NapiWebAsyncController::Init(env, exports);
     NapiWebviewController::Init(env, exports);
+    NapiWebSiteConfigParams::Init(env, exports);
+    NapiWebSiteConfigResult::Init(env, exports);
     NapiWebCookieManager::Init(env, exports);
     NapiGeolocationPermission::Init(env, exports);
     NapiWebDownloadItem::Init(env, exports);

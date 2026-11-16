@@ -23,10 +23,17 @@
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
 #include "nweb_download_manager.h"
+#include "nweb_remove_visited_links_callback.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
 
 namespace OHOS::NWeb {
+
+// OOM dump decision callback (appkit provides; engine stores and invokes).
+// Called synchronously on the browser thread and serialized by the engine:
+// no locking is needed, but the implementation must not block.
+typedef bool (*OOMDumpDecisionCallback)(int32_t pid, bool needDecreaseQuota,
+                                        std::string& eventConfig);
 
 class OHOS_NWEB_EXPORT NWebEngine {
 public:
@@ -118,6 +125,10 @@ public:
 
     virtual void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
 
+    virtual void SetWebNavigationConfigMode(int32_t mode) {}
+
+    virtual int32_t GetWebNavigationConfigMode() { return 0; }
+
     virtual void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) {}
 
     virtual uint32_t AddBlanklessLoadingUrls(const std::vector<std::string>& urls) { return 0; }
@@ -160,6 +171,29 @@ public:
     virtual void SetWholeWebDrawing() = 0;
 
     virtual void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) {}
+
+    // OOM dump fd provider registration (webview implements; browser dump
+    // flow calls on demand, pull mode, one fd per event).
+    virtual void SetOutputFdCallback(int (*callback)(int32_t render_pid)) {}
+
+    // OOM dump decision callback registration. The callback is provided by
+    // appkit and injected here during engine initialization (NWebHelper::GetWebEngine).
+    virtual void SetOOMDumpDecisionCallback(OOMDumpDecisionCallback cb) {}
+
+    /**
+     * Remove the visited link records of the current application that changed
+     * at or after the specified time point (inclusive). The completion is
+     * notified via the callback. If no records match, the callback is invoked
+     * with zero records deleted.
+     *
+     * @param time_ms Start time point in milliseconds since the Unix epoch.
+     * @param callback Callback invoked when the removal completes.
+     */
+    virtual void RemoveVisitedLinksSince(int64_t time_ms,
+                                         std::shared_ptr<NWebRemoveVisitedLinksCallback> callback) {}
+
+    virtual void SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
+
 };
 
 } // namespace OHOS::NWeb

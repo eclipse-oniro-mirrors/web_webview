@@ -25,7 +25,9 @@
 #include "ohos_nweb/bridge/ark_web_nweb_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_web_storage_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_proxy_changed_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_remove_visited_links_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_user_agent_metadata_impl.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_user_agent_metadata_ack_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
@@ -62,17 +64,38 @@ std::shared_ptr<OHOS::NWeb::NWeb> ArkWebEngineWrapper::CreateNWeb(
         return nullptr;
     }
 
-    return std::make_shared<ArkWebNWebWrapper>(ark_web_nweb);
+    int32_t nweb_id = static_cast<int32_t>(ark_web_nweb->GetWebId());
+    return GetOrCreateNWebWrapper(nweb_id, ark_web_nweb);
 }
 
 std::shared_ptr<OHOS::NWeb::NWeb> ArkWebEngineWrapper::GetNWeb(int32_t nweb_id)
 {
+    {
+        std::lock_guard<std::mutex> lock(nweb_cache_mtx_);
+        auto it = nweb_cache_.find(nweb_id);
+        if (it != nweb_cache_.end()) {
+            if (auto nweb = it->second.lock()) {
+                return nweb;
+            }
+            nweb_cache_.erase(it);
+        }
+    }
+
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb = ark_web_engine_->GetNWeb(nweb_id);
     if (CHECK_REF_PTR_IS_NULL(ark_web_nweb)) {
         return nullptr;
     }
 
-    return std::make_shared<ArkWebNWebWrapper>(ark_web_nweb);
+    return GetOrCreateNWebWrapper(nweb_id, ark_web_nweb);
+}
+
+std::shared_ptr<OHOS::NWeb::NWeb> ArkWebEngineWrapper::GetOrCreateNWebWrapper(
+    int32_t nweb_id, ArkWebRefPtr<ArkWebNWeb> ark_web_nweb)
+{
+    auto wrapper = std::make_shared<ArkWebNWebWrapper>(ark_web_nweb);
+    std::lock_guard<std::mutex> lock(nweb_cache_mtx_);
+    nweb_cache_[nweb_id] = wrapper;
+    return wrapper;
 }
 
 std::shared_ptr<OHOS::NWeb::NWebDataBase> ArkWebEngineWrapper::GetDataBase()
@@ -438,5 +461,71 @@ void ArkWebEngineWrapper::SetWholeWebDrawing()
 void ArkWebEngineWrapper::DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw)
 {
     ark_web_engine_->DumpArkWebJSHeap(fd, renderPid, needSnapshot, needGC, needRaw);
+}
+
+void ArkWebEngineWrapper::SetWebNavigationConfigMode(int32_t mode)
+{
+    ark_web_engine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t ArkWebEngineWrapper::GetWebNavigationConfigMode()
+{
+    return ark_web_engine_->GetWebNavigationConfigMode();
+}
+
+void ArkWebEngineWrapper::SetOutputFdCallback(int (*callback)(int32_t render_pid))
+{
+    ark_web_engine_->SetOutputFdCallback(callback);
+}
+
+// The bridge only accepts C-compatible types (ArkWebString*).
+// The original callback (from appkit via NWebHelper) uses std::string&.
+// This trampoline wraps the original so it can cross the bridge.
+
+static OOMDumpDecisionCallback g_oom_dump_original_cb = nullptr;
+
+static bool OomDumpBridgeTrampoline(int32_t pid, bool needDecreaseQuota, ArkWebString* eventConfig)
+{
+    if (!g_oom_dump_original_cb) {
+        return false;
+    }
+    std::string config;
+    if (eventConfig) {
+        config = ArkWebStringStructToClass(*eventConfig);
+    }
+    bool result = g_oom_dump_original_cb(pid, needDecreaseQuota, config);
+    if (eventConfig) {
+        ArkWebStringStructRelease(*eventConfig);
+        *eventConfig = ArkWebStringClassToStruct(config);
+    }
+    return result;
+}
+
+void ArkWebEngineWrapper::SetOOMDumpDecisionCallback(OOMDumpDecisionCallback cb)
+{
+    g_oom_dump_original_cb = cb;
+    ark_web_engine_->SetOOMDumpDecisionCallback(cb ? &OomDumpBridgeTrampoline : nullptr);
+}
+
+void ArkWebEngineWrapper::RemoveVisitedLinksSince(
+    int64_t time_ms, std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> callback)
+{
+    ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> ark_web_remove_visited_links_callback =
+        new ArkWebRemoveVisitedLinksCallbackImpl(callback);
+    if (ark_web_engine_) {
+        ark_web_engine_->RemoveVisitedLinksSince(time_ms, ark_web_remove_visited_links_callback);
+    }
+}
+
+void ArkWebEngineWrapper::SetGlobalWebSiteConfigCallback(
+    std::shared_ptr<OHOS::NWeb::NWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_engine_->SetGlobalWebSiteConfigCallback(nullptr);
+        return;
+    }
+
+    ark_web_engine_->SetGlobalWebSiteConfigCallback(
+        new ArkWebWebSiteConfigCallbackImpl(callback));
 }
 } // namespace OHOS::ArkWeb
