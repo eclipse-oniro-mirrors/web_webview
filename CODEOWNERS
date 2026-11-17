@@ -12,9 +12,9 @@
 # limitations under the License.
 
 # arkweb dfx
-/ohos_nweb/src/nweb_crashpad_handler_main.cpp @StringChen
-/ohos_nweb/src/nweb_hisysevent.cpp @StringChen
-/ohos_nweb/include/nweb_log.h @StringChen
-/ohos_adapter/hiviewdfx_adapter/ @StringChen
-/test/fuzztest/ohos_nweb/hisysevent_fuzzer/ @StringChen
-/test/unittest/ohos_adapter/hiviewdfx_adapter_test/ @StringChen
+/ohos_nweb/src/nweb_crashpad_handler_main.cpp @zhangyao75477
+/ohos_nweb/src/nweb_hisysevent.cpp @zhangyao75477
+/ohos_nweb/include/nweb_log.h @zhangyao75477
+/ohos_adapter/hiviewdfx_adapter/ @zhangyao75477
+/test/fuzztest/ohos_nweb/hisysevent_fuzzer/ @zhangyao75477
+/test/unittest/ohos_adapter/hiviewdfx_adapter_test/ @zhangyao75477
