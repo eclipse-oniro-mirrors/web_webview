@@ -211,6 +211,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
+    "hiview:libperfmonitor",
     "huks:libhukssdk",
     "i18n:intl_util",
     "icu:shared_icuuc",
