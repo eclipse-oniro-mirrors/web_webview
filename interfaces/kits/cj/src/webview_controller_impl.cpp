@@ -184,6 +184,8 @@ namespace OHOS::Webview {
         std::unique_lock<std::mutex> lk(webMtx_);
         g_webview_controller_map.emplace(nwebId, this);
 
+        SetNWebJavaScriptResultCallBack();
+
         if (webTag_.empty()) {
             WEBVIEWLOGI("native webtag is empty, don't care because it's not a native instance");
             return;
