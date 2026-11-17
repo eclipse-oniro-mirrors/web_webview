@@ -322,16 +322,16 @@ function selectFile(callback) {
 
 function isSafeSaveUri(saveUri) {
   if (!saveUri.startsWith('file://')) {
-    console.error(`reject save uri with unexpected scheme: ${saveUri}`);
+    console.error('reject save uri with unexpected scheme');
     return false;
   }
   if (saveUri.split('/').includes('..')) {
-    console.error(`reject save uri containing traversal sequence: ${saveUri}`);
+    console.error('reject save uri containing traversal sequence');
     return false;
   }
   let fileName = saveUri.substr(saveUri.lastIndexOf('/'));
   if (fileName === '/' || fileName === '/.' || fileName === '/..') {
-    console.error(`reject save uri without valid file name: ${saveUri}`);
+    console.error('reject save uri without valid file name');
     return false;
   }
   return true;
