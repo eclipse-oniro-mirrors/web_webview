@@ -260,6 +260,12 @@ function selectPicture(event: OnShowFileSelectorEvent) {
 }
 
 function takePhoto(event: OnShowFileSelectorEvent) {
+  const context = UIContext.resolveUIContext()?.getHostContext()
+  if (!context) {
+    console.error('takePhoto failed, uiContext is undefined')
+    event.result.handleFileList([])
+    return
+  }
   const pickerProfileOptions: cameraPicker.PickerProfile = {
     cameraPosition: camera.CameraPosition.CAMERA_POSITION_BACK,
   }
@@ -272,9 +278,11 @@ function takePhoto(event: OnShowFileSelectorEvent) {
     mediaType.push(cameraPicker.PickerMediaType.VIDEO)
   }
   const result: string[] = []
-  cameraPicker.pick(UIContext.resolveUIContext()?.getHostContext()!, mediaType, pickerProfileOptions)
+  cameraPicker.pick(context, mediaType, pickerProfileOptions)
     .then((pickerResult) => {
-      result.push(pickerResult.resultUri)
+      if (pickerResult.resultCode === 0) {
+        result.push(pickerResult.resultUri)
+      }
     })
     .catch((error) => {
       console.log('selectFile error: ' + JSON.stringify(error))
@@ -287,8 +295,31 @@ function takePhoto(event: OnShowFileSelectorEvent) {
     })
 }
 
+function isSafeSaveUri(saveUri: string) {
+  if (!saveUri.startsWith('file://')) {
+    console.error(`reject save uri with unexpected scheme: ${saveUri}`)
+    return false
+  }
+  if (saveUri.split('/').includes('..')) {
+    console.error(`reject save uri containing traversal sequence: ${saveUri}`)
+    return false
+  }
+  const fileName = saveUri.substr(saveUri.lastIndexOf('/'))
+  if (fileName === '/' || fileName === '/.' || fileName === '/..') {
+    console.error(`reject save uri without valid file name: ${saveUri}`)
+    return false
+  }
+  return true
+}
+
 function selectFile(event: OnShowFileSelectorEvent) {
-  const documentPicker = new picker.DocumentViewPicker(UIContext.resolveUIContext()?.getHostContext()!)
+  const context = UIContext.resolveUIContext()?.getHostContext()
+  if (!context) {
+    console.error('selectFile failed, uiContext is undefined')
+    event.result.handleFileList([])
+    return
+  }
+  const documentPicker = new picker.DocumentViewPicker(context)
   let result: string[] = []
   if (event.fileSelector.getMode() !== FileSelectorMode.FILE_SAVE_MODE) {
     documentPicker.select(createDocumentSelectionOptions(event.fileSelector)).then((documentSelectResult) => {
@@ -305,9 +336,9 @@ function selectFile(event: OnShowFileSelectorEvent) {
     documentPicker.save(createDocumentSaveOptions(event.fileSelector)).then((documentSaveResult) => {
       const filePaths: string[] = documentSaveResult
       let tempUri = ''
-      if (filePaths.length > 0) {
+      if (filePaths.length > 0 && isSafeSaveUri(filePaths[0])) {
         const fileName = filePaths[0].substr(filePaths[0].lastIndexOf('/'))
-        const tempPath = UIContext.resolveUIContext()?.getHostContext()!.filesDir + fileName
+        const tempPath = context.filesDir + fileName
         tempUri = fileUri.getUriFromPath(tempPath)
         const randomAccessFile = fileIo.createRandomAccessFileSync(tempPath, fileIo.OpenMode.CREATE)
         randomAccessFile.close()

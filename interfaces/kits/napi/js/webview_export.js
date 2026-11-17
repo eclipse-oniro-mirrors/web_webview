@@ -320,10 +320,27 @@ function selectFile(callback) {
   }
 }
 
+function isSafeSaveUri(saveUri) {
+  if (!saveUri.startsWith('file://')) {
+    console.error(`reject save uri with unexpected scheme: ${saveUri}`);
+    return false;
+  }
+  if (saveUri.split('/').includes('..')) {
+    console.error(`reject save uri containing traversal sequence: ${saveUri}`);
+    return false;
+  }
+  let fileName = saveUri.substr(saveUri.lastIndexOf('/'));
+  if (fileName === '/' || fileName === '/.' || fileName === '/..') {
+    console.error(`reject save uri without valid file name: ${saveUri}`);
+    return false;
+  }
+  return true;
+}
+
 function saveFile(documentSaveResult) {
   let filePaths = documentSaveResult;
   let tempUri = '';
-  if (filePaths.length > 0) {
+  if (filePaths.length > 0 && isSafeSaveUri(filePaths[0])) {
     let tempPath = '';
     try {
       let fileName = filePaths[0].substr(filePaths[0].lastIndexOf('/'));
