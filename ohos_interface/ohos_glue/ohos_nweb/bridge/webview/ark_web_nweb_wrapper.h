@@ -2085,7 +2085,7 @@ public:
      * @return the url of frame that sent the last postMessage to native application.
      *         Return empty string if no postMessage has been called.
      */
-    std::string GetLastPostMessageURL() override;
+    std::string GetLastPostMessageUrl() override;
 
     /**
      * @brief Get the NWebCommandActionManager for command action operations.

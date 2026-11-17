@@ -2929,7 +2929,7 @@ std::shared_ptr<NWebUserAgentMetadata> WebviewController::GetUserAgentMetadata(c
     return nweb_ptr->GetUserAgentMetadata(userAgent);
 }
 
-std::string WebviewController::GetLastPostMessageURL()
+std::string WebviewController::GetLastPostMessageUrl()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -2937,7 +2937,7 @@ std::string WebviewController::GetLastPostMessageURL()
         return "";
     }
 
-    return nweb_ptr->GetLastPostMessageURL();
+    return nweb_ptr->GetLastPostMessageUrl();
 }
 
 ErrCode WebviewController::SetZoomFactor(double factor)

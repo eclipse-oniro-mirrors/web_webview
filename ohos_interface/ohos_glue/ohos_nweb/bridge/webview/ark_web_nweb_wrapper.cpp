@@ -2206,9 +2206,12 @@ void ArkWebNWebWrapper::GetImageInfosByUrls(const std::vector<std::string>& imag
     ArkWebStringVectorStructRelease(image_urls_struct);
 }
 
-std::string ArkWebNWebWrapper::GetLastPostMessageURL()
+std::string ArkWebNWebWrapper::GetLastPostMessageUrl()
 {
-    return ArkWebStringStructToClass(ark_web_nweb_->GetLastPostMessageURL());
+    ArkWebString stUrl = ark_web_nweb_->GetLastPostMessageUrl();
+    std::string objUrl = ArkWebStringStructToClass(stUrl);
+    ArkWebStringStructRelease(stUrl);
+    return objUrl;
 }
 
 std::shared_ptr<OHOS::NWeb::NWebCommandActionManager> ArkWebNWebWrapper::GetCommandActionManager()

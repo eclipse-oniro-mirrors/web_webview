@@ -868,7 +868,7 @@ public:
         return nullptr;
     }
 
-    std::string GetLastPostMessageURL()
+    std::string GetLastPostMessageUrl()
     {
         return "";
     }

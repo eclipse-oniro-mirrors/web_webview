@@ -1187,7 +1187,7 @@ public:
         return onInactiveCalled_;
     }
 
-    std::string GetLastPostMessageURL()
+    std::string GetLastPostMessageUrl()
     {
         return "";
     }

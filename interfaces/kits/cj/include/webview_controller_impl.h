@@ -337,7 +337,7 @@ public:
 
     bool GetAutoReloadEnabled();
 
-    std::string GetLastPostMessageURL();
+    std::string GetLastPostMessageUrl();
 
 public:
     static std::string customeSchemeCmdLine_;
