@@ -20,6 +20,8 @@
 #include <string>
 #include <vector>
 
+#include "nweb_rect.h"
+
 namespace OHOS::NWeb {
 
 struct DateTime {
@@ -61,6 +63,13 @@ public:
     virtual bool GetHasSelected() = 0;
 
     virtual size_t GetSuggestionIndex() = 0;
+
+    /**
+     * @brief Get the rect of the focused element.
+     *
+     * @return The rect of the focused element.
+     */
+    virtual std::shared_ptr<NWebRect> GetFocusedElementRect() { return nullptr; }
 };
 
 class NWebDateTimeChooserCallback {

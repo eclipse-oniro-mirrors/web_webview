@@ -15,6 +15,8 @@
 
 #include "ohos_nweb/bridge/ark_web_file_selector_params_impl.h"
 
+#include "ohos_nweb/bridge/ark_web_rect_impl.h"
+
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -72,6 +74,16 @@ bool ArkWebFileSelectorParamsImpl::IsAcceptAllOptionExcluded()
 const ArkWebString ArkWebFileSelectorParamsImpl::Accepts()
 {
     return ArkWebStringClassToStruct(nweb_file_selector_params_->Accepts());
+}
+
+ArkWebRefPtr<ArkWebRect> ArkWebFileSelectorParamsImpl::GetFocusedElementRect()
+{
+    std::shared_ptr<OHOS::NWeb::NWebRect> nweb_rect = nweb_file_selector_params_->GetFocusedElementRect();
+    if (CHECK_SHARED_PTR_IS_NULL(nweb_rect)) {
+        return nullptr;
+    }
+
+    return new ArkWebRectImpl(nweb_rect);
 }
 
 } // namespace OHOS::ArkWeb

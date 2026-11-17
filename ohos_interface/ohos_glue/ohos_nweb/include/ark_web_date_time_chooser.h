@@ -18,6 +18,7 @@
 #pragma once
 
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "ohos_nweb/include/ark_web_rect.h"
 
 #include "base/include/ark_web_base_ref_counted.h"
 
@@ -46,6 +47,9 @@ public:
 
     /*--ark web()--*/
     virtual size_t GetSuggestionIndex() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebRect> GetFocusedElementRect() = 0;
 };
 
 } // namespace OHOS::ArkWeb
