@@ -419,7 +419,7 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_DestroyCallback_02, TestSize
     OH_NativeArkWeb_SetDestroyCallback(nullptr, nullptr);
     EXPECT_EQ(OH_NativeArkWeb_GetDestroyCallback(nullptr), nullptr);
     OH_NativeArkWeb_SetDestroyCallback("tagDestroy", DummyDestroyCallback);
-    EXPECT_EQ(OH_NativeArkWeb_GetDestroyCallback("tagDestroy"), DummyDestroyCallback);
+    EXPECT_EQ(OH_NativeArkWeb_GetDestroyCallback("tagDestroy"), nullptr);
 
     OH_NativeArkWeb_SetJavaScriptProxyValidCallback(nullptr, nullptr);
     EXPECT_EQ(OH_NativeArkWeb_GetJavaScriptProxyValidCallback(nullptr), nullptr);
@@ -430,6 +430,7 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_DestroyCallback_02, TestSize
     OH_NativeArkWeb_BindWebTagToWebInstance("callbackTag", nweb);
     OH_NativeArkWeb_SetDestroyCallback("callbackTag", DummyDestroyCallback);
     EXPECT_EQ(nweb->registerDestroyCbCount, 1);
+    EXPECT_EQ(OH_NativeArkWeb_GetDestroyCallback("callbackTag"), DummyDestroyCallback);
     OH_NativeArkWeb_SetJavaScriptProxyValidCallback("callbackTag", DummyValidCallback);
     EXPECT_EQ(nweb->registerValidCbCount, 1);
     OH_NativeArkWeb_BindWebTagToWebInstance("callbackTag", std::weak_ptr<OHOS::NWeb::NWeb>());
