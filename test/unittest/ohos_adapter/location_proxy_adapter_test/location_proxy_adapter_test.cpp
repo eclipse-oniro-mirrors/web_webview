@@ -33,14 +33,14 @@ static constexpr double MIN_LONGITUDE = -180.0;
 bool g_startLocatingResult = true;
 OHOS::sptr<OHOS::Location::ILocatorCallback> g_lastStartedCallback = nullptr;
 
-bool FakeStartLocating(std::unique_ptr<OHOS::Location::RequestConfig>& requestConfig,
+bool g_fakeStartLocating(std::unique_ptr<OHOS::Location::RequestConfig>& requestConfig,
     OHOS::sptr<OHOS::Location::ILocatorCallback>& callback)
 {
     g_lastStartedCallback = callback;
     return g_startLocatingResult;
 }
 
-bool FakeStopLocating(OHOS::sptr<OHOS::Location::ILocatorCallback>& callback)
+bool g_fakeStopLocating(OHOS::sptr<OHOS::Location::ILocatorCallback>& callback)
 {
     return true;
 }
@@ -305,8 +305,8 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_007, T
 HWTEST_F(LocationProxyDetachedTest, LocationProxyAdapterTest_StopLocatingMarksDetached_008, TestSize.Level1)
 {
     LocationProxyAdapterImpl proxyAdapter;
-    LocationProxyAdapterImpl::startLocatingFunc_ = FakeStartLocating;
-    LocationProxyAdapterImpl::stopLocatingFunc_ = FakeStopLocating;
+    LocationProxyAdapterImpl::startLocatingFunc_ = g_fakeStartLocating;
+    LocationProxyAdapterImpl::stopLocatingFunc_ = g_fakeStopLocating;
     auto requestConfig = std::make_shared<LocationRequestConfigImpl>();
     auto callback = std::make_shared<LocationCallbackAdapterMock>();
 
@@ -331,8 +331,8 @@ HWTEST_F(LocationProxyDetachedTest, LocationProxyAdapterTest_StartLocatingFailMa
 {
     g_startLocatingResult = false;
     LocationProxyAdapterImpl proxyAdapter;
-    LocationProxyAdapterImpl::startLocatingFunc_ = FakeStartLocating;
-    LocationProxyAdapterImpl::stopLocatingFunc_ = FakeStopLocating;
+    LocationProxyAdapterImpl::startLocatingFunc_ = g_fakeStartLocating;
+    LocationProxyAdapterImpl::stopLocatingFunc_ = g_fakeStopLocating;
     auto requestConfig = std::make_shared<LocationRequestConfigImpl>();
     auto callback = std::make_shared<LocationCallbackAdapterMock>();
 
@@ -354,8 +354,8 @@ HWTEST_F(LocationProxyDetachedTest, LocationProxyAdapterTest_DestructorMarksDeta
     LocationCallbackImpl* callbackImpl = nullptr;
     {
         LocationProxyAdapterImpl proxyAdapter;
-        LocationProxyAdapterImpl::startLocatingFunc_ = FakeStartLocating;
-        LocationProxyAdapterImpl::stopLocatingFunc_ = FakeStopLocating;
+        LocationProxyAdapterImpl::startLocatingFunc_ = g_fakeStartLocating;
+        LocationProxyAdapterImpl::stopLocatingFunc_ = g_fakeStopLocating;
         auto requestConfig = std::make_shared<LocationRequestConfigImpl>();
         auto callback = std::make_shared<LocationCallbackAdapterMock>();
 
