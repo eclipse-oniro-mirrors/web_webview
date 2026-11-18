@@ -23,8 +23,8 @@
 
 using namespace OHOS::NWeb;
 namespace {
-  constexpr size_t RENDER_PID_DATA_INDEX = 2;
-  constexpr size_t MIN_SIZE_WITH_RENDER_PID = 3;
+    constexpr size_t RENDER_PID_DATA_INDEX = 2;
+    constexpr size_t MIN_SIZE_WITH_RENDER_PID = 3;
 }
 class BackgroundStateChangeCallbackAdapterMock : public BackgroundStateChangeCallbackAdapter {
 public:
