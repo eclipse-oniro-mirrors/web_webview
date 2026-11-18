@@ -184,8 +184,10 @@ public:
     void DumpArkWebJSHeap(
         int32_t fd = -1, int32_t renderPid = -1, bool needSnapshot = false, bool needGC = false, bool needRaw = false);
 
-    // Returns the default UA assembled without any web engine initialization.
-    // Empty string when the ArkWeb version cannot be resolved from the engine.
+    // Returns the default UA without initializing the web engine. Only the
+    // engine library is loaded (dlopen + LibraryLoaded), CEF is never
+    // initialized. Once the engine library has been loaded, the UA assembly
+    // path is the same as GetDefaultUserAgent.
     std::string GetDefaultUserAgentLite();
 
 private:

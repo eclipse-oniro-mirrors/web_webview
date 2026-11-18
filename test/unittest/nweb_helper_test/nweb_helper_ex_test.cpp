@@ -2120,5 +2120,57 @@ HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_Norm
     NWebHelper::Instance().initFlag_ = savedInitFlag;
 }
 
+class NWebHelperGetDefaultUserAgentLiteTest : public testing::Test {
+public:
+    static void SetUpTestCase(void) {}
+    static void TearDownTestCase(void) {}
+    void SetUp() {}
+    void TearDown() {}
+};
+
+/**
+ * @tc.name: NWebHelperGetDefaultUserAgentLiteTest_EngineAvailable_001
+ * @tc.desc: Engine is already loaded, the lite UA is forwarded to the engine
+ *           without initializing it.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperGetDefaultUserAgentLiteTest,
+    NWebHelperGetDefaultUserAgentLiteTest_EngineAvailable_001, TestSize.Level1)
+{
+    class UserAgentLiteMockNWebEngine : public MockNWebEngine {
+    public:
+        std::string GetDefaultUserAgentLite() override
+        {
+            return "lite-ua";
+        }
+    };
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = std::make_shared<UserAgentLiteMockNWebEngine>();
+    NWebHelper::Instance().initFlag_ = false;
+    EXPECT_EQ(NWebHelper::Instance().GetDefaultUserAgentLite(), "lite-ua");
+    EXPECT_FALSE(NWebHelper::Instance().initFlag_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperGetDefaultUserAgentLiteTest_EmptyFromEngine_002
+ * @tc.desc: The engine returns an empty UA, which is propagated unchanged.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperGetDefaultUserAgentLiteTest,
+    NWebHelperGetDefaultUserAgentLiteTest_EmptyFromEngine_002, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().initFlag_ = false;
+    EXPECT_EQ(NWebHelper::Instance().GetDefaultUserAgentLite(), "");
+    EXPECT_FALSE(NWebHelper::Instance().initFlag_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
 } // namespace OHOS::NWeb
 }

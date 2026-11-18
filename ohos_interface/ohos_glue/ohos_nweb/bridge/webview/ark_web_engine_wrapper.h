@@ -165,6 +165,8 @@ public:
                                  std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> callback) override;
 
     void SetGlobalWebSiteConfigCallback(std::shared_ptr<OHOS::NWeb::NWebWebSiteConfigCallback> callback) override;
+
+    std::string GetDefaultUserAgentLite() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> GetOrCreateNWebWrapper(int32_t nweb_id,
         ArkWebRefPtr<ArkWebNWeb> ark_web_nweb);

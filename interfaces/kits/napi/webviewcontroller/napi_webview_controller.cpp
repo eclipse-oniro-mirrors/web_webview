@@ -923,7 +923,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getUserAgentMetadata", NapiWebviewController::GetUserAgentMetadata),
         DECLARE_NAPI_FUNCTION("getLastPostMessageUrl", NapiWebviewController::GetLastPostMessageUrl),
         DECLARE_NAPI_FUNCTION("setZoomFactor", NapiWebviewController::SetZoomFactor),
-        DECLARE_NAPI_STATIC_FUNCTION("getDefaultUserAgentLite", NapiWebviewController::GetDefaultUserAgentLite),
         DECLARE_NAPI_STATIC_FUNCTION("getDefaultUserAgentLite", NapiWebviewController::GetDefaultUserAgentLite)
     };
     napi_value constructor = nullptr;
@@ -6596,7 +6595,6 @@ napi_value NapiWebviewController::GetDefaultUserAgent(napi_env env, napi_callbac
 
 napi_value NapiWebviewController::GetDefaultUserAgentLite(napi_env env, napi_callback_info info)
 {
-    WVLOG_I("Get the default user agent lite.");
     napi_value result = nullptr;
 
     std::string userAgent = NWebHelper::Instance().GetDefaultUserAgentLite();

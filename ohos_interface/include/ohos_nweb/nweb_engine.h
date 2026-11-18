@@ -194,6 +194,16 @@ public:
 
     virtual void SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) {}
 
+    /**
+     * Get the default user agent without initializing the web engine. Only the
+     * engine library is loaded, so the result is identical with
+     * GetDefaultUserAgent while CEF is never initialized.
+     *
+     * @return The default user agent, or an empty string on failure.
+     */
+    virtual std::string GetDefaultUserAgentLite() {
+        return "";
+    }
 };
 
 } // namespace OHOS::NWeb

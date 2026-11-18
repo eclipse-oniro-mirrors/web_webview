@@ -441,4 +441,9 @@ void ArkWebEngineImpl::SetGlobalWebSiteConfigCallback(
     nweb_engine_->SetGlobalWebSiteConfigCallback(
         std::make_shared<ArkWebWebSiteConfigCallbackWrapper>(callback));
 }
+
+ArkWebString ArkWebEngineImpl::GetDefaultUserAgentLite()
+{
+    return ArkWebStringClassToStruct(nweb_engine_->GetDefaultUserAgentLite());
+}
 } // namespace OHOS::ArkWeb
