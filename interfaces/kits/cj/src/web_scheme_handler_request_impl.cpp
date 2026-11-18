@@ -230,10 +230,12 @@ namespace OHOS::Webview {
         WebSchemeHandlerImpl::webSchemeHandlerMap_;
     std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandlerImpl*>
         WebSchemeHandlerImpl::arkWebSchemeHandlerMap_;
+    std::mutex WebSchemeHandlerImpl::mapMutex_;
 
     const ArkWeb_SchemeHandler* WebSchemeHandlerImpl::GetArkWebSchemeHandler(
         WebSchemeHandlerImpl* handler)
     {
+        std::lock_guard<std::mutex> lock(mapMutex_);
         return WebSchemeHandlerImpl::webSchemeHandlerMap_.find(handler) !=
             WebSchemeHandlerImpl::webSchemeHandlerMap_.end() ?
             WebSchemeHandlerImpl::webSchemeHandlerMap_[handler] : nullptr;
@@ -241,6 +243,7 @@ namespace OHOS::Webview {
 
     WebSchemeHandlerImpl* WebSchemeHandlerImpl::GetWebSchemeHandler(const ArkWeb_SchemeHandler* handler)
     {
+        std::lock_guard<std::mutex> lock(mapMutex_);
         return WebSchemeHandlerImpl::arkWebSchemeHandlerMap_.find(handler) !=
             WebSchemeHandlerImpl::arkWebSchemeHandlerMap_.end() ?
             WebSchemeHandlerImpl::arkWebSchemeHandlerMap_[handler] : nullptr;
@@ -259,6 +262,7 @@ namespace OHOS::Webview {
         OH_ArkWebSchemeHandler_SetOnRequestStart(handler, onRequestStart_);
         OH_ArkWebSchemeHandler_SetOnRequestStop(handler, onRequestStop_);
         OH_ArkWebSchemeHandler_SetFromEts(handler, true);
+        std::lock_guard<std::mutex> lock(mapMutex_);
         webSchemeHandlerMap_.insert(std::make_pair(this, handler));
         arkWebSchemeHandlerMap_.insert(std::make_pair(handler, this));
     }
@@ -266,14 +270,22 @@ namespace OHOS::Webview {
     WebSchemeHandlerImpl::~WebSchemeHandlerImpl()
     {
         WEBVIEWLOGD("WebSchemeHandler::~WebSchemeHandler");
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            request_start_callback_ = nullptr;
+            request_stop_callback_ = nullptr;
+        }
         ArkWeb_SchemeHandler* handler =
             const_cast<ArkWeb_SchemeHandler*>(GetArkWebSchemeHandler(this));
         if (!handler) {
             WEBVIEWLOGD("~WebSchemeHandler not found ArkWeb_SchemeHandler");
             return;
         }
-        webSchemeHandlerMap_.erase(this);
-        arkWebSchemeHandlerMap_.erase(handler);
+        {
+            std::lock_guard<std::mutex> lock(mapMutex_);
+            webSchemeHandlerMap_.erase(this);
+            arkWebSchemeHandlerMap_.erase(handler);
+        }
         OH_ArkWeb_DestroySchemeHandler(handler);
     }
 
@@ -283,7 +295,12 @@ namespace OHOS::Webview {
         bool* intercept)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::RequestStart");
-        if (!request_start_callback_) {
+        std::function<bool(int64_t, int64_t)> callback;
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            callback = request_start_callback_;
+        }
+        if (!callback) {
             WEBVIEWLOGE("[SchemeHandler] :RequestStart not exists.");
             return;
         }
@@ -302,7 +319,7 @@ namespace OHOS::Webview {
         } else {
             resourceHandler->IncStrongRef(nullptr);
         }
-        *intercept = request_start_callback_(schemeHandlerRequest->GetID(), resourceHandler->GetID());
+        *intercept = callback(schemeHandlerRequest->GetID(), resourceHandler->GetID());
         if (!*intercept) {
             resourceHandler->SetFinishFlag();
             resourceHandler->DecStrongRef(nullptr);
@@ -335,7 +352,10 @@ namespace OHOS::Webview {
         if (param == nullptr) {
             return;
         }
-        param->callbackRef_ = request_stop_callback_;
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            param->callbackRef_ = request_stop_callback_;
+        }
         param->request_ = FFIData::Create<WebSchemeHandlerRequestImpl>(resourceRequest);
         if (param->request_ == nullptr) {
             delete param;
@@ -350,12 +370,14 @@ namespace OHOS::Webview {
     void WebSchemeHandlerImpl::PutRequestStart(std::function<bool(int64_t, int64_t)> callback)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::PutRequestStart");
+        std::lock_guard<std::mutex> lock(callbackMutex_);
         request_start_callback_ = callback;
     }
 
     void WebSchemeHandlerImpl::PutRequestStop(std::function<void(int64_t)> callback)
     {
         WEBVIEWLOGI("WebSchemeHandlerImpl::PutRequestStop");
+        std::lock_guard<std::mutex> lock(callbackMutex_);
         request_stop_callback_ = callback;
     }
 }

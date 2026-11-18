@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <map>
+#include <mutex>
 #include "ffi_remote_data.h"
 #include "web_errors.h"
 #include "webview_javascript_result_callback.h"
@@ -181,8 +182,13 @@ namespace OHOS::Webview {
         ArkWeb_OnRequestStart onRequestStart_ = nullptr;
         ArkWeb_OnRequestStop onRequestStop_ = nullptr;
 
+        // Protects request_start_callback_ and request_stop_callback_ which are written by CJ
+        // application threads and read by the Chromium IO thread.
+        std::mutex callbackMutex_;
         std::function<bool(int64_t, int64_t)> request_start_callback_ = nullptr;
         std::function<void(int64_t)> request_stop_callback_ = nullptr;
+
+        static std::mutex mapMutex_;
     };
 
     // WebResourceHandler
