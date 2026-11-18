@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include <limits>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -23,7 +25,21 @@
 using namespace testing;
 using namespace testing::ext;
 
+// Mock control knobs defined in sensor_agent_test_mock.cpp.
+extern int32_t g_subscribeSensorRet;
+extern int32_t g_setBatchRet;
+extern int32_t g_activateSensorRet;
+extern int32_t g_setModeRet;
+extern int32_t g_deactivateSensorRet;
+extern int32_t g_unsubscribeSensorRet;
+extern int32_t g_getAllSensorsRet;
+extern int32_t g_sensorInfoCount;
+extern SensorInfo* g_sensorInfoList;
+
 namespace OHOS::NWeb {
+extern SensorTypeId SensorTypeToOhosSensorType(int sensorTypeId);
+extern std::string SensorTypeToSensorUserName(int sensorTypeId);
+
 namespace {
 std::shared_ptr<OHOS::NWeb::SensorCallbackImpl> g_sensoCallback;
 std::shared_ptr<OHOS::NWeb::SensorAdapterImpl> g_sensorAdapter;
@@ -52,6 +68,27 @@ public:
     ~SensorCallbackAdapterMock() = default;
     void UpdateOhosSensorData(double timestamp,
         double value1, double value2, double value3, double value4) {}
+};
+
+class RecordingSensorCallbackAdapter : public SensorCallbackAdapter {
+public:
+    void UpdateOhosSensorData(double timestamp,
+        double value1, double value2, double value3, double value4) override
+    {
+        ++callCount;
+        lastTimestamp = timestamp;
+        lastValue1 = value1;
+        lastValue2 = value2;
+        lastValue3 = value3;
+        lastValue4 = value4;
+    }
+
+    int32_t callCount = 0;
+    double lastTimestamp = 0.0;
+    double lastValue1 = 0.0;
+    double lastValue2 = 0.0;
+    double lastValue3 = 0.0;
+    double lastValue4 = 0.0;
 };
 
 void SensorCallbackImplTest::SetUpTestCase(void) {}
@@ -579,5 +616,561 @@ HWTEST_F(SensorAdapterImplTest, SensorAdapterImplTest_SensorAdapterImpl_017, Tes
     event =nullptr;
     g_sensorAdapter->handleGameRotationVectorData(callback, event);
     EXPECT_NE(g_sensorAdapter, nullptr);
+}
+
+/**
+ * @tc.name: SensorTypeToOhosSensorType_001
+ * @tc.desc: Verify web sensor type ids map to OH sensor type ids and invalid ids map to none
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, SensorTypeToOhosSensorType_001, TestSize.Level1)
+{
+    EXPECT_EQ(SensorTypeToOhosSensorType(2), SENSOR_TYPE_ID_ACCELEROMETER);
+    EXPECT_EQ(SensorTypeToOhosSensorType(3), SENSOR_TYPE_ID_LINEAR_ACCELERATION);
+    EXPECT_EQ(SensorTypeToOhosSensorType(4), SENSOR_TYPE_ID_GRAVITY);
+    EXPECT_EQ(SensorTypeToOhosSensorType(5), SENSOR_TYPE_ID_GYROSCOPE);
+    EXPECT_EQ(SensorTypeToOhosSensorType(6), SENSOR_TYPE_ID_MAGNETIC_FIELD);
+    EXPECT_EQ(SensorTypeToOhosSensorType(8), SENSOR_TYPE_ID_ORIENTATION);
+    EXPECT_EQ(SensorTypeToOhosSensorType(9), SENSOR_TYPE_ID_ROTATION_VECTOR);
+    EXPECT_EQ(SensorTypeToOhosSensorType(11), SENSOR_TYPE_ID_GAME_ROTATION_VECTOR);
+
+    EXPECT_EQ(SensorTypeToOhosSensorType(0), SENSOR_TYPE_ID_NONE);
+    EXPECT_EQ(SensorTypeToOhosSensorType(1), SENSOR_TYPE_ID_NONE);
+    EXPECT_EQ(SensorTypeToOhosSensorType(-1), SENSOR_TYPE_ID_NONE);
+}
+
+/**
+ * @tc.name: SensorTypeToSensorUserName_001
+ * @tc.desc: Verify all mapped user names and the default name for unknown ids
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, SensorTypeToSensorUserName_001, TestSize.Level1)
+{
+    EXPECT_EQ(SensorTypeToSensorUserName(2), "OhosAccelerometerService");
+    EXPECT_EQ(SensorTypeToSensorUserName(3), "OhosLinearAccelerometerService");
+    EXPECT_EQ(SensorTypeToSensorUserName(4), "OhosGravityService");
+    EXPECT_EQ(SensorTypeToSensorUserName(5), "OhosCyroscopeService");
+    EXPECT_EQ(SensorTypeToSensorUserName(6), "OhosMagnetometerService");
+    EXPECT_EQ(SensorTypeToSensorUserName(8), "OhosOrientationService");
+    EXPECT_EQ(SensorTypeToSensorUserName(9), "OhosRotationVectorService");
+    EXPECT_EQ(SensorTypeToSensorUserName(11), "OhosGameRotationVectorService");
+    EXPECT_EQ(SensorTypeToSensorUserName(0), "OhosSensorService");
+    EXPECT_EQ(SensorTypeToSensorUserName(7), "OhosSensorService");
+}
+
+/**
+ * @tc.name: GetOhosSensorReportingMode_003
+ * @tc.desc: Verify reporting mode for every supported sensor and an unsupported one
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, GetOhosSensorReportingMode_003, TestSize.Level1)
+{
+    const int32_t supportedIds[] = {2, 3, 4, 5, 6, 8, 9, 11};
+    for (int32_t id : supportedIds) {
+        EXPECT_EQ(g_sensorAdapter->GetOhosSensorReportingMode(id), SENSOR_DATA_REPORT_CONTINUOUS);
+    }
+    EXPECT_EQ(g_sensorAdapter->GetOhosSensorReportingMode(0), -1);
+}
+
+/**
+ * @tc.name: GetOhosSensorDefaultSupportedFrequency_002
+ * @tc.desc: Verify default frequency is 5Hz for supported ids and 0 for unsupported ids
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, GetOhosSensorDefaultSupportedFrequency_002, TestSize.Level1)
+{
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorDefaultSupportedFrequency(0), 0.0);
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorDefaultSupportedFrequency(11),
+        NANOSECONDS_IN_SECOND / DEFAULT_SAMPLE_PERIOD);
+}
+
+/**
+ * @tc.name: GetOhosSensorMinSupportedFrequency_002
+ * @tc.desc: Verify min supported frequency returns 0 for unsupported sensor ids
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, GetOhosSensorMinSupportedFrequency_002, TestSize.Level2)
+{
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(0), 0.0);
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(-1), 0.0);
+}
+
+/**
+ * @tc.name: GetOhosSensorMaxSupportedFrequency_002
+ * @tc.desc: Verify max supported frequency returns 0 for unsupported sensor ids
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, GetOhosSensorMaxSupportedFrequency_002, TestSize.Level2)
+{
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(0), 0.0);
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(1), 0.0);
+}
+
+/**
+ * @tc.name: SubscribeOhosSensor_002
+ * @tc.desc: Verify invalid sampling intervals and invalid sensor ids are rejected
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, SubscribeOhosSensor_002, TestSize.Level2)
+{
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, -1), SENSOR_PARAMETER_ERROR);
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, std::numeric_limits<int64_t>::min()), SENSOR_PARAMETER_ERROR);
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(0, 1000), SENSOR_PARAMETER_ERROR);
+}
+
+/**
+ * @tc.name: UpdateOhosSensorData_002
+ * @tc.desc: Verify SensorCallbackImpl forwards all five data values to its adapter
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorCallbackImplTest, UpdateOhosSensorData_002, TestSize.Level1)
+{
+    auto callbackAdapter = std::make_shared<RecordingSensorCallbackAdapter>();
+    SensorCallbackImpl callback(callbackAdapter);
+
+    callback.UpdateOhosSensorData(1.0, 2.0, 3.0, 4.0, 5.0);
+
+    EXPECT_EQ(callbackAdapter->callCount, 1);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastTimestamp, 1.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 2.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 3.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 4.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 5.0);
+}
+
+/**
+ * @tc.name: OhosSensorCallback_002
+ * @tc.desc: Verify accelerometer event is dispatched with parsed values to registered callback
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_002, TestSize.Level1)
+{
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ACCELEROMETER);
+    auto callbackAdapter = std::make_shared<RecordingSensorCallbackAdapter>();
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
+    ASSERT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
+
+    AccelData data;
+    data.x = 1.0F;
+    data.y = 2.0F;
+    data.z = 3.0F;
+    SensorEvent event;
+    event.sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER;
+    event.timestamp = 123;
+    event.data = reinterpret_cast<uint8_t*>(&data);
+    event.dataLen = sizeof(data);
+
+    g_sensorAdapter->OhosSensorCallback(&event);
+
+    EXPECT_EQ(callbackAdapter->callCount, 1);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastTimestamp, 123.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 1.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 2.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 3.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
+
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ACCELEROMETER);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 1);
+}
+
+/**
+ * @tc.name: HandleGameRotationVectorData_002
+ * @tc.desc: Verify short data buffer is ignored and valid buffer forwards four values
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, HandleGameRotationVectorData_002, TestSize.Level2)
+{
+    auto callbackAdapter = std::make_shared<RecordingSensorCallbackAdapter>();
+    auto callback = std::make_shared<SensorCallbackImpl>(callbackAdapter);
+    GameRotationVectorData data;
+    data.x = 1.0F;
+    data.y = 2.0F;
+    data.z = 3.0F;
+    data.w = 4.0F;
+    SensorEvent event;
+    event.sensorTypeId = SENSOR_TYPE_ID_GAME_ROTATION_VECTOR;
+    event.data = reinterpret_cast<uint8_t*>(&data);
+
+    event.dataLen = sizeof(data) - 1;
+    g_sensorAdapter->handleGameRotationVectorData(callback, &event);
+    EXPECT_EQ(callbackAdapter->callCount, 0);
+
+    event.dataLen = sizeof(data);
+    g_sensorAdapter->handleGameRotationVectorData(callback, &event);
+    EXPECT_EQ(callbackAdapter->callCount, 1);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 1.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 2.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 3.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 4.0);
+}
+
+/**
+ * @tc.name: IsOhosSensorSupported_002
+ * @tc.desc: Verify all mapped sensor ids report supported and hidden ones report unsupported
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, IsOhosSensorSupported_002, TestSize.Level1)
+{
+    const int32_t supportedIds[] = {2, 3, 4, 5, 6, 8, 9, 11};
+    for (int32_t id : supportedIds) {
+        EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(id), SENSOR_SUCCESS);
+    }
+
+    int32_t savedCount = g_sensorInfoCount;
+    g_sensorInfoCount = 1; // only the accelerometer entry is visible
+    EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_SUCCESS);
+    EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(5), SENSOR_ERROR);
+    g_sensorInfoCount = savedCount;
+}
+
+/**
+ * @tc.name: IsOhosSensorSupported_003
+ * @tc.desc: Verify GetAllSensors failures (error code, null list, negative count) map to SENSOR_ERROR
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, IsOhosSensorSupported_003, TestSize.Level2)
+{
+    int32_t savedRet = g_getAllSensorsRet;
+    int32_t savedCount = g_sensorInfoCount;
+    SensorInfo* savedList = g_sensorInfoList;
+
+    g_getAllSensorsRet = -1;
+    EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_ERROR);
+
+    g_getAllSensorsRet = 0;
+    g_sensorInfoList = nullptr;
+    EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_ERROR);
+
+    g_sensorInfoList = savedList;
+    g_sensorInfoCount = -1;
+    EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_ERROR);
+
+    g_getAllSensorsRet = savedRet;
+    g_sensorInfoCount = savedCount;
+    g_sensorInfoList = savedList;
+}
+
+/**
+ * @tc.name: GetOhosSensorMinSupportedFrequency_003
+ * @tc.desc: Verify min frequency derives from maxSamplePeriod and stays 0 when absent or invalid
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, GetOhosSensorMinSupportedFrequency_003, TestSize.Level1)
+{
+    int32_t savedCount = g_sensorInfoCount;
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(2), 5.0); // 1e9 / 2e8
+
+    g_sensorInfoList[0].maxSamplePeriod = 0;
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(2), 0.0);
+    g_sensorInfoList[0].maxSamplePeriod = 200000000;
+
+    g_sensorInfoCount = 0; // no sensor visible
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(2), 0.0);
+    g_sensorInfoCount = savedCount;
+}
+
+/**
+ * @tc.name: GetOhosSensorMaxSupportedFrequency_003
+ * @tc.desc: Verify max frequency derives from minSamplePeriod and stays 0 when absent or invalid
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, GetOhosSensorMaxSupportedFrequency_003, TestSize.Level1)
+{
+    int32_t savedCount = g_sensorInfoCount;
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(2), 200.0); // 1e9 / 5e6
+
+    g_sensorInfoList[0].minSamplePeriod = 0;
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(2), 0.0);
+    g_sensorInfoList[0].minSamplePeriod = 5000000;
+
+    g_sensorInfoCount = 0; // no sensor visible
+    EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(2), 0.0);
+    g_sensorInfoCount = savedCount;
+}
+
+/**
+ * @tc.name: SubscribeOhosSensor_003
+ * @tc.desc: Verify failures of each native call are propagated and all mapped ids can subscribe
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, SubscribeOhosSensor_003, TestSize.Level2)
+{
+    int32_t savedSubscribeRet = g_subscribeSensorRet;
+    int32_t savedSetBatchRet = g_setBatchRet;
+    int32_t savedActivateRet = g_activateSensorRet;
+    int32_t savedSetModeRet = g_setModeRet;
+
+    g_subscribeSensorRet = -2;
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -2);
+    g_subscribeSensorRet = savedSubscribeRet;
+
+    g_setBatchRet = -3;
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -3);
+    g_setBatchRet = savedSetBatchRet;
+
+    g_activateSensorRet = -4;
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -4);
+    g_activateSensorRet = savedActivateRet;
+
+    g_setModeRet = -5;
+    EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -5);
+    g_setModeRet = savedSetModeRet;
+
+    const int32_t supportedIds[] = {2, 3, 4, 5, 6, 8, 9, 11};
+    for (int32_t id : supportedIds) {
+        EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(id, 200000000), SENSOR_SUCCESS);
+    }
+}
+
+/**
+ * @tc.name: UnsubscribeOhosSensor_002
+ * @tc.desc: Verify unsubscribe removes the callback on success and keeps it on native failures
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, UnsubscribeOhosSensor_002, TestSize.Level2)
+{
+    int32_t savedDeactivateRet = g_deactivateSensorRet;
+    int32_t savedUnsubscribeRet = g_unsubscribeSensorRet;
+    auto callbackAdapter = std::make_shared<SensorCallbackAdapterMock>();
+
+    EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(12), SENSOR_PARAMETER_ERROR);
+    EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(-1), SENSOR_PARAMETER_ERROR);
+
+    EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
+    ASSERT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
+
+    g_deactivateSensorRet = 0;
+    g_unsubscribeSensorRet = 0;
+    EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(2), SENSOR_SUCCESS);
+    EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 0U);
+
+    // DeactivateSensor failure keeps the registered callback.
+    EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
+    g_deactivateSensorRet = -1;
+    EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(2), -1);
+    EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
+
+    // UnsubscribeSensor failure keeps the registered callback as well.
+    g_deactivateSensorRet = 0;
+    g_unsubscribeSensorRet = -1;
+    EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(2), -1);
+    EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
+
+    g_deactivateSensorRet = savedDeactivateRet;
+    g_unsubscribeSensorRet = savedUnsubscribeRet;
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ACCELEROMETER);
+}
+
+/**
+ * @tc.name: RegistOhosSensorCallback_002
+ * @tc.desc: Verify duplicate registration overwrites the callback and invalid ids are rejected
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, RegistOhosSensorCallback_002, TestSize.Level2)
+{
+    const int32_t supportedIds[] = {2, 3, 4, 5, 6, 8, 9, 11};
+    auto callbackAdapter = std::make_shared<SensorCallbackAdapterMock>();
+    for (int32_t id : supportedIds) {
+        EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(id, callbackAdapter), SENSOR_SUCCESS);
+    }
+    EXPECT_EQ(static_cast<int32_t>(SensorAdapterImpl::sensorCallbackMap.size()), 8);
+
+    // Duplicate registration overwrites instead of inserting a second entry.
+    EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
+    EXPECT_EQ(static_cast<int32_t>(SensorAdapterImpl::sensorCallbackMap.size()), 8);
+    EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
+
+    // A null adapter is stored as-is by the adapter implementation.
+    EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(4, nullptr), SENSOR_SUCCESS);
+    EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_GRAVITY), 1U);
+
+    EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(12, callbackAdapter), SENSOR_PARAMETER_ERROR);
+    EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(-1, callbackAdapter), SENSOR_PARAMETER_ERROR);
+
+    for (int32_t ohosId : {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_GYROSCOPE,
+        SENSOR_TYPE_ID_MAGNETIC_FIELD, SENSOR_TYPE_ID_ORIENTATION, SENSOR_TYPE_ID_GRAVITY,
+        SENSOR_TYPE_ID_LINEAR_ACCELERATION, SENSOR_TYPE_ID_ROTATION_VECTOR,
+        SENSOR_TYPE_ID_GAME_ROTATION_VECTOR}) {
+        SensorAdapterImpl::sensorCallbackMap.erase(ohosId);
+    }
+}
+
+/**
+ * @tc.name: OhosSensorCallback_003
+ * @tc.desc: Verify null events and unregistered or unknown sensor types are ignored safely
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_003, TestSize.Level2)
+{
+    g_sensorAdapter->OhosSensorCallback(nullptr); // no crash
+
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_GYROSCOPE);
+    auto callbackAdapter = std::make_shared<RecordingSensorCallbackAdapter>();
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
+
+    // A type with no registered callback is ignored.
+    SensorEvent event;
+    event.sensorTypeId = SENSOR_TYPE_ID_GYROSCOPE;
+    event.timestamp = 111;
+    event.data = nullptr;
+    event.dataLen = 0;
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 0);
+
+    // A type that hits no dispatch branch does not forward data.
+    SensorAdapterImpl::sensorCallbackMap[999] = std::make_shared<SensorCallbackImpl>(callbackAdapter);
+    event.sensorTypeId = 999;
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 0);
+    SensorAdapterImpl::sensorCallbackMap.erase(999);
+
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ACCELEROMETER);
+}
+
+/**
+ * @tc.name: OhosSensorCallback_004
+ * @tc.desc: Verify linear acceleration, gravity, gyroscope and magnetometer events forward x/y/z with 0 as 4th value
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_004, TestSize.Level1)
+{
+    auto callbackAdapter = std::make_shared<RecordingSensorCallbackAdapter>();
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(3, callbackAdapter), SENSOR_SUCCESS);
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(4, callbackAdapter), SENSOR_SUCCESS);
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(5, callbackAdapter), SENSOR_SUCCESS);
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(6, callbackAdapter), SENSOR_SUCCESS);
+
+    SensorEvent event;
+    event.timestamp = 1234;
+
+    LinearAccelData linearData;
+    linearData.x = 1.5F;
+    linearData.y = 2.5F;
+    linearData.z = 3.5F;
+    event.sensorTypeId = SENSOR_TYPE_ID_LINEAR_ACCELERATION;
+    event.data = reinterpret_cast<uint8_t*>(&linearData);
+    event.dataLen = sizeof(linearData);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 1);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastTimestamp, 1234.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 1.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 2.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 3.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
+
+    GravityData gravityData;
+    gravityData.x = 4.5F;
+    gravityData.y = 5.5F;
+    gravityData.z = 6.5F;
+    event.sensorTypeId = SENSOR_TYPE_ID_GRAVITY;
+    event.data = reinterpret_cast<uint8_t*>(&gravityData);
+    event.dataLen = sizeof(gravityData);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 2);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 4.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 5.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 6.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
+
+    GyroscopeData gyroData;
+    gyroData.x = 7.5F;
+    gyroData.y = 8.5F;
+    gyroData.z = 9.5F;
+    event.sensorTypeId = SENSOR_TYPE_ID_GYROSCOPE;
+    event.data = reinterpret_cast<uint8_t*>(&gyroData);
+    event.dataLen = sizeof(gyroData);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 3);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 7.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 8.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 9.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
+
+    MagneticFieldData magneticData;
+    magneticData.x = 10.5F;
+    magneticData.y = 11.5F;
+    magneticData.z = 12.5F;
+    event.sensorTypeId = SENSOR_TYPE_ID_MAGNETIC_FIELD;
+    event.data = reinterpret_cast<uint8_t*>(&magneticData);
+    event.dataLen = sizeof(magneticData);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 4);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 10.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 11.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 12.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
+
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_LINEAR_ACCELERATION);
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_GRAVITY);
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_GYROSCOPE);
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_MAGNETIC_FIELD);
+}
+
+/**
+ * @tc.name: OhosSensorCallback_005
+ * @tc.desc: Verify orientation forwards beta/gamma/alpha and rotation vector forwards x/y/z/w
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_005, TestSize.Level1)
+{
+    auto callbackAdapter = std::make_shared<RecordingSensorCallbackAdapter>();
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(8, callbackAdapter), SENSOR_SUCCESS);
+    ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(9, callbackAdapter), SENSOR_SUCCESS);
+
+    SensorEvent event;
+    event.timestamp = 99;
+    OrientationData orientationData;
+    orientationData.alpha = 30.0F;
+    orientationData.beta = 60.0F;
+    orientationData.gamma = 90.0F;
+    event.sensorTypeId = SENSOR_TYPE_ID_ORIENTATION;
+    event.data = reinterpret_cast<uint8_t*>(&orientationData);
+    event.dataLen = sizeof(orientationData);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 1);
+    // The adapter forwards beta, gamma, alpha in this order.
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 60.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 90.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 30.0);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
+
+    RotationVectorData rotationData;
+    rotationData.x = 0.5F;
+    rotationData.y = 1.5F;
+    rotationData.z = 2.5F;
+    rotationData.w = 3.5F;
+    event.sensorTypeId = SENSOR_TYPE_ID_ROTATION_VECTOR;
+    event.data = reinterpret_cast<uint8_t*>(&rotationData);
+    event.dataLen = sizeof(rotationData);
+    g_sensorAdapter->OhosSensorCallback(&event);
+    EXPECT_EQ(callbackAdapter->callCount, 2);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 0.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 1.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 2.5);
+    EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 3.5);
+
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ORIENTATION);
+    SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ROTATION_VECTOR);
 }
 } // namespace OHOS::NWeb
