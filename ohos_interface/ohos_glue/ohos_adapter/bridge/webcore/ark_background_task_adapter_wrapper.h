@@ -17,6 +17,7 @@
 #define ARK_BACKGROUND_TASK_ADAPTER_WRAPPER_H
 #pragma once
 
+#include <vector>
 #include "background_task_adapter.h"
 #include "ohos_adapter/include/ark_background_task_adapter.h"
 
@@ -30,6 +31,8 @@ public:
     void RegisterBackgroundTaskPolicyCallback(
         std::shared_ptr<NWeb::BackgroundStateChangeCallbackAdapter> callback) override;
 
+    bool RequestBackgroundTaskRunningWithRenderPids(
+        bool running, NWeb::BackgroundModeAdapter bgMode, const std::vector<int32_t>& renderPids) override;
 private:
     ArkWebRefPtr<ArkBackgroundTaskAdapter> ctocpp_;
 };

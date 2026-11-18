@@ -30,7 +30,8 @@ public:
     bool RequestBackgroundTaskRunning(bool running, int32_t bgMode) override;
     void RegisterBackgroundTaskPolicyCallback(
         const ArkWebRefPtr<ArkBackgroundStateChangeCallbackAdapter> callback) override;
-
+    bool RequestBackgroundTaskRunningWithRenderPids(bool running, int32_t bgMode,
+                                                    const ArkWebInt32Vector& renderPids) override;
 private:
     std::shared_ptr<OHOS::NWeb::BackgroundTaskAdapter> real_;
 

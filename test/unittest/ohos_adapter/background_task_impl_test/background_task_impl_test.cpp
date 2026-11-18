@@ -167,4 +167,52 @@ HWTEST_F(BackgroundTaskImplTest, BackgroundTaskImplTest_BackgroundTaskAdapter_00
     testCallback->NotifyApplicationForeground();
     testCallback->NotifyApplicationBackground();
 }
+
+/**
+ * @tc.name: BackgroundTaskImplTest_BackgroundTaskAdapter_007
+ * @tc.desc: BackgroundTaskAdapter RequestBackgroundRunningWithRenderPids.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BackgroundTaskImplTest, BackgroundTaskImplTest_BackgroundTaskAdapter_007, TestSize.Level0)
+{
+    std::vector<int32_t> renderPids { 100 };
+    g_errCode = 0;
+    bool result = BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(
+        true, BackgroundModeAdapter::DATA_TRANSFER, renderPids);
+    EXPECT_TRUE(result);
+    g_errCode = -1;
+    result = BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(
+        true, BackgroundModeAdapter::AUDIO_PLAYBACK, renderPids);
+    EXPECT_FALSE(result);
+    result = BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(
+        true, BackgroundModeAdapter::AUDIO_PLAYBACK, {});
+    EXPECT_FALSE(result);
+}
+ 
+/**
+ * @tc.name: BackgroundTaskImplTest_BackgroundTaskAdapter_008
+ * @tc.desc: BackgroundTaskAdapterImpl RequestBackgroundTaskRunningWithRenderPids.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BackgroundTaskImplTest, BackgroundTaskImplTest_BackgroundTaskAdapter_008, TestSize.Level0)
+{
+    std::vector<int32_t> renderPids { 100 };
+    std::shared_ptr<BackgroundTaskAdapterImpl> adapter =
+        std::make_shared<BackgroundTaskAdapterImpl>();
+    EXPECT_NE(adapter, nullptr);
+ 
+    g_errCode = 0;
+    bool result = adapter->RequestBackgroundTaskRunningWithRenderPids(
+        true, BackgroundModeAdapter::DATA_TRANSFER, renderPids);
+    EXPECT_TRUE(result);
+    g_errCode = -1;
+    result = adapter->RequestBackgroundTaskRunningWithRenderPids(
+        true, BackgroundModeAdapter::AUDIO_PLAYBACK, renderPids);
+    EXPECT_FALSE(result);
+    result = adapter->RequestBackgroundTaskRunningWithRenderPids(
+        true, BackgroundModeAdapter::AUDIO_PLAYBACK, {});
+    EXPECT_FALSE(result);
+}
 } // namespace OHOS

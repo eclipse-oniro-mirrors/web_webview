@@ -17,6 +17,7 @@
 #include <cstdint>
 #include <unistd.h>
 #include <memory>
+#include <vector>
 #include "background_task_adapter.h"
 #include "background_task_impl.h"
 
@@ -46,6 +47,13 @@ namespace OHOS {
             std::make_shared<BackgroundTaskAdapterImpl>();
         adapter->RegisterBackgroundTaskPolicyCallback(callback);
         adapter->RequestBackgroundTaskRunning(running, bgMode);
+        // Fuzz RequestBackgroundRunningWithRenderPids / RequestBackgroundTaskRunningWithRenderPids.
+        if (size >= 3) { // data[2]: render pid
+            std::vector<int32_t> renderPids;
+            renderPids.emplace_back(static_cast<int32_t>(data[2]));
+            BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(running, bgMode, renderPids);
+            adapter->RequestBackgroundTaskRunningWithRenderPids(running, bgMode, renderPids);
+        }
         return true;
     }
 }

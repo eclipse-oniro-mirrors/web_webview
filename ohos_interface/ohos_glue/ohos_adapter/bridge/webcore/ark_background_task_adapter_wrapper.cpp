@@ -26,6 +26,16 @@ bool BackgroundTaskAdapter::RequestBackgroundRunning(bool running, BackgroundMod
     return ArkWeb::ArkBackgroundTaskAdapter::RequestBackgroundRunning(running, (int32_t)bgMode);
 }
 
+bool BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(bool running, BackgroundModeAdapter bgMode,
+                                                                   const std::vector<int32_t>& renderPids)
+{
+    ArkWebInt32Vector arkRenderPids =
+        ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(renderPids);
+    bool result = ArkWeb::ArkBackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(
+        running, static_cast<int32_t>(bgMode), arkRenderPids);
+    ArkWebBasicVectorStructRelease(arkRenderPids);
+    return result;
+}
 } // namespace OHOS::NWeb
 
 namespace OHOS::ArkWeb {
@@ -47,5 +57,16 @@ void ArkBackgroundTaskAdapterWrapper::RegisterBackgroundTaskPolicyCallback(
     }
 
     ctocpp_->RegisterBackgroundTaskPolicyCallback(new ArkBackgroundStateChangeCallbackAdapterImpl(callback));
+}
+
+bool ArkBackgroundTaskAdapterWrapper::RequestBackgroundTaskRunningWithRenderPids(
+    bool running, NWeb::BackgroundModeAdapter bgMode, const std::vector<int32_t>& renderPids)
+{
+    ArkWebInt32Vector arkRenderPids =
+        ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(renderPids);
+    bool result = ctocpp_->RequestBackgroundTaskRunningWithRenderPids(
+        running, static_cast<int32_t>(bgMode), arkRenderPids);
+    ArkWebBasicVectorStructRelease(arkRenderPids);
+    return result;
 }
 } // namespace OHOS::ArkWeb
