@@ -17,6 +17,7 @@
 #define DISPLAY_MANAGER_ADAPTER_IMPL_H
 
 #include <map>
+#include <mutex>
 #include "display_manager_adapter.h"
 
 #include "display.h"
@@ -136,6 +137,7 @@ public:
     bool IsSinglePhysicalDisplayForFold() override;
 private:
     ListenerMap reg_;
+    std::mutex regMutex_;
 };
 }
 

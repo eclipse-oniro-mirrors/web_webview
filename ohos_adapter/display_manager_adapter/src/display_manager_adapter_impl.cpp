@@ -14,6 +14,7 @@
  */
 #include "display_manager_adapter_impl.h"
 
+#include <atomic>
 #include <cmath>
 #include "display_info.h"
 #include "nweb_log.h"
@@ -489,19 +490,23 @@ std::shared_ptr<DisplayAdapter> DisplayManagerAdapterImpl::GetDefaultDisplay()
 uint32_t DisplayManagerAdapterImpl::RegisterDisplayListener(
     std::shared_ptr<DisplayListenerAdapter> listener)
 {
-    static uint32_t count = 1;
+    static std::atomic<uint32_t> count = 1;
     sptr<DisplayListenerAdapterImpl> reg =
         new (std::nothrow) DisplayListenerAdapterImpl(listener);
     if (reg == nullptr) {
         return false;
     }
 
-    uint32_t id = count++;
-    if (count == 0) {
-        count++;
+    uint32_t id;
+    {
+        std::lock_guard<std::mutex> lock_(regMutex_);
+        id = count.fetch_add(1);
+        if (count == 0) {
+            count.fetch_add(1);
+        }
+        reg_.emplace(std::make_pair(id, reg));
     }
 
-    reg_.emplace(std::make_pair(id, reg));
     if (DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK) {
         return id;
     } else {
@@ -511,6 +516,7 @@ uint32_t DisplayManagerAdapterImpl::RegisterDisplayListener(
 
 bool DisplayManagerAdapterImpl::UnregisterDisplayListener(uint32_t id)
 {
+    std::lock_guard<std::mutex> lock_(regMutex_);
     ListenerMap::iterator iter = reg_.find(id);
     if (iter == reg_.end()) {
         return false;
