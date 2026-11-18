@@ -18,27 +18,17 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "sensor_agent_test_mock.h"
+
 #define private public
 #include "sensor_adapter.h"
 #include "sensor_adapter_impl.h"
+#undef private
 
 using namespace testing;
 using namespace testing::ext;
 
-// Mock control knobs defined in sensor_agent_test_mock.cpp.
-extern int32_t g_subscribeSensorRet;
-extern int32_t g_setBatchRet;
-extern int32_t g_activateSensorRet;
-extern int32_t g_setModeRet;
-extern int32_t g_deactivateSensorRet;
-extern int32_t g_unsubscribeSensorRet;
-extern int32_t g_getAllSensorsRet;
-extern int32_t g_sensorInfoCount;
-extern SensorInfo* g_sensorInfoList;
-
 namespace OHOS::NWeb {
-extern SensorTypeId SensorTypeToOhosSensorType(int sensorTypeId);
-extern std::string SensorTypeToSensorUserName(int sensorTypeId);
 
 namespace {
 std::shared_ptr<OHOS::NWeb::SensorCallbackImpl> g_sensoCallback;
@@ -828,11 +818,11 @@ HWTEST_F(SensorAdapterImplTest, IsOhosSensorSupported_002, TestSize.Level1)
         EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(id), SENSOR_SUCCESS);
     }
 
-    int32_t savedCount = g_sensorInfoCount;
-    g_sensorInfoCount = 1; // only the accelerometer entry is visible
+    int32_t savedCount = SensorAgentTestMock::GetSensorInfoCount();
+    SensorAgentTestMock::SetSensorInfoCount(1); // only the accelerometer entry is visible
     EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_SUCCESS);
     EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(5), SENSOR_ERROR);
-    g_sensorInfoCount = savedCount;
+    SensorAgentTestMock::SetSensorInfoCount(savedCount);
 }
 
 /**
@@ -843,24 +833,24 @@ HWTEST_F(SensorAdapterImplTest, IsOhosSensorSupported_002, TestSize.Level1)
  */
 HWTEST_F(SensorAdapterImplTest, IsOhosSensorSupported_003, TestSize.Level2)
 {
-    int32_t savedRet = g_getAllSensorsRet;
-    int32_t savedCount = g_sensorInfoCount;
-    SensorInfo* savedList = g_sensorInfoList;
+    int32_t savedRet = SensorAgentTestMock::GetGetAllSensorsResult();
+    int32_t savedCount = SensorAgentTestMock::GetSensorInfoCount();
+    SensorInfo* savedList = SensorAgentTestMock::GetSensorInfoList();
 
-    g_getAllSensorsRet = -1;
+    SensorAgentTestMock::SetGetAllSensorsResult(-1);
     EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_ERROR);
 
-    g_getAllSensorsRet = 0;
-    g_sensorInfoList = nullptr;
+    SensorAgentTestMock::SetGetAllSensorsResult(0);
+    SensorAgentTestMock::SetSensorInfoList(nullptr);
     EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_ERROR);
 
-    g_sensorInfoList = savedList;
-    g_sensorInfoCount = -1;
+    SensorAgentTestMock::SetSensorInfoList(savedList);
+    SensorAgentTestMock::SetSensorInfoCount(-1);
     EXPECT_EQ(g_sensorAdapter->IsOhosSensorSupported(2), SENSOR_ERROR);
 
-    g_getAllSensorsRet = savedRet;
-    g_sensorInfoCount = savedCount;
-    g_sensorInfoList = savedList;
+    SensorAgentTestMock::SetGetAllSensorsResult(savedRet);
+    SensorAgentTestMock::SetSensorInfoCount(savedCount);
+    SensorAgentTestMock::SetSensorInfoList(savedList);
 }
 
 /**
@@ -871,16 +861,16 @@ HWTEST_F(SensorAdapterImplTest, IsOhosSensorSupported_003, TestSize.Level2)
  */
 HWTEST_F(SensorAdapterImplTest, GetOhosSensorMinSupportedFrequency_003, TestSize.Level1)
 {
-    int32_t savedCount = g_sensorInfoCount;
+    int32_t savedCount = SensorAgentTestMock::GetSensorInfoCount();
     EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(2), 5.0); // 1e9 / 2e8
 
-    g_sensorInfoList[0].maxSamplePeriod = 0;
+    SensorAgentTestMock::GetSensorInfoList()[0].maxSamplePeriod = 0;
     EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(2), 0.0);
-    g_sensorInfoList[0].maxSamplePeriod = 200000000;
+    SensorAgentTestMock::GetSensorInfoList()[0].maxSamplePeriod = 200000000;
 
-    g_sensorInfoCount = 0; // no sensor visible
+    SensorAgentTestMock::SetSensorInfoCount(0); // no sensor visible
     EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMinSupportedFrequency(2), 0.0);
-    g_sensorInfoCount = savedCount;
+    SensorAgentTestMock::SetSensorInfoCount(savedCount);
 }
 
 /**
@@ -891,16 +881,16 @@ HWTEST_F(SensorAdapterImplTest, GetOhosSensorMinSupportedFrequency_003, TestSize
  */
 HWTEST_F(SensorAdapterImplTest, GetOhosSensorMaxSupportedFrequency_003, TestSize.Level1)
 {
-    int32_t savedCount = g_sensorInfoCount;
+    int32_t savedCount = SensorAgentTestMock::GetSensorInfoCount();
     EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(2), 200.0); // 1e9 / 5e6
 
-    g_sensorInfoList[0].minSamplePeriod = 0;
+    SensorAgentTestMock::GetSensorInfoList()[0].minSamplePeriod = 0;
     EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(2), 0.0);
-    g_sensorInfoList[0].minSamplePeriod = 5000000;
+    SensorAgentTestMock::GetSensorInfoList()[0].minSamplePeriod = 5000000;
 
-    g_sensorInfoCount = 0; // no sensor visible
+    SensorAgentTestMock::SetSensorInfoCount(0); // no sensor visible
     EXPECT_DOUBLE_EQ(g_sensorAdapter->GetOhosSensorMaxSupportedFrequency(2), 0.0);
-    g_sensorInfoCount = savedCount;
+    SensorAgentTestMock::SetSensorInfoCount(savedCount);
 }
 
 /**
@@ -911,26 +901,26 @@ HWTEST_F(SensorAdapterImplTest, GetOhosSensorMaxSupportedFrequency_003, TestSize
  */
 HWTEST_F(SensorAdapterImplTest, SubscribeOhosSensor_003, TestSize.Level2)
 {
-    int32_t savedSubscribeRet = g_subscribeSensorRet;
-    int32_t savedSetBatchRet = g_setBatchRet;
-    int32_t savedActivateRet = g_activateSensorRet;
-    int32_t savedSetModeRet = g_setModeRet;
+    int32_t savedSubscribeRet = SensorAgentTestMock::GetSubscribeSensorResult();
+    int32_t savedSetBatchRet = SensorAgentTestMock::GetSetBatchResult();
+    int32_t savedActivateRet = SensorAgentTestMock::GetActivateSensorResult();
+    int32_t savedSetModeRet = SensorAgentTestMock::GetSetModeResult();
 
-    g_subscribeSensorRet = -2;
+    SensorAgentTestMock::SetSubscribeSensorResult(-2);
     EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -2);
-    g_subscribeSensorRet = savedSubscribeRet;
+    SensorAgentTestMock::SetSubscribeSensorResult(savedSubscribeRet);
 
-    g_setBatchRet = -3;
+    SensorAgentTestMock::SetSetBatchResult(-3);
     EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -3);
-    g_setBatchRet = savedSetBatchRet;
+    SensorAgentTestMock::SetSetBatchResult(savedSetBatchRet);
 
-    g_activateSensorRet = -4;
+    SensorAgentTestMock::SetActivateSensorResult(-4);
     EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -4);
-    g_activateSensorRet = savedActivateRet;
+    SensorAgentTestMock::SetActivateSensorResult(savedActivateRet);
 
-    g_setModeRet = -5;
+    SensorAgentTestMock::SetSetModeResult(-5);
     EXPECT_EQ(g_sensorAdapter->SubscribeOhosSensor(2, 1000000), -5);
-    g_setModeRet = savedSetModeRet;
+    SensorAgentTestMock::SetSetModeResult(savedSetModeRet);
 
     const int32_t supportedIds[] = {2, 3, 4, 5, 6, 8, 9, 11};
     for (int32_t id : supportedIds) {
@@ -946,8 +936,8 @@ HWTEST_F(SensorAdapterImplTest, SubscribeOhosSensor_003, TestSize.Level2)
  */
 HWTEST_F(SensorAdapterImplTest, UnsubscribeOhosSensor_002, TestSize.Level2)
 {
-    int32_t savedDeactivateRet = g_deactivateSensorRet;
-    int32_t savedUnsubscribeRet = g_unsubscribeSensorRet;
+    int32_t savedDeactivateRet = SensorAgentTestMock::GetDeactivateSensorResult();
+    int32_t savedUnsubscribeRet = SensorAgentTestMock::GetUnsubscribeSensorResult();
     auto callbackAdapter = std::make_shared<SensorCallbackAdapterMock>();
 
     EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(12), SENSOR_PARAMETER_ERROR);
@@ -956,25 +946,25 @@ HWTEST_F(SensorAdapterImplTest, UnsubscribeOhosSensor_002, TestSize.Level2)
     EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
     ASSERT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
 
-    g_deactivateSensorRet = 0;
-    g_unsubscribeSensorRet = 0;
+    SensorAgentTestMock::SetDeactivateSensorResult(0);
+    SensorAgentTestMock::SetUnsubscribeSensorResult(0);
     EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(2), SENSOR_SUCCESS);
     EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 0U);
 
     // DeactivateSensor failure keeps the registered callback.
     EXPECT_EQ(g_sensorAdapter->RegistOhosSensorCallback(2, callbackAdapter), SENSOR_SUCCESS);
-    g_deactivateSensorRet = -1;
+    SensorAgentTestMock::SetDeactivateSensorResult(-1);
     EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(2), -1);
     EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
 
     // UnsubscribeSensor failure keeps the registered callback as well.
-    g_deactivateSensorRet = 0;
-    g_unsubscribeSensorRet = -1;
+    SensorAgentTestMock::SetDeactivateSensorResult(0);
+    SensorAgentTestMock::SetUnsubscribeSensorResult(-1);
     EXPECT_EQ(g_sensorAdapter->UnsubscribeOhosSensor(2), -1);
     EXPECT_EQ(SensorAdapterImpl::sensorCallbackMap.count(SENSOR_TYPE_ID_ACCELEROMETER), 1U);
 
-    g_deactivateSensorRet = savedDeactivateRet;
-    g_unsubscribeSensorRet = savedUnsubscribeRet;
+    SensorAgentTestMock::SetDeactivateSensorResult(savedDeactivateRet);
+    SensorAgentTestMock::SetUnsubscribeSensorResult(savedUnsubscribeRet);
     SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ACCELEROMETER);
 }
 
@@ -1046,6 +1036,25 @@ HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_003, TestSize.Level2)
     SensorAdapterImpl::sensorCallbackMap.erase(SENSOR_TYPE_ID_ACCELEROMETER);
 }
 
+namespace {
+// Sends one x/y/z sensor event through OhosSensorCallback. SensorData must
+// have float members x, y and z, e.g. LinearAccelData or GravityData.
+template <typename SensorData>
+void DispatchThreeAxisSensorEvent(SensorAdapterImpl* adapter, int32_t sensorTypeId, float x, float y, float z)
+{
+    SensorData data;
+    data.x = x;
+    data.y = y;
+    data.z = z;
+    SensorEvent event;
+    event.sensorTypeId = sensorTypeId;
+    event.timestamp = 1234;
+    event.data = reinterpret_cast<uint8_t*>(&data);
+    event.dataLen = sizeof(data);
+    adapter->OhosSensorCallback(&event);
+}
+} // namespace
+
 /**
  * @tc.name: OhosSensorCallback_004
  * @tc.desc: Verify linear acceleration, gravity, gyroscope and magnetometer events forward x/y/z with 0 as 4th value
@@ -1060,17 +1069,8 @@ HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_004, TestSize.Level1)
     ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(5, callbackAdapter), SENSOR_SUCCESS);
     ASSERT_EQ(g_sensorAdapter->RegistOhosSensorCallback(6, callbackAdapter), SENSOR_SUCCESS);
 
-    SensorEvent event;
-    event.timestamp = 1234;
-
-    LinearAccelData linearData;
-    linearData.x = 1.5F;
-    linearData.y = 2.5F;
-    linearData.z = 3.5F;
-    event.sensorTypeId = SENSOR_TYPE_ID_LINEAR_ACCELERATION;
-    event.data = reinterpret_cast<uint8_t*>(&linearData);
-    event.dataLen = sizeof(linearData);
-    g_sensorAdapter->OhosSensorCallback(&event);
+    DispatchThreeAxisSensorEvent<LinearAccelData>(g_sensorAdapter.get(),
+        SENSOR_TYPE_ID_LINEAR_ACCELERATION, 1.5F, 2.5F, 3.5F);
     EXPECT_EQ(callbackAdapter->callCount, 1);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastTimestamp, 1234.0);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 1.5);
@@ -1078,42 +1078,22 @@ HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_004, TestSize.Level1)
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 3.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
 
-    GravityData gravityData;
-    gravityData.x = 4.5F;
-    gravityData.y = 5.5F;
-    gravityData.z = 6.5F;
-    event.sensorTypeId = SENSOR_TYPE_ID_GRAVITY;
-    event.data = reinterpret_cast<uint8_t*>(&gravityData);
-    event.dataLen = sizeof(gravityData);
-    g_sensorAdapter->OhosSensorCallback(&event);
+    DispatchThreeAxisSensorEvent<GravityData>(g_sensorAdapter.get(), SENSOR_TYPE_ID_GRAVITY, 4.5F, 5.5F, 6.5F);
     EXPECT_EQ(callbackAdapter->callCount, 2);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 4.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 5.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 6.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
 
-    GyroscopeData gyroData;
-    gyroData.x = 7.5F;
-    gyroData.y = 8.5F;
-    gyroData.z = 9.5F;
-    event.sensorTypeId = SENSOR_TYPE_ID_GYROSCOPE;
-    event.data = reinterpret_cast<uint8_t*>(&gyroData);
-    event.dataLen = sizeof(gyroData);
-    g_sensorAdapter->OhosSensorCallback(&event);
+    DispatchThreeAxisSensorEvent<GyroscopeData>(g_sensorAdapter.get(), SENSOR_TYPE_ID_GYROSCOPE, 7.5F, 8.5F, 9.5F);
     EXPECT_EQ(callbackAdapter->callCount, 3);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 7.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 8.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue3, 9.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue4, 0.0);
 
-    MagneticFieldData magneticData;
-    magneticData.x = 10.5F;
-    magneticData.y = 11.5F;
-    magneticData.z = 12.5F;
-    event.sensorTypeId = SENSOR_TYPE_ID_MAGNETIC_FIELD;
-    event.data = reinterpret_cast<uint8_t*>(&magneticData);
-    event.dataLen = sizeof(magneticData);
-    g_sensorAdapter->OhosSensorCallback(&event);
+    DispatchThreeAxisSensorEvent<MagneticFieldData>(g_sensorAdapter.get(),
+        SENSOR_TYPE_ID_MAGNETIC_FIELD, 10.5F, 11.5F, 12.5F);
     EXPECT_EQ(callbackAdapter->callCount, 4);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue1, 10.5);
     EXPECT_DOUBLE_EQ(callbackAdapter->lastValue2, 11.5);

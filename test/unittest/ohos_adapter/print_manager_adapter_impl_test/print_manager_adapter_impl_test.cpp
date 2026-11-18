@@ -21,6 +21,7 @@
 #define private public
 #include "print_manager_adapter_impl.h"
 #include "print_manager_adapter.h"
+#undef private
 
 using namespace testing;
 using namespace testing::ext;
@@ -104,6 +105,101 @@ public:
     PrintAttributesAdapter lastOldAttrs;
     PrintAttributesAdapter lastNewAttrs;
 };
+
+namespace {
+OHOS::Print::PrintAttributes MakeFullOldPrintAttributes()
+{
+    OHOS::Print::PrintAttributes attrs;
+    attrs.SetCopyNumber(1);
+    OHOS::Print::PrintRange range;
+    range.SetStartPage(2);
+    range.SetEndPage(6);
+    range.SetPages({2, 4, 6});
+    attrs.SetPageRange(range);
+    attrs.SetIsSequential(false);
+    OHOS::Print::PrintPageSize pageSize;
+    pageSize.SetWidth(210);
+    pageSize.SetHeight(297);
+    attrs.SetPageSize(pageSize);
+    attrs.SetIsLandscape(true);
+    attrs.SetColorMode(2);
+    attrs.SetDuplexMode(0);
+    OHOS::Print::PrintMargin margin;
+    margin.SetTop(10);
+    margin.SetBottom(20);
+    margin.SetLeft(30);
+    margin.SetRight(40);
+    attrs.SetMargin(margin);
+    attrs.SetOption("{\"header_and_footer\":{\"value\":false},\"background_graphics\":{\"value\":true}}");
+    return attrs;
+}
+
+OHOS::Print::PrintAttributes MakeFullNewPrintAttributes()
+{
+    OHOS::Print::PrintAttributes attrs;
+    attrs.SetCopyNumber(3);
+    OHOS::Print::PrintRange range;
+    range.SetStartPage(1);
+    range.SetEndPage(3);
+    range.SetPages({1, 2, 3});
+    attrs.SetPageRange(range);
+    attrs.SetIsSequential(true);
+    OHOS::Print::PrintPageSize pageSize;
+    pageSize.SetWidth(100);
+    pageSize.SetHeight(200);
+    attrs.SetPageSize(pageSize);
+    attrs.SetIsLandscape(false);
+    attrs.SetColorMode(1);
+    attrs.SetDuplexMode(1);
+    OHOS::Print::PrintMargin margin;
+    margin.SetTop(1);
+    margin.SetBottom(2);
+    margin.SetLeft(3);
+    margin.SetRight(4);
+    attrs.SetMargin(margin);
+    return attrs;
+}
+
+void VerifyConvertedOldAttributes(const PrintAttributesAdapter& received)
+{
+    EXPECT_EQ(received.copyNumber, 1U);
+    EXPECT_EQ(received.pageRange.startPage, 2U);
+    EXPECT_EQ(received.pageRange.endPage, 6U);
+    EXPECT_EQ(received.pageRange.pages.size(), 3U);
+    EXPECT_FALSE(received.isSequential);
+    EXPECT_EQ(received.pageSize.width, 210U);
+    EXPECT_EQ(received.pageSize.height, 297U);
+    EXPECT_TRUE(received.isLandscape);
+    EXPECT_EQ(received.colorMode, 2U);
+    EXPECT_EQ(received.duplexMode, 0U);
+    EXPECT_EQ(received.margin.top, 10U);
+    EXPECT_EQ(received.margin.bottom, 20U);
+    EXPECT_EQ(received.margin.left, 30U);
+    EXPECT_EQ(received.margin.right, 40U);
+    EXPECT_EQ(received.display_header_footer, 0U);
+    EXPECT_EQ(received.print_backgrounds, 1U);
+}
+
+void VerifyConvertedNewAttributes(const PrintAttributesAdapter& received)
+{
+    EXPECT_EQ(received.copyNumber, 3U);
+    EXPECT_EQ(received.pageRange.startPage, 1U);
+    EXPECT_EQ(received.pageRange.endPage, 3U);
+    EXPECT_EQ(received.pageRange.pages.size(), 3U);
+    EXPECT_TRUE(received.isSequential);
+    EXPECT_EQ(received.pageSize.width, 100U);
+    EXPECT_EQ(received.pageSize.height, 200U);
+    EXPECT_FALSE(received.isLandscape);
+    EXPECT_EQ(received.colorMode, 1U);
+    EXPECT_EQ(received.duplexMode, 1U);
+    EXPECT_EQ(received.margin.top, 1U);
+    EXPECT_EQ(received.margin.bottom, 2U);
+    EXPECT_EQ(received.margin.left, 3U);
+    EXPECT_EQ(received.margin.right, 4U);
+    EXPECT_EQ(received.display_header_footer, UINT32_MAX);
+    EXPECT_EQ(received.print_backgrounds, UINT32_MAX);
+}
+} // namespace
 
 /**
  * @tc.name: PrintManagerAdapterImplTest_InitParamSet_001
@@ -243,94 +339,16 @@ HWTEST_F(PrintManagerAdapterImplTest, OnStartLayoutWrite_002, TestSize.Level1)
 #if defined(NWEB_PRINT_ENABLE)
     auto recorder = std::make_shared<RecordingPrintDocumentAdapter>();
     PrintDocumentAdapterImpl adapter(recorder);
-
-    OHOS::Print::PrintAttributes oldAttrs;
-    oldAttrs.SetCopyNumber(1);
-    OHOS::Print::PrintRange oldRange;
-    oldRange.SetStartPage(2);
-    oldRange.SetEndPage(6);
-    oldRange.SetPages({2, 4, 6});
-    oldAttrs.SetPageRange(oldRange);
-    oldAttrs.SetIsSequential(false);
-    OHOS::Print::PrintPageSize oldPageSize;
-    oldPageSize.SetWidth(210);
-    oldPageSize.SetHeight(297);
-    oldAttrs.SetPageSize(oldPageSize);
-    oldAttrs.SetIsLandscape(true);
-    oldAttrs.SetColorMode(2);
-    oldAttrs.SetDuplexMode(0);
-    OHOS::Print::PrintMargin oldMargin;
-    oldMargin.SetTop(10);
-    oldMargin.SetBottom(20);
-    oldMargin.SetLeft(30);
-    oldMargin.SetRight(40);
-    oldAttrs.SetMargin(oldMargin);
-    oldAttrs.SetOption("{\"header_and_footer\":{\"value\":false},\"background_graphics\":{\"value\":true}}");
-
-    OHOS::Print::PrintAttributes newAttrs;
-    newAttrs.SetCopyNumber(3);
-    OHOS::Print::PrintRange newRange;
-    newRange.SetStartPage(1);
-    newRange.SetEndPage(3);
-    newRange.SetPages({1, 2, 3});
-    newAttrs.SetPageRange(newRange);
-    newAttrs.SetIsSequential(true);
-    OHOS::Print::PrintPageSize newPageSize;
-    newPageSize.SetWidth(100);
-    newPageSize.SetHeight(200);
-    newAttrs.SetPageSize(newPageSize);
-    newAttrs.SetIsLandscape(false);
-    newAttrs.SetColorMode(1);
-    newAttrs.SetDuplexMode(1);
-    OHOS::Print::PrintMargin newMargin;
-    newMargin.SetTop(1);
-    newMargin.SetBottom(2);
-    newMargin.SetLeft(3);
-    newMargin.SetRight(4);
-    newAttrs.SetMargin(newMargin);
-
     auto writeResultCallback = [](std::string jobId, uint32_t index) {};
-    adapter.onStartLayoutWrite("full-layout-job", oldAttrs, newAttrs, 9U, writeResultCallback);
+
+    adapter.onStartLayoutWrite("full-layout-job", MakeFullOldPrintAttributes(),
+        MakeFullNewPrintAttributes(), 9U, writeResultCallback);
 
     EXPECT_EQ(recorder->startLayoutWriteCount, 1);
     EXPECT_EQ(recorder->lastJobId, "full-layout-job");
     EXPECT_EQ(recorder->writeFd, 9U);
-
-    const PrintAttributesAdapter& oldReceived = recorder->lastOldAttrs;
-    EXPECT_EQ(oldReceived.copyNumber, 1U);
-    EXPECT_EQ(oldReceived.pageRange.startPage, 2U);
-    EXPECT_EQ(oldReceived.pageRange.endPage, 6U);
-    EXPECT_EQ(oldReceived.pageRange.pages.size(), 3U);
-    EXPECT_FALSE(oldReceived.isSequential);
-    EXPECT_EQ(oldReceived.pageSize.width, 210U);
-    EXPECT_EQ(oldReceived.pageSize.height, 297U);
-    EXPECT_TRUE(oldReceived.isLandscape);
-    EXPECT_EQ(oldReceived.colorMode, 2U);
-    EXPECT_EQ(oldReceived.duplexMode, 0U);
-    EXPECT_EQ(oldReceived.margin.top, 10U);
-    EXPECT_EQ(oldReceived.margin.bottom, 20U);
-    EXPECT_EQ(oldReceived.margin.left, 30U);
-    EXPECT_EQ(oldReceived.margin.right, 40U);
-    EXPECT_EQ(oldReceived.display_header_footer, 0U);
-    EXPECT_EQ(oldReceived.print_backgrounds, 1U);
-
-    const PrintAttributesAdapter& newReceived = recorder->lastNewAttrs;
-    EXPECT_EQ(newReceived.copyNumber, 3U);
-    EXPECT_EQ(newReceived.pageRange.startPage, 1U);
-    EXPECT_EQ(newReceived.pageRange.endPage, 3U);
-    EXPECT_EQ(newReceived.pageRange.pages.size(), 3U);
-    EXPECT_TRUE(newReceived.isSequential);
-    EXPECT_EQ(newReceived.pageSize.width, 100U);
-    EXPECT_EQ(newReceived.pageSize.height, 200U);
-    EXPECT_FALSE(newReceived.isLandscape);
-    EXPECT_EQ(newReceived.colorMode, 1U);
-    EXPECT_EQ(newReceived.duplexMode, 1U);
-    EXPECT_EQ(newReceived.margin.top, 1U);
-    EXPECT_EQ(newReceived.margin.bottom, 2U);
-    EXPECT_EQ(newReceived.margin.left, 3U);
-    EXPECT_EQ(newReceived.margin.right, 4U);
-    EXPECT_EQ(newReceived.display_header_footer, UINT32_MAX);
-    EXPECT_EQ(newReceived.print_backgrounds, UINT32_MAX);
+    VerifyConvertedOldAttributes(recorder->lastOldAttrs);
+    VerifyConvertedNewAttributes(recorder->lastNewAttrs);
 #else
     SUCCEED();
 #endif

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "sensor_agent.h"
+#include "sensor_agent_test_mock.h"
 
 #include <cstdint>
 
@@ -35,6 +35,18 @@ const int32_t DEFAULT_MOCK_SENSOR_TYPE_IDS[DEFAULT_MOCK_SENSOR_COUNT] = {
 SensorInfo g_defaultSensorList[DEFAULT_MOCK_SENSOR_COUNT];
 bool g_defaultSensorListInitialized = false;
 
+// Configurable mock results. Defaults keep the behaviour expected by the
+// legacy test cases. Accessed only through SensorAgentTestMock.
+int32_t g_subscribeSensorRet = 0;       // SENSOR_SUCCESS
+int32_t g_setBatchRet = 0;              // SENSOR_SUCCESS
+int32_t g_activateSensorRet = 0;        // SENSOR_SUCCESS
+int32_t g_setModeRet = 0;               // SENSOR_SUCCESS
+int32_t g_deactivateSensorRet = -1;     // failure, same as without a real subscription
+int32_t g_unsubscribeSensorRet = -1;    // failure, same as without a real subscription
+int32_t g_getAllSensorsRet = 0;         // SENSOR_SUCCESS
+int32_t g_sensorInfoCount = DEFAULT_MOCK_SENSOR_COUNT;
+SensorInfo* g_sensorInfoList = g_defaultSensorList;
+
 void InitDefaultSensorList()
 {
     if (g_defaultSensorListInitialized) {
@@ -51,17 +63,99 @@ void InitDefaultSensorList()
 }
 } // namespace
 
-// Configurable mock results shared with sensor_adapter_impl_test.cpp.
-// Defaults keep the behaviour expected by the legacy test cases.
-int32_t g_subscribeSensorRet = 0;      // SENSOR_SUCCESS
-int32_t g_setBatchRet = 0;             // SENSOR_SUCCESS
-int32_t g_activateSensorRet = 0;       // SENSOR_SUCCESS
-int32_t g_setModeRet = 0;              // SENSOR_SUCCESS
-int32_t g_deactivateSensorRet = -1;    // failure, same as without a real subscription
-int32_t g_unsubscribeSensorRet = -1;   // failure, same as without a real subscription
-int32_t g_getAllSensorsRet = 0;        // SENSOR_SUCCESS
-int32_t g_sensorInfoCount = DEFAULT_MOCK_SENSOR_COUNT;
-SensorInfo* g_sensorInfoList = g_defaultSensorList;
+namespace OHOS {
+namespace NWeb {
+int32_t SensorAgentTestMock::GetSubscribeSensorResult()
+{
+    return g_subscribeSensorRet;
+}
+
+void SensorAgentTestMock::SetSubscribeSensorResult(int32_t result)
+{
+    g_subscribeSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetSetBatchResult()
+{
+    return g_setBatchRet;
+}
+
+void SensorAgentTestMock::SetSetBatchResult(int32_t result)
+{
+    g_setBatchRet = result;
+}
+
+int32_t SensorAgentTestMock::GetActivateSensorResult()
+{
+    return g_activateSensorRet;
+}
+
+void SensorAgentTestMock::SetActivateSensorResult(int32_t result)
+{
+    g_activateSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetSetModeResult()
+{
+    return g_setModeRet;
+}
+
+void SensorAgentTestMock::SetSetModeResult(int32_t result)
+{
+    g_setModeRet = result;
+}
+
+int32_t SensorAgentTestMock::GetDeactivateSensorResult()
+{
+    return g_deactivateSensorRet;
+}
+
+void SensorAgentTestMock::SetDeactivateSensorResult(int32_t result)
+{
+    g_deactivateSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetUnsubscribeSensorResult()
+{
+    return g_unsubscribeSensorRet;
+}
+
+void SensorAgentTestMock::SetUnsubscribeSensorResult(int32_t result)
+{
+    g_unsubscribeSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetGetAllSensorsResult()
+{
+    return g_getAllSensorsRet;
+}
+
+void SensorAgentTestMock::SetGetAllSensorsResult(int32_t result)
+{
+    g_getAllSensorsRet = result;
+}
+
+int32_t SensorAgentTestMock::GetSensorInfoCount()
+{
+    return g_sensorInfoCount;
+}
+
+void SensorAgentTestMock::SetSensorInfoCount(int32_t count)
+{
+    g_sensorInfoCount = count;
+}
+
+SensorInfo* SensorAgentTestMock::GetSensorInfoList()
+{
+    return g_sensorInfoList;
+}
+
+void SensorAgentTestMock::SetSensorInfoList(SensorInfo* list)
+{
+    g_sensorInfoList = list;
+}
+} // namespace NWeb
+} // namespace OHOS
 
 #ifdef __cplusplus
 #if __cplusplus
