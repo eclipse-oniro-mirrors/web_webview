@@ -288,7 +288,7 @@ HWTEST_F(SensorAdapterImplTest, SensorAdapterImplTest_SensorAdapterImpl_008, Tes
 HWTEST_F(SensorAdapterImplTest, SensorAdapterImplTest_SensorAdapterImpl_009, TestSize.Level1)
 {
     std::vector<std::shared_ptr<OHOS::NWeb::SensorCallbackImpl>> callback(9);
-    for(int32_t i=0; i<9; i++) {
+    for (int32_t i = 0; i < 9; i++) {
         auto callbackAdapter = std::make_shared<SensorCallbackAdapterMock>();
         callback[i] = std::make_shared<OHOS::NWeb::SensorCallbackImpl>(callbackAdapter);
         SensorAdapterImpl::sensorCallbackMap.emplace(i+2,callback[i]);
@@ -1037,6 +1037,7 @@ HWTEST_F(SensorAdapterImplTest, OhosSensorCallback_003, TestSize.Level2)
 }
 
 namespace {
+constexpr int64_t DISPATCHED_EVENT_TIMESTAMP = 1234;
 // Sends one x/y/z sensor event through OhosSensorCallback. SensorData must
 // have float members x, y and z, e.g. LinearAccelData or GravityData.
 template <typename SensorData>
@@ -1048,7 +1049,7 @@ void DispatchThreeAxisSensorEvent(SensorAdapterImpl* adapter, int32_t sensorType
     data.z = z;
     SensorEvent event;
     event.sensorTypeId = sensorTypeId;
-    event.timestamp = 1234;
+    event.timestamp = DISPATCHED_EVENT_TIMESTAMP;
     event.data = reinterpret_cast<uint8_t*>(&data);
     event.dataLen = sizeof(data);
     adapter->OhosSensorCallback(&event);

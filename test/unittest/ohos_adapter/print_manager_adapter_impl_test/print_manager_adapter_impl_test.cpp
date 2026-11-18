@@ -107,28 +107,46 @@ public:
 };
 
 namespace {
+// Attribute values used by the full print attribute fixtures below.
+constexpr uint32_t OLD_PAGE_RANGE_START = 2;
+constexpr uint32_t OLD_PAGE_RANGE_END = 6;
+constexpr uint32_t OLD_PAGE_WIDTH = 210; // A4 portrait width
+constexpr uint32_t OLD_PAGE_HEIGHT = 297; // A4 portrait height
+constexpr uint32_t OLD_COLOR_MODE = 2;
+constexpr uint32_t OLD_MARGIN_TOP = 10;
+constexpr uint32_t OLD_MARGIN_BOTTOM = 20;
+constexpr uint32_t OLD_MARGIN_LEFT = 30;
+constexpr uint32_t OLD_MARGIN_RIGHT = 40;
+constexpr uint32_t NEW_COPY_NUMBER = 3;
+constexpr uint32_t NEW_PAGE_RANGE_END = 3;
+constexpr uint32_t NEW_PAGE_WIDTH = 100;
+constexpr uint32_t NEW_PAGE_HEIGHT = 200;
+constexpr uint32_t NEW_MARGIN_BOTTOM = 2;
+constexpr uint32_t NEW_MARGIN_LEFT = 3;
+constexpr uint32_t NEW_MARGIN_RIGHT = 4;
+
 OHOS::Print::PrintAttributes MakeFullOldPrintAttributes()
 {
     OHOS::Print::PrintAttributes attrs;
     attrs.SetCopyNumber(1);
     OHOS::Print::PrintRange range;
-    range.SetStartPage(2);
-    range.SetEndPage(6);
+    range.SetStartPage(OLD_PAGE_RANGE_START);
+    range.SetEndPage(OLD_PAGE_RANGE_END);
     range.SetPages({2, 4, 6});
     attrs.SetPageRange(range);
     attrs.SetIsSequential(false);
     OHOS::Print::PrintPageSize pageSize;
-    pageSize.SetWidth(210);
-    pageSize.SetHeight(297);
+    pageSize.SetWidth(OLD_PAGE_WIDTH);
+    pageSize.SetHeight(OLD_PAGE_HEIGHT);
     attrs.SetPageSize(pageSize);
     attrs.SetIsLandscape(true);
-    attrs.SetColorMode(2);
+    attrs.SetColorMode(OLD_COLOR_MODE);
     attrs.SetDuplexMode(0);
     OHOS::Print::PrintMargin margin;
-    margin.SetTop(10);
-    margin.SetBottom(20);
-    margin.SetLeft(30);
-    margin.SetRight(40);
+    margin.SetTop(OLD_MARGIN_TOP);
+    margin.SetBottom(OLD_MARGIN_BOTTOM);
+    margin.SetLeft(OLD_MARGIN_LEFT);
+    margin.SetRight(OLD_MARGIN_RIGHT);
     attrs.SetMargin(margin);
     attrs.SetOption("{\"header_and_footer\":{\"value\":false},\"background_graphics\":{\"value\":true}}");
     return attrs;
@@ -137,25 +155,25 @@ OHOS::Print::PrintAttributes MakeFullOldPrintAttributes()
 OHOS::Print::PrintAttributes MakeFullNewPrintAttributes()
 {
     OHOS::Print::PrintAttributes attrs;
-    attrs.SetCopyNumber(3);
+    attrs.SetCopyNumber(NEW_COPY_NUMBER);
     OHOS::Print::PrintRange range;
     range.SetStartPage(1);
-    range.SetEndPage(3);
+    range.SetEndPage(NEW_PAGE_RANGE_END);
     range.SetPages({1, 2, 3});
     attrs.SetPageRange(range);
     attrs.SetIsSequential(true);
     OHOS::Print::PrintPageSize pageSize;
-    pageSize.SetWidth(100);
-    pageSize.SetHeight(200);
+    pageSize.SetWidth(NEW_PAGE_WIDTH);
+    pageSize.SetHeight(NEW_PAGE_HEIGHT);
     attrs.SetPageSize(pageSize);
     attrs.SetIsLandscape(false);
     attrs.SetColorMode(1);
     attrs.SetDuplexMode(1);
     OHOS::Print::PrintMargin margin;
     margin.SetTop(1);
-    margin.SetBottom(2);
-    margin.SetLeft(3);
-    margin.SetRight(4);
+    margin.SetBottom(NEW_MARGIN_BOTTOM);
+    margin.SetLeft(NEW_MARGIN_LEFT);
+    margin.SetRight(NEW_MARGIN_RIGHT);
     attrs.SetMargin(margin);
     return attrs;
 }
