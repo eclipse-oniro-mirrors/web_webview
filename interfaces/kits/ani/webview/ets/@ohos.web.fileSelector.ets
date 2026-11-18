@@ -262,7 +262,7 @@ function selectPicture(event: OnShowFileSelectorEvent) {
 function takePhoto(event: OnShowFileSelectorEvent) {
   const context = UIContext.resolveUIContext()?.getHostContext()
   if (!context) {
-    console.error('takePhoto failed, uiContext is undefined')
+    console.error('takePhoto failed, context is undefined')
     event.result.handleFileList([])
     return
   }
@@ -285,7 +285,7 @@ function takePhoto(event: OnShowFileSelectorEvent) {
       }
     })
     .catch((error) => {
-      console.log('selectFile error: ' + JSON.stringify(error))
+      console.log('takePhoto error: ' + JSON.stringify(error))
       UIContext.resolveUIContext()?.getPromptAction().showToast({
         message: '无法打开拍照功能，请检查是否具备拍照功能'
       })
@@ -315,7 +315,7 @@ function isSafeSaveUri(saveUri: string) {
 function selectFile(event: OnShowFileSelectorEvent) {
   const context = UIContext.resolveUIContext()?.getHostContext()
   if (!context) {
-    console.error('selectFile failed, uiContext is undefined')
+    console.error('selectFile failed, context is undefined')
     event.result.handleFileList([])
     return
   }
@@ -357,7 +357,9 @@ function selectFile(event: OnShowFileSelectorEvent) {
         watcher = fileIo.createWatcher(tempPath, 0x4, listener)
         watcher.start()
       }
-      result.push(tempUri)
+      if (tempUri !== '') {
+        result.push(tempUri)
+      }
     }).catch((error) => {
       console.log('saveFile error: ' + JSON.stringify(error))
       UIContext.resolveUIContext()?.getPromptAction().showToast({
