@@ -40,7 +40,7 @@ ohos_unittest("cert_mgr_adapter_test") {
     "config_policy:configpolicy_util",
     "c_utils:utils",
     "certificate_manager:cert_manager_sdk",
-    "certificate_framework:crypto_lib",
+    "certificate_framework:certificate_framework_core",
     "googletest:gmock_main",
     "googletest:gtest_main",
     "hilog:libhilog",
