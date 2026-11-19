@@ -1055,9 +1055,9 @@ int32_t CameraSurfaceListener::GetPictureRotation()
 
     int32_t pictureRotation = 0;
     if (cameraPosition == OHOS::CameraStandard::CameraPosition::CAMERA_POSITION_FRONT) {
-        pictureRotation = (cameraOrientation - screenRotation) % ROTATION_MAX;
+        pictureRotation = (cameraOrientation - screenRotation + ROTATION_MAX) % ROTATION_MAX;
     } else {
-        pictureRotation = (cameraOrientation + screenRotation) % ROTATION_MAX;
+        pictureRotation = (cameraOrientation + screenRotation + ROTATION_MAX) % ROTATION_MAX;
     }
 
     WVLOG_D("GetPictureRotation, cameraOrientation:%{public}d, screenRotation:%{public}d, pictureRotation:%{public}d",
