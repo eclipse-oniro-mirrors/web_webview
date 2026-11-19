@@ -336,11 +336,19 @@ function isSafeSaveUri(saveUri) {
     console.error('reject save uri with unexpected scheme');
     return false;
   }
-  if (saveUri.split('/').includes('..')) {
+  // System side decodes the URI exactly once before use, so validate on the same view
+  let decodedUri = '';
+  try {
+    decodedUri = decodeURIComponent(saveUri);
+  } catch (error) {
+    console.error('reject save uri with malformed percent encoding');
+    return false;
+  }
+  if (decodedUri.split('/').includes('..')) {
     console.error('reject save uri containing traversal sequence');
     return false;
   }
-  let fileName = saveUri.substr(saveUri.lastIndexOf('/'));
+  let fileName = decodedUri.substr(decodedUri.lastIndexOf('/'));
   if (fileName === '/' || fileName === '/.' || fileName === '/..') {
     console.error('reject save uri without valid file name');
     return false;
