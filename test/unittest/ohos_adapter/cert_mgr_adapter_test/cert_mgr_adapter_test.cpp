@@ -112,7 +112,9 @@ public:
     MOCK_METHOD(int32_t, CmUpdate, (const struct CmBlob*, const struct CmBlob*));
     MOCK_METHOD(int32_t, CmFinish, (const struct CmBlob*, const struct CmBlob*, struct CmBlob*));
     MOCK_METHOD(int32_t, CmAbort, (const struct CmBlob*));
-    MOCK_METHOD(CfResult, HcfCertRevocationCheck, (const CfRevocationCheckParam*, CfRevocationCheckResult*));
+    MOCK_METHOD(CfResult, HcfX509CertificateCreate, (const CfEncodingBlob*, HcfX509Certificate**));
+    MOCK_METHOD(CfResult, HcfCertRevocationCheck, (const HcfX509CertificateArray*, int32_t*));
+    MOCK_METHOD(void, CfObjDestroy, (void*));
 };
 
 static MockCmApi* g_mockCmApi = nullptr;
@@ -166,9 +168,19 @@ int32_t CmAbort(const struct CmBlob* handle)
     return g_mockCmApi->CmAbort(handle);
 }
 
-CfResult HcfCertRevocationCheck(const CfRevocationCheckParam* params, CfRevocationCheckResult* result)
+CfResult HcfX509CertificateCreate(const CfEncodingBlob* inStream, HcfX509Certificate** returnObj)
 {
-    return g_mockCmApi->HcfCertRevocationCheck(params, result);
+    return g_mockCmApi->HcfX509CertificateCreate(inStream, returnObj);
+}
+
+CfResult HcfCertRevocationCheck(const HcfX509CertificateArray* certs, int32_t* blockedIndex)
+{
+    return g_mockCmApi->HcfCertRevocationCheck(certs, blockedIndex);
+}
+
+void CfObjDestroy(void* obj)
+{
+    g_mockCmApi->CfObjDestroy(obj);
 }
 
 #ifdef __cplusplus
@@ -744,13 +756,16 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_NoStrategyDa
     CertManagerAdapterImpl adapter;
     std::vector<std::string> cert_bytes;
     cert_bytes.emplace_back(std::string(10, '\x30'));
-
-    CfRevocationCheckResult mockResult = {0};
-    mockResult.revocationStatus = CF_REVOCATION_CHECK_RESULT_UNREVOKED;
+ 
+    static HcfX509Certificate* dummyCert = reinterpret_cast<HcfX509Certificate*>(0x11);
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgPointee<1>(dummyCert), Return(CF_SUCCESS)));
     EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _))
         .Times(1)
-        .WillOnce(DoAll(SetArgPointee<1>(mockResult), Return(CF_SUCCESS)));
-
+        .WillOnce(DoAll(SetArgPointee<1>(-1), Return(CF_SUCCESS)));
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(1);
+ 
     bool result = adapter.CheckCertRevocation(cert_bytes);
     EXPECT_FALSE(result);
 }
@@ -766,11 +781,16 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_ApiError_010
     CertManagerAdapterImpl adapter;
     std::vector<std::string> cert_bytes;
     cert_bytes.emplace_back(std::string(10, '\x30'));
-
+ 
+    static HcfX509Certificate* dummyCert = reinterpret_cast<HcfX509Certificate*>(0x11);
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgPointee<1>(dummyCert), Return(CF_SUCCESS)));
     EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _))
         .Times(1)
         .WillOnce(Return(static_cast<CfResult>(-1)));
-
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(1);
+ 
     bool result = adapter.CheckCertRevocation(cert_bytes);
     EXPECT_FALSE(result);
 }
