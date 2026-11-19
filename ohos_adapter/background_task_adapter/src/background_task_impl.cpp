@@ -63,7 +63,7 @@ bool RequestBackgroundRunningWithRenderPidsInner(bool running, BackgroundModeAda
     taskParam.SetRenderPids({ renderPids.begin(), renderPids.end() });
     ErrCode errCode = BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam);
     if (errCode != ERR_OK) {
-        WVLOG_I("RequestBackgroundRunningWithRenderPids failed, error code: %{public}d", errCode);
+        WVLOG_E("RequestBackgroundRunningWithRenderPids failed, error code: %{public}d", errCode);
         return false;
     }
     return true;
