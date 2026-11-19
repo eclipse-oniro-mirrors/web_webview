@@ -528,4 +528,12 @@ void ArkWebEngineWrapper::SetGlobalWebSiteConfigCallback(
     ark_web_engine_->SetGlobalWebSiteConfigCallback(
         new ArkWebWebSiteConfigCallbackImpl(callback));
 }
+std::string ArkWebEngineWrapper::GetDefaultUserAgentLite()
+{
+    ArkWebString stUA = ark_web_engine_->GetDefaultUserAgentLite();
+
+    std::string objUA = ArkWebStringStructToClass(stUA);
+    ArkWebStringStructRelease(stUA);
+    return objUA;
+}
 } // namespace OHOS::ArkWeb

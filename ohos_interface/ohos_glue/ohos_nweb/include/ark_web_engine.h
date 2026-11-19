@@ -261,6 +261,9 @@ public:
 
     /*--ark web()--*/
     virtual void SetGlobalWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetDefaultUserAgentLite() = 0;
 };
 
 } // namespace OHOS::ArkWeb

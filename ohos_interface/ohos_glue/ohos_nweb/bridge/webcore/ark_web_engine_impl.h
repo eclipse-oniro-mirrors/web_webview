@@ -158,6 +158,7 @@ public:
                                  ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback) override;
 
     void SetGlobalWebSiteConfigCallback(ArkWebRefPtr<ArkWebWebSiteConfigCallback> callback) override;
+    ArkWebString GetDefaultUserAgentLite() override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;

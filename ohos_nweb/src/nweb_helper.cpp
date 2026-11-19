@@ -35,7 +35,6 @@
 #include "nweb_hisysevent.h"
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
-#include "nweb_user_agent_builder.h"
 #include "parameter.h"
 #include "parameters.h"
 #include "arkweb_utils.h"
@@ -1170,7 +1169,16 @@ std::string NWebHelper::GetDefaultUserAgent()
 
 std::string NWebHelper::GetDefaultUserAgentLite()
 {
-    return UserAgentBuilder::BuildDefaultUserAgentLite();
+    // Only dlopen + LibraryLoaded, the engine is not initialized here.
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine for lite user agent");
+        return "";
+    }
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return "";
+    }
+    return nwebEngine_->GetDefaultUserAgentLite();
 }
 
 void NWebHelper::PauseAllTimers()
