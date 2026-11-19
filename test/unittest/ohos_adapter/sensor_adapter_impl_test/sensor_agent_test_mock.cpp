@@ -13,7 +13,149 @@
  * limitations under the License.
  */
 
-#include "sensor_agent.h"
+#include "sensor_agent_test_mock.h"
+
+#include <cstdint>
+
+namespace {
+constexpr int32_t DEFAULT_MOCK_SENSOR_COUNT = 8;
+constexpr int64_t MOCK_MIN_SAMPLE_PERIOD = 5000000;   // 5 ms, maps to 200 Hz max frequency
+constexpr int64_t MOCK_MAX_SAMPLE_PERIOD = 200000000;  // 200 ms, maps to 5 Hz min frequency
+const int32_t DEFAULT_MOCK_SENSOR_TYPE_IDS[DEFAULT_MOCK_SENSOR_COUNT] = {
+    SENSOR_TYPE_ID_ACCELEROMETER,
+    SENSOR_TYPE_ID_GYROSCOPE,
+    SENSOR_TYPE_ID_MAGNETIC_FIELD,
+    SENSOR_TYPE_ID_ORIENTATION,
+    SENSOR_TYPE_ID_GRAVITY,
+    SENSOR_TYPE_ID_LINEAR_ACCELERATION,
+    SENSOR_TYPE_ID_ROTATION_VECTOR,
+    SENSOR_TYPE_ID_GAME_ROTATION_VECTOR,
+};
+
+SensorInfo g_defaultSensorList[DEFAULT_MOCK_SENSOR_COUNT];
+bool g_defaultSensorListInitialized = false;
+
+// Configurable mock results. Defaults keep the behaviour expected by the
+// legacy test cases. Accessed only through SensorAgentTestMock.
+int32_t g_subscribeSensorRet = 0;       // SENSOR_SUCCESS
+int32_t g_setBatchRet = 0;              // SENSOR_SUCCESS
+int32_t g_activateSensorRet = 0;        // SENSOR_SUCCESS
+int32_t g_setModeRet = 0;               // SENSOR_SUCCESS
+int32_t g_deactivateSensorRet = -1;     // failure, same as without a real subscription
+int32_t g_unsubscribeSensorRet = -1;    // failure, same as without a real subscription
+int32_t g_getAllSensorsRet = 0;         // SENSOR_SUCCESS
+int32_t g_sensorInfoCount = DEFAULT_MOCK_SENSOR_COUNT;
+SensorInfo* g_sensorInfoList = g_defaultSensorList;
+
+void InitDefaultSensorList()
+{
+    if (g_defaultSensorListInitialized) {
+        return;
+    }
+    for (int32_t i = 0; i < DEFAULT_MOCK_SENSOR_COUNT; i++) {
+        g_defaultSensorList[i] = SensorInfo{};
+        g_defaultSensorList[i].sensorTypeId = DEFAULT_MOCK_SENSOR_TYPE_IDS[i];
+        g_defaultSensorList[i].sensorId = DEFAULT_MOCK_SENSOR_TYPE_IDS[i];
+        g_defaultSensorList[i].minSamplePeriod = MOCK_MIN_SAMPLE_PERIOD;
+        g_defaultSensorList[i].maxSamplePeriod = MOCK_MAX_SAMPLE_PERIOD;
+    }
+    g_defaultSensorListInitialized = true;
+}
+} // namespace
+
+namespace OHOS {
+namespace NWeb {
+int32_t SensorAgentTestMock::GetSubscribeSensorResult()
+{
+    return g_subscribeSensorRet;
+}
+
+void SensorAgentTestMock::SetSubscribeSensorResult(int32_t result)
+{
+    g_subscribeSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetSetBatchResult()
+{
+    return g_setBatchRet;
+}
+
+void SensorAgentTestMock::SetSetBatchResult(int32_t result)
+{
+    g_setBatchRet = result;
+}
+
+int32_t SensorAgentTestMock::GetActivateSensorResult()
+{
+    return g_activateSensorRet;
+}
+
+void SensorAgentTestMock::SetActivateSensorResult(int32_t result)
+{
+    g_activateSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetSetModeResult()
+{
+    return g_setModeRet;
+}
+
+void SensorAgentTestMock::SetSetModeResult(int32_t result)
+{
+    g_setModeRet = result;
+}
+
+int32_t SensorAgentTestMock::GetDeactivateSensorResult()
+{
+    return g_deactivateSensorRet;
+}
+
+void SensorAgentTestMock::SetDeactivateSensorResult(int32_t result)
+{
+    g_deactivateSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetUnsubscribeSensorResult()
+{
+    return g_unsubscribeSensorRet;
+}
+
+void SensorAgentTestMock::SetUnsubscribeSensorResult(int32_t result)
+{
+    g_unsubscribeSensorRet = result;
+}
+
+int32_t SensorAgentTestMock::GetGetAllSensorsResult()
+{
+    return g_getAllSensorsRet;
+}
+
+void SensorAgentTestMock::SetGetAllSensorsResult(int32_t result)
+{
+    g_getAllSensorsRet = result;
+}
+
+int32_t SensorAgentTestMock::GetSensorInfoCount()
+{
+    return g_sensorInfoCount;
+}
+
+void SensorAgentTestMock::SetSensorInfoCount(int32_t count)
+{
+    g_sensorInfoCount = count;
+}
+
+SensorInfo* SensorAgentTestMock::GetSensorInfoList()
+{
+    return g_sensorInfoList;
+}
+
+void SensorAgentTestMock::SetSensorInfoList(SensorInfo* list)
+{
+    g_sensorInfoList = list;
+}
+} // namespace NWeb
+} // namespace OHOS
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -23,22 +165,44 @@ extern "C" {
 
 int32_t SubscribeSensor(int32_t sensorTypeId, const SensorUser *user)
 {
-    return 0;
+    return g_subscribeSensorRet;
 }
 
 int32_t SetBatch(int32_t sensorTypeId, const SensorUser *user, int64_t samplingInterval, int64_t reportInterval)
 {
-    return 0;
+    return g_setBatchRet;
 }
 
 int32_t ActivateSensor(int32_t sensorTypeId, const SensorUser *user)
 {
-    return 0;
+    return g_activateSensorRet;
 }
 
 int32_t SetMode(int32_t sensorTypeId, const SensorUser *user, int32_t mode)
 {
-    return 0;
+    return g_setModeRet;
+}
+
+int32_t DeactivateSensor(int32_t sensorTypeId, const SensorUser *user)
+{
+    return g_deactivateSensorRet;
+}
+
+int32_t UnsubscribeSensor(int32_t sensorTypeId, const SensorUser *user)
+{
+    return g_unsubscribeSensorRet;
+}
+
+int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
+{
+    InitDefaultSensorList();
+    if (sensorInfo != nullptr) {
+        *sensorInfo = g_sensorInfoList;
+    }
+    if (count != nullptr) {
+        *count = g_sensorInfoCount;
+    }
+    return g_getAllSensorsRet;
 }
 
 #ifdef __cplusplus
