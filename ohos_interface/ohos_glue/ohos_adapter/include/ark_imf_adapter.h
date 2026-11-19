@@ -90,6 +90,19 @@ public:
     virtual int32_t GetEnterKeyType() = 0;
 };
 
+/*--ark web(source=webview)--*/
+class ArkIMFPreviewTextStyleAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual int32_t GetUnderlineStyle() = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t GetUnderlineColor() = 0;
+
+    /*--ark web()--*/
+    virtual bool HasUnderlineColor() = 0;
+};
+
 /*--ark web(source=webcore)--*/
 class ArkIMFTextListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
@@ -153,6 +166,13 @@ public:
 
     /*--ark web()--*/
     virtual void WebSetImeShow(bool visible) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t SetPreviewTextWithStyle(const ArkWebU16String& text, int32_t start, int32_t end,
+        ArkWebRefPtr<ArkIMFPreviewTextStyleAdapter> style) = 0;
+
+    /*--ark web()--*/
+    virtual bool IsSupportPreviewTextWithStyle() = 0;
 };
 
 /*--ark web(source=webview)--*/

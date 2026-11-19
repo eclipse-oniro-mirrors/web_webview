@@ -687,4 +687,19 @@ void ArkWebPreferenceWrapper::SetTransformRotateAndSkewEnabled(bool enable)
         ark_web_preference_->SetTransformRotateAndSkewEnabled(enable);
     }
 }
+
+void ArkWebPreferenceWrapper::PutVisitedLinkPersistEnabled(bool enabled)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->PutVisitedLinkPersistEnabled(enabled);
+    }
+}
+
+bool ArkWebPreferenceWrapper::IsVisitedLinkPersistEnabled()
+{
+    if (ark_web_preference_) {
+        return ark_web_preference_->IsVisitedLinkPersistEnabled();
+    }
+    return false;
+}
 } // namespace OHOS::ArkWeb

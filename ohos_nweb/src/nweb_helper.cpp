@@ -14,7 +14,9 @@
  */
 
 #include "nweb_helper.h"
+#include "faultloggerd_client.h"
 
+#include <chrono>
 #include <cstdint>
 #include <refbase.h>
 #include <surface.h>
@@ -709,24 +711,57 @@ bool NWebHelper::RegisterCustomSchemes()
     return true;
 }
 
-bool NWebHelper::GetWebEngine(bool fromArk)
+// OOM dump fd provider: requests a temp file fd from faultloggerd.
+// Called by the engine's browser-side dump flow (pull mode, per-event).
+static int GetDfxFdForOOMDump(int32_t renderPid)
 {
-    if (nwebEngine_) {
-        return true;
-    }
+    struct FaultLoggerdRequest request = {};
+    request.pid = static_cast<int32_t>(getpid());
+    request.type = static_cast<int32_t>(FaultLoggerType::ARKWEB_JS_RAW_SNAPSHOT);
+    request.tid = renderPid;
+    request.time = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count());
+    return RequestFileDescriptorEx(&request);
+}
 
+bool NWebHelper::InitBundlePath()
+{
     if (bundlePath_.empty()) {
         auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
         if (!ctx) {
             WVLOG_E("failed to get application context");
             return false;
         }
-
         SetBundlePath(ctx->GetBundleCodeDir());
         if (bundlePath_.empty()) {
             WVLOG_E("bundle path is empty");
             return false;
         }
+    }
+    return true;
+}
+
+void NWebHelper::RegisterOOMDumpCallbacks()
+{
+    nwebEngine_->SetOutputFdCallback(&GetDfxFdForOOMDump);
+    WVLOG_I("dfx fd provider registered");
+
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    auto decisionCb = ctx ? ctx->GetAppFreezeFilterCallback() : nullptr;
+    if (decisionCb == nullptr) {
+        WVLOG_E("oom dump decision callback unavailable");
+    }
+    nwebEngine_->SetOOMDumpDecisionCallback(decisionCb);
+}
+
+bool NWebHelper::GetWebEngine(bool fromArk)
+{
+    if (nwebEngine_) {
+        return true;
+    }
+
+    if (!InitBundlePath()) {
+        return false;
     }
 
     bool webPlayGroundEnable = NWebConfigHelper::Instance().IsWebPlayGroundEnable();
@@ -758,8 +793,10 @@ bool NWebHelper::GetWebEngine(bool fromArk)
 
     coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
     WVLOG_E("api level of arkweb core is %{public}d", coreApiLevel_);
-
     nwebEngine_->SetArkWebRomApiLevel(ARKWEB_CORE_API_LEVEL);
+
+    RegisterOOMDumpCallbacks();
+
     WVLOG_I("web engine libraryloaded");
     auto initArgs = GetInitArgs();
     nwebEngine_->LibraryLoaded(initArgs, lazyInitializeWebEngine_);
@@ -786,6 +823,11 @@ std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> NWebHelper::GetInitArgs()
     initArgs->AddArg(std::string("--enable-cache-data-dir-migration=").append(isDataMigrate));
     initArgs->AddArg(std::string("--user-data-dir=").append(ctx->GetBaseDir()));
     WVLOG_I("user data dir: %{public}s", ctx->GetBaseDir().c_str());
+    std::string dataDirSuffix = OHOS::ArkWeb::getDataDirectorySuffix();
+    if (!dataDirSuffix.empty()) {
+        initArgs->AddArg(std::string("--data-dir-suffix=").append(dataDirSuffix));
+        WVLOG_I("data dir suffix: %{public}s", dataDirSuffix.c_str());
+    }
     initArgs->AddArg(std::string("--bundle-installation-dir=").append(bundlePath_));
     WVLOG_I("bundle installation dir: %{public}s", bundlePath_.c_str());
     initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
@@ -1125,6 +1167,20 @@ std::string NWebHelper::GetDefaultUserAgent()
     return nwebEngine_->GetDefaultUserAgent();
 }
 
+std::string NWebHelper::GetDefaultUserAgentLite()
+{
+    // Only dlopen + LibraryLoaded, the engine is not initialized here.
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine for lite user agent");
+        return "";
+    }
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return "";
+    }
+    return nwebEngine_->GetDefaultUserAgentLite();
+}
+
 void NWebHelper::PauseAllTimers()
 {
     if (nwebEngine_ == nullptr) {
@@ -1274,6 +1330,26 @@ void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::v
     nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
 }
 
+void NWebHelper::SetWebNavigationConfigMode(int32_t mode)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t NWebHelper::GetWebNavigationConfigMode()
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return 0;
+    }
+
+    return nwebEngine_->GetWebNavigationConfigMode();
+}
+
 void NWebHelper::WarmupServiceWorker(const std::string& url)
 {
     if (!initFlag_) {
@@ -1330,6 +1406,27 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     }
 
     nwebEngine_->RemoveAllCache(includeDiskFiles);
+}
+
+void NWebHelper::RemoveVisitedLinksSince(
+    int64_t timeMs, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback)
+{
+    if (!LoadWebEngine(true, true)) {
+        WVLOG_E("failed to load web engine");
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+        return;
+    }
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+        return;
+    }
+
+    nwebEngine_->RemoveVisitedLinksSince(timeMs, std::move(callback));
 }
 
 void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
@@ -1539,6 +1636,19 @@ void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
         return;
     }
     nwebEngine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
+}
+
+void NWebHelper::SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback)
+{
+    if (!initFlag_) {
+        WVLOG_E("SetGlobalWebSiteConfigCallback, not initialized");
+        return;
+    }
+    if (!nwebEngine_) {
+        WVLOG_E("SetGlobalWebSiteConfigCallback, nweb engine is nullptr");
+        return;
+    }
+    nwebEngine_->SetGlobalWebSiteConfigCallback(callback);
 }
 
 std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)

@@ -128,6 +128,14 @@ enum class PressureLevel : int {
     MEMORY_PRESSURE_LEVEL_CRITICAL = 2,
 };
 
+// WebNavigationConfigMode: navigation config query mode.
+// SET = 0 (existing interface, uses preset UA/viewport config during navigation),
+// QUERY = 1 (queries the app via callback for UA and viewport width during navigation).
+enum class WebNavigationConfigModeType : int {
+    SET = 0,
+    QUERY = 1,
+};
+
 enum class ScrollType : int {
     EVENT = 0,
 };
@@ -215,6 +223,11 @@ public:
     ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value);
 
     ErrCode RemoveNavigationEntryUserData(const std::string& key);
+
+    // Registers (handler != nullptr) or clears (handler == nullptr) the
+    // navigation throttle for this WebviewController's NWeb instance.
+    ErrCode SetNavigationThrottle(
+        std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler);
 
     std::string GetTitle();
 
@@ -459,6 +472,8 @@ public:
 
     void OnCreateNativeMediaPlayer(ani_vm *vm, ani_fn_object callback);
 
+    void PutWebSiteConfigCallback(ani_vm *vm, ani_fn_object callback);
+
     int32_t GetNWebId();
 
     ErrCode SetErrorPageEnabled(bool enable);
@@ -505,7 +520,7 @@ public:
 
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent);
 
-    std::string GetLastPostMessageURL();
+    std::string GetLastPostMessageUrl();
 
     ErrCode SetZoomFactor(double factor);
 

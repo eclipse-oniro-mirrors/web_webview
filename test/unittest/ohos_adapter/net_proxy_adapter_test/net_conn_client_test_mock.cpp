@@ -21,22 +21,39 @@ namespace OHOS {
 namespace NetManagerStandard {
 
 HttpProxy defaultHttpProxy_;
-HttpProxy appHttpProxy_("", 0, {});
+// NOTE: Do not name this "appHttpProxy_". NetConnClient has a private member with the same name,
+// which would shadow the namespace-scope variable inside NetConnClient member functions
+// (e.g. RegisterAppHttpProxyCallback), causing the mock callback to read the member instead.
+HttpProxy g_appHttpProxy("", 0, {});
 uint32_t appId_;
+int32_t g_defaultHttpProxyRet = 0;
 std::map<int, int> appMap;
 
 int32_t NetConnClient::GetDefaultHttpProxy(HttpProxy& httpProxy)
 {
     httpProxy = defaultHttpProxy_;
-    return 0;
+    return g_defaultHttpProxyRet;
 }
 
-void NetConnClient::RegisterAppHttpProxyCallback(std::function<void(const HttpProxy &httpProxy)> callback,
-                                                 uint32_t &callbackid)
+void NetConnClient::RegisterAppHttpProxyCallback(
+    std::function<void(const HttpProxy& httpProxy)> callback, uint32_t& callbackid)
 {
     callbackid = appId_;
     appMap[callbackid] = callbackid;
-    callback(appHttpProxy_);
+    callback(g_appHttpProxy);
+}
+
+void NetConnClient::RegisterAppHttpProxyCallback(
+    std::function<void(const HttpProxy& httpProxy)> callback, uint32_t& callbackid, bool notifyEmptyProxy)
+{
+    callbackid = appId_;
+    appMap[callbackid] = callbackid;
+    callback(g_appHttpProxy);
+}
+
+HttpProxy NetConnClient::GetAppHttpProxy()
+{
+    return g_appHttpProxy;
 }
 
 void NetConnClient::UnregisterAppHttpProxyCallback(uint32_t callbackid)
@@ -59,6 +76,20 @@ bool NetConnClientMock::IsAppExist(uint32_t appId)
     return appMap.find(appId) != appMap.end();
 }
 
+void NetConnClientMock::SetDefaultHttpProxyResult(int32_t ret)
+{
+    g_defaultHttpProxyRet = ret;
 }
 
+void NetConnClientMock::SetAppHttpProxy(HttpProxy httpProxy)
+{
+    g_appHttpProxy = httpProxy;
 }
+
+HttpProxy NetConnClientMock::GetAppHttpProxy()
+{
+    return g_appHttpProxy;
+}
+} // namespace NetManagerStandard
+
+} // namespace OHOS

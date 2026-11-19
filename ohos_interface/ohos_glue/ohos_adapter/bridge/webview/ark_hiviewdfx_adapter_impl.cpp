@@ -40,4 +40,16 @@ uint64_t ArkHiViewDfxAdapterImpl::DfxCollectAsyncStack()
 {
     return real_.DfxCollectAsyncStack();
 }
+
+void ArkHiViewDfxAdapterImpl::WebComponentLoad(int64_t navigationId)
+{
+    return real_.WebComponentLoad(navigationId);
+}
+
+void ArkHiViewDfxAdapterImpl::WebContentPaintComplete(int64_t navigationId,
+                                                      int64_t largestContentPaintTime)
+{
+    return real_.WebContentPaintComplete(navigationId, largestContentPaintTime);
+}
+
 } // namespace OHOS::ArkWeb

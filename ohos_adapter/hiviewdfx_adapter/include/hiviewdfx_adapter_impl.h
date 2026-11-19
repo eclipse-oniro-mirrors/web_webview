@@ -32,6 +32,11 @@ public:
     void ReleaseAsyncContext(uint64_t ctx) override;
 
     uint64_t DfxCollectAsyncStack() override;
+
+    void WebComponentLoad(int64_t navigationId) override;
+
+    void WebContentPaintComplete(int64_t navigationId,
+                                 int64_t largestContentPaintTime) override;
 };
 } // namespace OHOS::NWeb
 

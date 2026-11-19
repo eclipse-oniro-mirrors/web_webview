@@ -774,6 +774,23 @@ public:
      * @param colorValue The ARGB caret color.
      */
     virtual void PutCaretColor(uint32_t colorValue) {}
+
+    /**
+     * Set whether to persist visited link records to the local database.
+     * The default value is false. When disabled, visited link records are kept
+     * in memory only. The database file itself is created by default.
+     */
+    virtual void PutVisitedLinkPersistEnabled(bool enabled) {}
+
+    /**
+     * Get whether visited link persistence is enabled.
+     *
+     * @see PutVisitedLinkPersistEnabled
+     */
+    virtual bool IsVisitedLinkPersistEnabled()
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

@@ -24,6 +24,7 @@ ohos_fuzztest("ArkwebUtilsFuzzTest") {
   include_dirs = [
     "$webview_path/test/ohos_nweb",
     "$webview_path/arkweb_utils",
+    "$webview_path/interfaces/kits/nativecommon",
     "$webview_path/test/fuzztest",
     "../../../ohos_adapter/hiviewdfx_adapter/include/",
   ]

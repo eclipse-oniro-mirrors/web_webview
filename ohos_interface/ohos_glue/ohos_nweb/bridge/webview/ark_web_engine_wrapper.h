@@ -17,6 +17,10 @@
 #define ARK_WEB_ENGINE_WRAPPER_H_
 #pragma once
 
+#include <memory>
+#include <mutex>
+#include <unordered_map>
+
 #include "include/nweb_engine.h"
 #include "ohos_nweb/include/ark_web_engine.h"
 #include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
@@ -25,6 +29,8 @@ namespace OHOS::ArkWeb {
 using ArkWebRenderProcessMode = OHOS::NWeb::RenderProcessMode;
 
 using ArkWebSiteIsolationMode = OHOS::NWeb::SiteIsolationMode;
+
+using OOMDumpDecisionCallback = OHOS::NWeb::OOMDumpDecisionCallback;
 
 class ArkWebEngineWrapper : public OHOS::NWeb::NWebEngine {
 public:
@@ -82,6 +88,10 @@ public:
     void SetAppCustomUserAgent(const std::string& userAgent) override;
 
     void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) override;
+
+    void SetWebNavigationConfigMode(int32_t mode) override;
+
+    int32_t GetWebNavigationConfigMode() override;
 
     void EnableWholeWebPageDrawing() override;
 
@@ -142,8 +152,28 @@ public:
     void SetWholeWebDrawing() override;
 
     void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) override;
+
+    void SetOutputFdCallback(int (*callback)(int32_t render_pid)) override;
+    
+    void SetOOMDumpDecisionCallback(OOMDumpDecisionCallback cb) override;
+
+    /**
+     * @brief Remove the visited link records of the current application that
+     *        changed at or after the specified time point (inclusive).
+     */
+    void RemoveVisitedLinksSince(int64_t time_ms,
+                                 std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> callback) override;
+
+    void SetGlobalWebSiteConfigCallback(std::shared_ptr<OHOS::NWeb::NWebWebSiteConfigCallback> callback) override;
+
+    std::string GetDefaultUserAgentLite() override;
 private:
+    std::shared_ptr<OHOS::NWeb::NWeb> GetOrCreateNWebWrapper(int32_t nweb_id,
+        ArkWebRefPtr<ArkWebNWeb> ark_web_nweb);
+
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
+    std::unordered_map<int32_t, std::weak_ptr<OHOS::NWeb::NWeb>> nweb_cache_;
+    std::mutex nweb_cache_mtx_;
 };
 
 } // namespace OHOS::ArkWeb

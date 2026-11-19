@@ -34,6 +34,10 @@ public:
 
     uint64_t DfxCollectAsyncStack() override;
 
+    void WebComponentLoad(int64_t navigationId) override;
+
+    void WebContentPaintComplete(int64_t navigationId,
+                                 int64_t largestContentPaintTime) override;
 private:
     NWeb::HiViewDfxAdapter& real_;
 

@@ -16,8 +16,11 @@
 #ifndef WEB_SCHEME_HANDLER_REQUEST_H
 #define WEB_SCHEME_HANDLER_REQUEST_H
 
+#include <atomic>
 #include <cstdint>
 #include <map>
+#include <memory>
+#include <mutex>
 #include "ffi_remote_data.h"
 #include "web_errors.h"
 #include "webview_javascript_result_callback.h"
@@ -146,6 +149,8 @@ namespace OHOS::Webview {
     };
 
     // WebSchemeHandler
+    class WebResourceHandlerImpl;
+
     class WebSchemeHandlerImpl : public OHOS::FFI::FFIData {
         DECL_TYPE(WebSchemeHandlerImpl, OHOS::FFI::FFIData)
     public:
@@ -173,16 +178,26 @@ namespace OHOS::Webview {
         typedef struct RequestStopParam {
             std::function<void(int64_t)> callbackRef_;
             WebSchemeHandlerRequestImpl* request_;
-            const ArkWeb_ResourceRequest* arkWebRequest_;
+            // Resolved from the ArkWeb_ResourceRequest on the calling thread so that the worker
+            // thread never touches the engine-owned request. Holds the reference taken by
+            // RequestStart and is released by RequestStopAfterWorkCb.
+            WebResourceHandlerImpl* resourceHandler_ = nullptr;
+            std::shared_ptr<std::atomic<bool>> isCallbackValid_;
         } RequestStopParam;
 
-        static void RequestStopAfterWorkCb(RequestStopParam* param);
+        static void RequestStopAfterWorkCb(std::unique_ptr<RequestStopParam> param);
 
         ArkWeb_OnRequestStart onRequestStart_ = nullptr;
         ArkWeb_OnRequestStop onRequestStop_ = nullptr;
 
+        // Protects request_start_callback_ and request_stop_callback_ which are written by CJ
+        // application threads and read by the Chromium IO thread.
+        std::mutex callbackMutex_;
         std::function<bool(int64_t, int64_t)> request_start_callback_ = nullptr;
         std::function<void(int64_t)> request_stop_callback_ = nullptr;
+
+        std::shared_ptr<std::atomic<bool>> is_stop_callback_valid_ = std::make_shared<std::atomic<bool>>(false);
+        static std::mutex mapMutex_;
     };
 
     // WebResourceHandler

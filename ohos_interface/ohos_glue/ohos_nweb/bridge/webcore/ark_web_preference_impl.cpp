@@ -608,4 +608,19 @@ void ArkWebPreferenceImpl::SetTransformRotateAndSkewEnabled(bool enable)
         nweb_preference_->SetTransformRotateAndSkewEnabled(enable);
     }
 }
+
+void ArkWebPreferenceImpl::PutVisitedLinkPersistEnabled(bool enabled)
+{
+    if (nweb_preference_) {
+        nweb_preference_->PutVisitedLinkPersistEnabled(enabled);
+    }
+}
+
+bool ArkWebPreferenceImpl::IsVisitedLinkPersistEnabled()
+{
+    if (nweb_preference_) {
+        return nweb_preference_->IsVisitedLinkPersistEnabled();
+    }
+    return false;
+}
 } // namespace OHOS::ArkWeb

@@ -143,10 +143,10 @@ ohos_shared_library("libnweb") {
     ":web.para.dac",
     ":web_config",
     ":web_configs",
-    "${webview_path}/arkweb_utils:libarkweb_utils",
     "${webview_path}/ohos_glue:ohos_adapter_glue_source",
     "${webview_path}/ohos_glue:ohos_base_glue_source",
     "${webview_path}/ohos_glue:ohos_nweb_glue_source",
+    "${webview_path}/arkweb_utils:libarkweb_utils",
   ]
 
   if (webview_app_fwk_update_enable) {
@@ -164,6 +164,7 @@ ohos_shared_library("libnweb") {
     "graphic_2d:libcomposer",
     "graphic_2d:librender_service_client",
     "graphic_surface:surface",
+    "faultloggerd:libfaultloggerd",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "i18n:intl_util",

@@ -37,6 +37,7 @@
 #include "webview_hasimage_callback.h"
 #include "webview_javascript_result_callback.h"
 #include "native_media_player_impl.h"
+#include "web_site_config_callback_impl.h"
 
 #include "nweb_precompile_callback.h"
 #include "nweb_cache_options_impl.h"
@@ -243,9 +244,16 @@ void WebviewController::SetWebDetach(int32_t nwebId)
         return;
     }
 
-    if (attachState_ != AttachState::NOT_ATTACHED) {
+    bool stateChanged = false;
+    {
         std::unique_lock<std::mutex> attachLock(attachMtx_);
-        attachState_ = AttachState::NOT_ATTACHED;
+        if (attachState_ != AttachState::NOT_ATTACHED) {
+            attachState_ = AttachState::NOT_ATTACHED;
+            stateChanged = true;
+        }
+    }
+
+    if (stateChanged) {
         TriggerStateChangeCallback(CONTROLLER_ATTACH_STATE_CHANGE);
     }
 }
@@ -503,6 +511,17 @@ ErrCode WebviewController::RemoveNavigationEntryUserData(const std::string& key)
         return NWebError::INIT_ERROR;
     }
     nweb_ptr->RemoveNavigationEntryUserData(key);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::SetNavigationThrottle(
+    std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    nweb_ptr->SetNavigationThrottle(std::move(handler));
     return NWebError::NO_ERROR;
 }
 
@@ -2376,6 +2395,31 @@ void WebviewController::OnCreateNativeMediaPlayer(ani_vm* vm, ani_fn_object call
     nweb_ptr->OnCreateNativeMediaPlayer(callbackImpl);
 }
 
+void WebviewController::PutWebSiteConfigCallback(ani_vm *vm, ani_fn_object callback)
+{
+    WVLOG_I("put website config callback");
+    if (vm == nullptr) {
+        WVLOG_E("vm is nullptr");
+        return;
+    }
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+
+    if (callback == nullptr) {
+        // Clear the callback by passing nullptr.
+        nweb_ptr->PutWebSiteConfigCallback(nullptr);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<AniNWebWebSiteConfigCallbackImpl>(vm, callback);
+    if (!callbackImpl) {
+        return;
+    }
+    nweb_ptr->PutWebSiteConfigCallback(callbackImpl);
+}
+
 int32_t WebviewController::GetNWebId()
 {
     return nwebId_;
@@ -2712,7 +2756,7 @@ std::shared_ptr<NWebUserAgentMetadata> WebviewController::GetUserAgentMetadata(c
     return nweb_ptr->GetUserAgentMetadata(userAgent);
 }
 
-std::string WebviewController::GetLastPostMessageURL()
+std::string WebviewController::GetLastPostMessageUrl()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -2720,7 +2764,7 @@ std::string WebviewController::GetLastPostMessageURL()
         return "";
     }
 
-    return nweb_ptr->GetLastPostMessageURL();
+    return nweb_ptr->GetLastPostMessageUrl();
 }
 
 ErrCode WebviewController::SetZoomFactor(double factor)

@@ -237,6 +237,11 @@ public:
 
     ErrCode RemoveNavigationEntryUserData(const std::string& key);
 
+    // Registers (handler != nullptr) or clears (handler == nullptr) the
+    // navigation throttle for this WebviewController's NWeb instance.
+    ErrCode SetNavigationThrottle(
+        std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler);
+
     std::string GetTitle();
 
     int32_t GetProgress();
@@ -416,6 +421,9 @@ public:
 
     void OnCreateNativeMediaPlayer(napi_env env, napi_ref callback);
 
+    void OnQueryNavigationConfig(napi_env env, napi_ref callback);
+    void PutWebSiteConfigCallback(napi_env env, napi_ref callback);
+
     bool ParseScriptContent(napi_env env, napi_value value, std::string &script);
 
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value);
@@ -541,7 +549,7 @@ public:
 
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent);
 
-    std::string GetLastPostMessageURL();
+    std::string GetLastPostMessageUrl();
 
     ErrCode SetZoomFactor(double factor);
 

@@ -140,3 +140,111 @@ HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_CustomOptions_
     EXPECT_EQ(result.display_header_footer, 1);
     EXPECT_EQ(result.print_backgrounds, 0);
 }
+
+/**
+ * @tc.name: ConvertPrintingParameters_003
+ * @tc.desc: Verify malformed custom option JSON keeps both values unset
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_003, TestSize.Level2)
+{
+    auto attrs = defaultAttrs_;
+    attrs.SetOption("not-a-json");
+
+    PrintDocumentAdapterImpl adapter(nullptr);
+    PrintAttributesAdapter result = adapter.ConvertPrintingParameters(attrs);
+
+    EXPECT_EQ(result.display_header_footer, UINT32_MAX);
+    EXPECT_EQ(result.print_backgrounds, UINT32_MAX);
+}
+
+/**
+ * @tc.name: ConvertPrintingParameters_004
+ * @tc.desc: Verify missing and non-boolean custom option values keep defaults
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_004, TestSize.Level2)
+{
+    auto attrs = defaultAttrs_;
+    attrs.SetOption("{\"header_and_footer\":{},\"background_graphics\":{\"value\":\"true\"}}");
+
+    PrintDocumentAdapterImpl adapter(nullptr);
+    PrintAttributesAdapter result = adapter.ConvertPrintingParameters(attrs);
+
+    EXPECT_EQ(result.display_header_footer, UINT32_MAX);
+    EXPECT_EQ(result.print_backgrounds, UINT32_MAX);
+}
+
+/**
+ * @tc.name: ConvertPrintingParameters_005
+ * @tc.desc: Verify a single custom option is parsed and the missing one stays unset
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_005, TestSize.Level1)
+{
+    auto attrs = defaultAttrs_;
+    attrs.SetOption("{\"header_and_footer\":{\"value\":true}}");
+
+    PrintDocumentAdapterImpl adapter(nullptr);
+    PrintAttributesAdapter result = adapter.ConvertPrintingParameters(attrs);
+
+    EXPECT_EQ(result.display_header_footer, 1U);
+    EXPECT_EQ(result.print_backgrounds, UINT32_MAX);
+}
+
+/**
+ * @tc.name: ConvertPrintingParameters_006
+ * @tc.desc: Verify background-only custom option keeps header unset
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_006, TestSize.Level1)
+{
+    auto attrs = defaultAttrs_;
+    attrs.SetOption("{\"background_graphics\":{\"value\":true}}");
+
+    PrintDocumentAdapterImpl adapter(nullptr);
+    PrintAttributesAdapter result = adapter.ConvertPrintingParameters(attrs);
+
+    EXPECT_EQ(result.display_header_footer, UINT32_MAX);
+    EXPECT_EQ(result.print_backgrounds, 1U);
+}
+
+/**
+ * @tc.name: ConvertPrintingParameters_007
+ * @tc.desc: Verify false header option maps to 0 and true background option maps to 1
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_007, TestSize.Level2)
+{
+    auto attrs = defaultAttrs_;
+    attrs.SetOption("{\"header_and_footer\":{\"value\":false},\"background_graphics\":{\"value\":true}}");
+
+    PrintDocumentAdapterImpl adapter(nullptr);
+    PrintAttributesAdapter result = adapter.ConvertPrintingParameters(attrs);
+
+    EXPECT_EQ(result.display_header_footer, 0U);
+    EXPECT_EQ(result.print_backgrounds, 1U);
+}
+
+/**
+ * @tc.name: ConvertPrintingParameters_008
+ * @tc.desc: Verify non-boolean header value keeps header unset while boolean background is parsed
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ConvertPrintingParametersTest, ConvertPrintingParameters_008, TestSize.Level2)
+{
+    auto attrs = defaultAttrs_;
+    attrs.SetOption("{\"header_and_footer\":{\"value\":\"yes\"},\"background_graphics\":{\"value\":false}}");
+
+    PrintDocumentAdapterImpl adapter(nullptr);
+    PrintAttributesAdapter result = adapter.ConvertPrintingParameters(attrs);
+
+    EXPECT_EQ(result.display_header_footer, UINT32_MAX);
+    EXPECT_EQ(result.print_backgrounds, 0U);
+}

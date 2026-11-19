@@ -35,6 +35,15 @@ public:
     MOCK_METHOD(int32_t, OH_ArkWebResourceHandler_DidFailWithErrorV2,
         (const ArkWeb_ResourceHandler* handler, ArkWeb_NetError errorCode, bool completeIfNoResponse));
     MOCK_METHOD(int32_t, OH_ArkWebResourceHandler_Destroy, (const ArkWeb_ResourceHandler* handler));
+    MOCK_METHOD(void, OH_ArkWeb_CreateErrorInfo, (ArkWeb_ErrorInfo * *errorInfo));
+    MOCK_METHOD(void, OH_ArkWeb_DestroyErrorInfo, (ArkWeb_ErrorInfo * errorInfo));
+    MOCK_METHOD(int32_t, OH_ArkWebErrorInfo_SetErrorCode, (ArkWeb_ErrorInfo * errorInfo, ArkWeb_NetError errorCode));
+    MOCK_METHOD(
+        int32_t, OH_ArkWebErrorInfo_SetCompleteIfNoResponse, (ArkWeb_ErrorInfo * errorInfo, bool completeIfNoResponse));
+    MOCK_METHOD(
+        int32_t, OH_ArkWebErrorInfo_SetCustomErrorCode, (ArkWeb_ErrorInfo * errorInfo, int32_t customErrorCode));
+    MOCK_METHOD(int32_t, OH_ArkWebResourceHandler_DidFailWithErrorInfo,
+        (const ArkWeb_ResourceHandler* handler, const ArkWeb_ErrorInfo* errorInfo));
 };
 
 MockArkWeb* g_mockArkWeb = nullptr;
@@ -66,6 +75,37 @@ int32_t OH_ArkWebResourceHandler_DidFailWithErrorV2(
 int32_t OH_ArkWebResourceHandler_Destroy(const ArkWeb_ResourceHandler* handler)
 {
     return g_mockArkWeb->OH_ArkWebResourceHandler_Destroy(handler);
+}
+
+void OH_ArkWeb_CreateErrorInfo(ArkWeb_ErrorInfo** errorInfo)
+{
+    g_mockArkWeb->OH_ArkWeb_CreateErrorInfo(errorInfo);
+}
+
+void OH_ArkWeb_DestroyErrorInfo(ArkWeb_ErrorInfo* errorInfo)
+{
+    g_mockArkWeb->OH_ArkWeb_DestroyErrorInfo(errorInfo);
+}
+
+int32_t OH_ArkWebErrorInfo_SetErrorCode(ArkWeb_ErrorInfo* errorInfo, ArkWeb_NetError errorCode)
+{
+    return g_mockArkWeb->OH_ArkWebErrorInfo_SetErrorCode(errorInfo, errorCode);
+}
+
+int32_t OH_ArkWebErrorInfo_SetCompleteIfNoResponse(ArkWeb_ErrorInfo* errorInfo, bool completeIfNoResponse)
+{
+    return g_mockArkWeb->OH_ArkWebErrorInfo_SetCompleteIfNoResponse(errorInfo, completeIfNoResponse);
+}
+
+int32_t OH_ArkWebErrorInfo_SetCustomErrorCode(ArkWeb_ErrorInfo* errorInfo, int32_t customErrorCode)
+{
+    return g_mockArkWeb->OH_ArkWebErrorInfo_SetCustomErrorCode(errorInfo, customErrorCode);
+}
+
+int32_t OH_ArkWebResourceHandler_DidFailWithErrorInfo(
+    const ArkWeb_ResourceHandler* handler, const ArkWeb_ErrorInfo* errorInfo)
+{
+    return g_mockArkWeb->OH_ArkWebResourceHandler_DidFailWithErrorInfo(handler, errorInfo);
 }
 }
 
@@ -259,6 +299,82 @@ HWTEST_F(WebResourceHandlerTest, DidFailWithError_WhenReturnsNonZero_DoesNotSetF
         .WillOnce(testing::Return(ARKWEB_SUCCESS));
 
     result = handler.DidFailWithError(ARKWEB_ERR_FAILED, true);
+    EXPECT_EQ(ARKWEB_SUCCESS, result);
+}
+
+HWTEST_F(WebResourceHandlerTest, DidFailWithErrorInfo_WhenFinished_ReturnsError, TestSize.Level1)
+{
+    ArkWeb_ResourceHandler* mockHandler = reinterpret_cast<ArkWeb_ResourceHandler*>(0x1234);
+    WebResourceHandler handler(mockHandler);
+
+    handler.SetFinishFlag();
+
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWeb_CreateErrorInfo(testing::_)).Times(0);
+
+    int32_t result = handler.DidFailWithErrorInfo(ARKWEB_ERR_FAILED, true, -1);
+    EXPECT_EQ(ARKWEB_ERROR_UNKNOWN, result);
+}
+
+HWTEST_F(WebResourceHandlerTest, DidFailWithErrorInfo_WhenCreateErrorInfoFails_ReturnsError, TestSize.Level1)
+{
+    ArkWeb_ResourceHandler* mockHandler = reinterpret_cast<ArkWeb_ResourceHandler*>(0x1234);
+    WebResourceHandler handler(mockHandler);
+
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWeb_CreateErrorInfo(testing::_)).WillOnce(testing::SetArgPointee<0>(nullptr));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebResourceHandler_DidFailWithErrorInfo(testing::_, testing::_)).Times(0);
+
+    int32_t result = handler.DidFailWithErrorInfo(ARKWEB_ERR_FAILED, true, -1);
+    EXPECT_EQ(ARKWEB_ERROR_UNKNOWN, result);
+}
+
+HWTEST_F(WebResourceHandlerTest, DidFailWithErrorInfo_WhenSucceeds_SetsFinishedFlag, TestSize.Level1)
+{
+    ArkWeb_ResourceHandler* mockHandler = reinterpret_cast<ArkWeb_ResourceHandler*>(0x1234);
+    ArkWeb_ErrorInfo* mockErrorInfo = reinterpret_cast<ArkWeb_ErrorInfo*>(0x5678);
+    WebResourceHandler handler(mockHandler);
+
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWeb_CreateErrorInfo(testing::_))
+        .WillOnce(testing::SetArgPointee<0>(mockErrorInfo));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebErrorInfo_SetErrorCode(mockErrorInfo, ARKWEB_ERR_FAILED))
+        .WillOnce(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebErrorInfo_SetCompleteIfNoResponse(mockErrorInfo, true))
+        .WillOnce(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebErrorInfo_SetCustomErrorCode(mockErrorInfo, -1))
+        .WillOnce(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebResourceHandler_DidFailWithErrorInfo(mockHandler, mockErrorInfo))
+        .WillOnce(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWeb_DestroyErrorInfo(mockErrorInfo));
+
+    int32_t result = handler.DidFailWithErrorInfo(ARKWEB_ERR_FAILED, true, -1);
+    EXPECT_EQ(ARKWEB_SUCCESS, result);
+
+    int32_t secondResult = handler.DidFailWithErrorInfo(ARKWEB_ERR_FAILED, true, -1);
+    EXPECT_EQ(ARKWEB_ERROR_UNKNOWN, secondResult);
+}
+
+HWTEST_F(WebResourceHandlerTest, DidFailWithErrorInfo_WhenReturnsNonZero_DoesNotSetFinished, TestSize.Level1)
+{
+    ArkWeb_ResourceHandler* mockHandler = reinterpret_cast<ArkWeb_ResourceHandler*>(0x1234);
+    ArkWeb_ErrorInfo* mockErrorInfo = reinterpret_cast<ArkWeb_ErrorInfo*>(0x5678);
+    WebResourceHandler handler(mockHandler);
+
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWeb_CreateErrorInfo(testing::_))
+        .WillRepeatedly(testing::SetArgPointee<0>(mockErrorInfo));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebErrorInfo_SetErrorCode(testing::_, testing::_))
+        .WillRepeatedly(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebErrorInfo_SetCompleteIfNoResponse(testing::_, testing::_))
+        .WillRepeatedly(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebErrorInfo_SetCustomErrorCode(testing::_, testing::_))
+        .WillRepeatedly(testing::Return(ARKWEB_SUCCESS));
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWeb_DestroyErrorInfo(testing::_)).WillRepeatedly(testing::Return());
+    EXPECT_CALL(*g_mockArkWeb, OH_ArkWebResourceHandler_DidFailWithErrorInfo(mockHandler, mockErrorInfo))
+        .WillOnce(testing::Return(ARKWEB_INVALID_PARAM))
+        .WillOnce(testing::Return(ARKWEB_SUCCESS));
+
+    int32_t result = handler.DidFailWithErrorInfo(ARKWEB_ERR_FAILED, true, -1);
+    EXPECT_EQ(ARKWEB_INVALID_PARAM, result);
+
+    result = handler.DidFailWithErrorInfo(ARKWEB_ERR_FAILED, true, -1);
     EXPECT_EQ(ARKWEB_SUCCESS, result);
 }
 } // namespace NWeb

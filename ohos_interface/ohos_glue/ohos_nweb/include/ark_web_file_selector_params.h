@@ -19,6 +19,7 @@
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
+#include "ohos_nweb/include/ark_web_rect.h"
 
 namespace OHOS::ArkWeb {
 
@@ -54,6 +55,9 @@ public:
 
     /*--ark web()--*/
     virtual const ArkWebString Accepts() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebRect> GetFocusedElementRect() = 0;
 };
 
 } // namespace OHOS::ArkWeb

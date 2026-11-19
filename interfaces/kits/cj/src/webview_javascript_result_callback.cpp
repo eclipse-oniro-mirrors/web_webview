@@ -64,6 +64,14 @@ bool WebviewJavaScriptResultCallBackImpl::FindObjectIdInJsTd(
     const std::vector<std::function<char*(const char*)>>& cjFuncs,
     const std::vector<std::string>& methodList, JavaScriptOb::ObjectID& objectId)
 {
+    std::lock_guard<std::mutex> lock(objectMutex_);
+    return FindObjectIdInJsTdLocked(cjFuncs, methodList, objectId);
+}
+
+bool WebviewJavaScriptResultCallBackImpl::FindObjectIdInJsTdLocked(
+    const std::vector<std::function<char*(const char*)>>& cjFuncs,
+    const std::vector<std::string>& methodList, JavaScriptOb::ObjectID& objectId)
+{
     objectId = static_cast<JavaScriptOb::ObjectID>(JavaScriptOb::JavaScriptObjIdErrorCode::WEBVIEWCONTROLLERERROR);
     for (const auto& pair : objects_) {
         bool result;
@@ -84,15 +92,19 @@ bool WebviewJavaScriptResultCallBackImpl::FindObjectIdInJsTd(
 JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::AddObject(
     const std::vector<std::function<char*(const char*)>>& cjFuncs)
 {
-    JavaScriptOb::ObjectID objectId;
-    {
-        auto new_object = JavaScriptOb::CreateNamed(cjFuncs);
-        objectId = nextObjectId_++;
-        WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::AddObject objectId = "
-                "%{public}d",
-            static_cast<int32_t>(objectId));
-        objects_[objectId] = new_object;
-    }
+    std::lock_guard<std::mutex> lock(objectMutex_);
+    return AddObjectLocked(cjFuncs);
+}
+
+JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::AddObjectLocked(
+    const std::vector<std::function<char*(const char*)>>& cjFuncs)
+{
+    auto new_object = JavaScriptOb::CreateNamed(cjFuncs);
+    JavaScriptOb::ObjectID objectId = nextObjectId_++;
+    WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::AddObject objectId = "
+            "%{public}d",
+        static_cast<int32_t>(objectId));
+    objects_[objectId] = new_object;
     return objectId;
 }
 
@@ -100,26 +112,40 @@ JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::AddNamedObject(
     const std::vector<std::function<char*(const char*)>>& cjFuncs,
     const std::vector<std::string>& methodList, const std::string& objName)
 {
+    std::lock_guard<std::mutex> lock(objectMutex_);
+    return AddNamedObjectLocked(cjFuncs, methodList, objName);
+}
+
+JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::AddNamedObjectLocked(
+    const std::vector<std::function<char*(const char*)>>& cjFuncs,
+    const std::vector<std::string>& methodList, const std::string& objName)
+{
     JavaScriptOb::ObjectID objectId;
     NamedObjectMap::iterator iter = namedObjects_.find(objName);
-    bool methodName = FindObjectIdInJsTd(cjFuncs, methodList, objectId);
+    bool methodName = FindObjectIdInJsTdLocked(cjFuncs, methodList, objectId);
     if (methodName && iter != namedObjects_.end() && iter->second == objectId) {
         // Nothing to do.
         return objectId;
     }
     if (iter != namedObjects_.end()) {
-        RemoveNamedObject(iter->first);
+        RemoveNamedObjectLocked(iter->first);
     }
     if (methodName && objects_[objectId] != nullptr) {
         objects_[objectId]->AddName();
     } else {
-        objectId = AddObject(cjFuncs);
+        objectId = AddObjectLocked(cjFuncs);
     }
     namedObjects_[objName] = objectId;
     return objectId;
 }
 
 bool WebviewJavaScriptResultCallBackImpl::RemoveNamedObject(const std::string& name)
+{
+    std::lock_guard<std::mutex> lock(objectMutex_);
+    return RemoveNamedObjectLocked(name);
+}
+
+bool WebviewJavaScriptResultCallBackImpl::RemoveNamedObjectLocked(const std::string& name)
 {
     WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::RemoveNamedObject called, "
             "name = %{public}s",
@@ -139,11 +165,16 @@ JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptPr
     const std::vector<std::function<char*(const char*)>>& cjFuncs,
     const std::string& objName, const std::vector<std::string>& methodList, const std::string& permission)
 {
-    JavaScriptOb::ObjectID objId = AddNamedObject(cjFuncs, methodList, objName);
+    std::lock_guard<std::mutex> lock(objectMutex_);
+    JavaScriptOb::ObjectID objId = AddNamedObjectLocked(cjFuncs, methodList, objName);
     // set up named object method
-    if (namedObjects_.find(objName) != namedObjects_.end() && objects_[namedObjects_[objName]]) {
-        objects_[namedObjects_[objName]]->SetMethods(methodList);
-        objects_[namedObjects_[objName]]->SetPermission(permission);
+    auto namedIter = namedObjects_.find(objName);
+    if (namedIter != namedObjects_.end()) {
+        auto objectIter = objects_.find(namedIter->second);
+        if (objectIter != objects_.end() && objectIter->second != nullptr) {
+            objectIter->second->SetMethods(methodList);
+            objectIter->second->SetPermission(permission);
+        }
     }
     WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptProxy called, "
             "objectId = %{public}d",
@@ -153,6 +184,7 @@ JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptPr
 
 std::shared_ptr<JavaScriptOb> WebviewJavaScriptResultCallBackImpl::FindObject(JavaScriptOb::ObjectID objectId)
 {
+    std::lock_guard<std::mutex> lock(objectMutex_);
     auto iter = objects_.find(objectId);
     if (iter != objects_.end()) {
         return iter->second;

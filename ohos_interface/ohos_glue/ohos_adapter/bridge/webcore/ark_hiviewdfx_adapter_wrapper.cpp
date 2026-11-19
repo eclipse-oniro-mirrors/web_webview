@@ -50,4 +50,22 @@ uint64_t ArkHiViewDfxAdapterWrapper::DfxCollectAsyncStack()
     }
     return ctocpp_->DfxCollectAsyncStack();
 }
+
+void ArkHiViewDfxAdapterWrapper::WebComponentLoad(int64_t navigationId)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ctocpp_->WebComponentLoad(navigationId);
+}
+
+void ArkHiViewDfxAdapterWrapper::WebContentPaintComplete(int64_t navigationId,
+                                                         int64_t largestContentPaintTime)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ctocpp_->WebContentPaintComplete(navigationId, largestContentPaintTime);
+}
+
 } // namespace OHOS::ArkWeb

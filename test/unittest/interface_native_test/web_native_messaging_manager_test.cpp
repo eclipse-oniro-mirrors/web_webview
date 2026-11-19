@@ -17,6 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 #define private public
@@ -270,6 +271,11 @@ HWTEST_F(WebNativeMessagingManagerTest, ConnectWebNativeMessagingExtension, test
     sptr<IRemoteObject> token = new IRemoteObjectMocker();
     sptr<IRemoteObject> callback = new IRemoteObjectMocker();
 
+    int readPipe[2] = {-1, -1};
+    int writePipe[2] = {-1, -1};
+    EXPECT_EQ(pipe(readPipe), 0);
+    EXPECT_EQ(pipe(writePipe), 0);
+
     std::string bundleName = "web_native_messaging_service_test";
     AAFwk::Want want;
     want.SetBundle(bundleName);
@@ -283,12 +289,12 @@ HWTEST_F(WebNativeMessagingManagerTest, ConnectWebNativeMessagingExtension, test
     want.SetParam(WANT_EXTENSION_ORIGIN_PARAM_KEY, std::string("app_instance_1"));
     AAFwk::WantParams readParams;
     readParams.SetParam("type", AAFwk::String::Box("FD"));
-    readParams.SetParam("value", AAFwk::Integer::Box(1));
+    readParams.SetParam("value", AAFwk::Integer::Box(readPipe[0]));
     topParams.SetParam(WANT_READ_PIPE_PARAM_KEY, AAFwk::WantParamWrapper::Box(readParams));
 
     AAFwk::WantParams writeParams;
     writeParams.SetParam("type", AAFwk::String::Box("FD"));
-    writeParams.SetParam("value", AAFwk::Integer::Box(2));
+    writeParams.SetParam("value", AAFwk::Integer::Box(writePipe[0]));
     topParams.SetParam(WANT_WRITE_PIPE_PARAM_KEY, AAFwk::WantParamWrapper::Box(writeParams));
     want.SetParams(topParams);
 
@@ -512,7 +518,7 @@ HWTEST_F(WebNativeMessagingManagerTest, StopNativeConnectionFromExtension, testi
     EXPECT_TRUE(errorNum == ConnectNativeRet::CONNECTION_NOT_EXIST);
 }
 
-static void FillWant(AAFwk::Want& want)
+static void FillWant(AAFwk::Want& want, int32_t readFd = MOCK_PIPE_FD, int32_t writeFd = MOCK_PIPE_FD)
 {
     std::string abilityName = "ability";
     std::string bundleName = "web_native_messaging_service_test";
@@ -527,12 +533,12 @@ static void FillWant(AAFwk::Want& want)
     topParams.SetParam(WANT_EXTENSION_ORIGIN_PARAM_KEY, AAFwk::String::Box("app_instance_1"));
     AAFwk::WantParams readParams;
     readParams.SetParam("type", AAFwk::String::Box("FD"));
-    readParams.SetParam("value", AAFwk::Integer::Box(MOCK_PIPE_FD));
+    readParams.SetParam("value", AAFwk::Integer::Box(readFd));
     topParams.SetParam(WANT_READ_PIPE_PARAM_KEY, AAFwk::WantParamWrapper::Box(readParams));
 
     AAFwk::WantParams writeParams;
     writeParams.SetParam("type", AAFwk::String::Box("FD"));
-    writeParams.SetParam("value", AAFwk::Integer::Box(MOCK_PIPE_FD));
+    writeParams.SetParam("value", AAFwk::Integer::Box(writeFd));
     topParams.SetParam(WANT_WRITE_PIPE_PARAM_KEY, AAFwk::WantParamWrapper::Box(writeParams));
     want.SetParams(topParams);
 }
@@ -553,16 +559,25 @@ HWTEST_F(WebNativeMessagingManagerTest, CreateNativeRequest001, testing::ext::Te
     auto request1 = manager_->CreateNativeRequest(want, params, errorNum);
     ASSERT_EQ(request1, nullptr);
 
-    FillWant(want);
+    int fd2[2] = {-1, -1};
+    int fd3[2] = {-1, -1};
+    int fd4[2] = {-1, -1};
+    int fd5[2] = {-1, -1};
+    EXPECT_EQ(pipe(fd2), 0);
+    EXPECT_EQ(pipe(fd3), 0);
+    EXPECT_EQ(pipe(fd4), 0);
+    EXPECT_EQ(pipe(fd5), 0);
 
     // params userid invalid
     params.callerUserId = -1;
+    FillWant(want, fd2[0], fd2[1]);
     auto request2 = manager_->CreateNativeRequest(want, params, errorNum);
     ASSERT_EQ(request2, nullptr);
 
     params.callerUserId = 1;
     // GetBundlerInfo failed
     AppExecFwk::BundleMgrClient::mockRet = false;
+    FillWant(want, fd3[0], fd3[1]);
     auto request3 = manager_->CreateNativeRequest(want, params, errorNum);
     ASSERT_EQ(request3, nullptr);
 
@@ -571,6 +586,7 @@ HWTEST_F(WebNativeMessagingManagerTest, CreateNativeRequest001, testing::ext::Te
     AppExecFwk::ExtensionAbilityInfo extensionInfo;
     extensionInfo.name = "ability";
     AppExecFwk::BundleMgrClient::mockExtensionAbilityInfo.emplace_back(extensionInfo);
+    FillWant(want, fd4[0], fd4[1]);
     auto request4 = manager_->CreateNativeRequest(want, params, errorNum);
     ASSERT_EQ(request4, nullptr);
 
@@ -582,6 +598,7 @@ HWTEST_F(WebNativeMessagingManagerTest, CreateNativeRequest001, testing::ext::Te
     std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
     extensionInfos.emplace_back(extensionInfo1);
     AppExecFwk::BundleMgrClient::mockExtensionAbilityInfo = extensionInfos;
+    FillWant(want, fd5[0], fd5[1]);
     auto request5 = manager_->CreateNativeRequest(want, params, errorNum);
     ASSERT_NE(request5, nullptr);
 }
@@ -598,7 +615,9 @@ HWTEST_F(WebNativeMessagingManagerTest, CreateNativeRequest002, testing::ext::Te
     ConnectNativeParams params;
     params.callerUserId = 1;
     AAFwk::Want want;
-    FillWant(want);
+    int pipeFd[2] = {-1, -1};
+    EXPECT_EQ(pipe(pipeFd), 0);
+    FillWant(want, pipeFd[0], pipeFd[1]);
 
     AppExecFwk::ExtensionAbilityInfo extensionInfo;
     extensionInfo.name = "ability";
@@ -880,8 +899,10 @@ HWTEST_F(WebNativeMessagingManagerTest, ConnectWebNativeMessagingExtension002, t
     sptr<IRemoteObject> token = new IRemoteObjectMocker();
     sptr<IRemoteObject> callback = new IRemoteObjectMocker();
 
+    int pipeFd[2] = {-1, -1};
+    EXPECT_EQ(pipe(pipeFd), 0);
     AAFwk::Want want;
-    FillWant(want);
+    FillWant(want, pipeFd[0], pipeFd[1]);
 
     int connectionId = 123;
     int errorNum = 0;

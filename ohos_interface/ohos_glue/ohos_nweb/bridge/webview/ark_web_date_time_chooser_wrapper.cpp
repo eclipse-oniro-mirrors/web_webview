@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
 
+#include "ohos_nweb/bridge/ark_web_rect_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
@@ -59,6 +60,16 @@ bool ArkWebDateTimeChooserWrapper::GetHasSelected()
 size_t ArkWebDateTimeChooserWrapper::GetSuggestionIndex()
 {
     return ark_web_date_time_chooser_->GetSuggestionIndex();
+}
+
+std::shared_ptr<OHOS::NWeb::NWebRect> ArkWebDateTimeChooserWrapper::GetFocusedElementRect()
+{
+    ArkWebRefPtr<ArkWebRect> ark_web_rect = ark_web_date_time_chooser_->GetFocusedElementRect();
+    if (CHECK_REF_PTR_IS_NULL(ark_web_rect)) {
+        return nullptr;
+    }
+
+    return std::make_shared<ArkWebRectWrapper>(ark_web_rect);
 }
 
 } // namespace OHOS::ArkWeb

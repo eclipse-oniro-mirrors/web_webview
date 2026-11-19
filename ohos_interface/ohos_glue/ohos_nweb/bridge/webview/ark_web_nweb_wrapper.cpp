@@ -24,6 +24,7 @@
 #include "ohos_nweb/bridge/ark_web_bool_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_cache_options_impl.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_query_navigation_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
@@ -36,6 +37,7 @@
 #include "ohos_nweb/bridge/ark_web_keyboard_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_mouse_event_impl.h"
+#include "ohos_nweb/bridge/ark_web_navigation_throttle_handler_impl.h"
 #include "ohos_nweb/bridge/ark_web_pdfconfig_args_impl.h"
 #include "ohos_nweb/bridge/ark_web_preference_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_impl.h"
@@ -47,6 +49,7 @@
 #include "ohos_nweb/bridge/ark_web_stylus_touch_point_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_impl.h"
 #include "ohos_nweb/bridge/ark_web_vault_plain_text_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_web_site_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_blankless_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/bridge/ark_web_print_document_adapter_adapter_wrapper.h"
@@ -2203,9 +2206,12 @@ void ArkWebNWebWrapper::GetImageInfosByUrls(const std::vector<std::string>& imag
     ArkWebStringVectorStructRelease(image_urls_struct);
 }
 
-std::string ArkWebNWebWrapper::GetLastPostMessageURL()
+std::string ArkWebNWebWrapper::GetLastPostMessageUrl()
 {
-    return ArkWebStringStructToClass(ark_web_nweb_->GetLastPostMessageURL());
+    ArkWebString stUrl = ark_web_nweb_->GetLastPostMessageUrl();
+    std::string objUrl = ArkWebStringStructToClass(stUrl);
+    ArkWebStringStructRelease(stUrl);
+    return objUrl;
 }
 
 std::shared_ptr<OHOS::NWeb::NWebCommandActionManager> ArkWebNWebWrapper::GetCommandActionManager()
@@ -2302,5 +2308,79 @@ void ArkWebNWebWrapper::RemoveNavigationEntryUserData(const std::string& key)
     ark_web_nweb_->RemoveNavigationEntryUserData(stKey);
 
     ArkWebStringStructRelease(stKey);
+}
+
+void ArkWebNWebWrapper::SetNavigationThrottle(std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(handler)) {
+        ark_web_nweb_->SetNavigationThrottle(nullptr);
+        return;
+    }
+    ark_web_nweb_->SetNavigationThrottle(new ArkWebNavigationThrottleHandlerImpl(handler));
+}
+
+bool ArkWebNWebWrapper::HasThrottleCallback()
+{
+    return ark_web_nweb_->HasThrottleCallback();
+}
+
+void ArkWebNWebWrapper::ResolveNavigationDefer(uint64_t deferId, bool proceed)
+{
+    ark_web_nweb_->ResolveNavigationDefer(deferId, proceed);
+}
+
+void ArkWebNWebWrapper::OnQueryNavigationConfig(
+    std::shared_ptr<OHOS::NWeb::NWebQueryNavigationConfigCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->OnQueryNavigationConfig(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->OnQueryNavigationConfig(new ArkWebQueryNavigationConfigCallbackImpl(callback));
+}
+
+void ArkWebNWebWrapper::GetElementInfoForSecurityHitTest(double x, double y,
+    std::shared_ptr<OHOS::NWeb::NWebStringValueCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->GetElementInfoForSecurityHitTest(x, y, nullptr);
+        return;
+    }
+
+    ark_web_nweb_->GetElementInfoForSecurityHitTest(x, y, new ArkWebStringValueCallbackImpl(callback));
+}
+
+void ArkWebNWebWrapper::PutWebSiteConfigCallback(
+    std::shared_ptr<OHOS::NWeb::NWebWebSiteConfigCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->PutWebSiteConfigCallback(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->PutWebSiteConfigCallback(
+        new ArkWebWebSiteConfigCallbackImpl(callback));
+}
+
+bool ArkWebNWebWrapper::GetWindowBounds(int32_t& x, int32_t& y, uint32_t& w, uint32_t& h,
+                                        std::string& state)
+{
+    ArkWebString stState;
+    bool ok = ark_web_nweb_->GetWindowBounds(x, y, w, h, stState);
+    if (ok) {
+        state = ArkWebStringStructToClass(stState);
+        ArkWebStringStructRelease(stState);
+    }
+    return ok;
+}
+
+bool ArkWebNWebWrapper::SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
+                                        const std::string& state)
+{
+    ArkWebString stState = ArkWebStringClassToStruct(state);
+    bool ok = ark_web_nweb_->SetWindowBounds(x, y, w, h, stState);
+    ArkWebStringStructRelease(stState);
+    return ok;
 }
 } // namespace OHOS::ArkWeb

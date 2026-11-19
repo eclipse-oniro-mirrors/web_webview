@@ -104,6 +104,11 @@ enum class SecureDnsModeType : int {
     SECURE_ONLY = 2,
 };
 
+enum class WebNavigationConfigModeType : int {
+    SET = 0,
+    QUERY = 1,
+};
+
 struct OfflineResourceValueAni {
     ani_ref urlListArray;
     ani_ref resourceArrayBuffer;
@@ -884,6 +889,11 @@ public:
         // Mock implementation
     }
 
+    void PutWebSiteConfigCallback(ani_vm* vm, ani_fn_object callback)
+    {
+        // Mock implementation
+    }
+
     ErrCode WebPageSnapshot(const char* id, PixelUnit type, int32_t width, int32_t height,
         const WebSnapshotCallback callback)
     {
@@ -972,6 +982,47 @@ public:
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent)
     {
         return nullptr;
+    }
+
+    ErrCode SetNavigationThrottle(std::shared_ptr<NWebNavigationThrottleHandler> handler)
+    {
+        if (g_setNavigationThrottleShouldFail) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        setNavigationThrottleCalled_ = true;
+        lastThrottleHandler_ = handler;
+        return NWebError::NO_ERROR;
+    }
+
+    bool HasThrottleCallback()
+    {
+        return lastThrottleHandler_ != nullptr;
+    }
+
+    void ResolveNavigationDefer(uint64_t deferId, bool proceed)
+    {
+        lastDeferId_ = deferId;
+        lastDeferProceed_ = proceed;
+    }
+
+    bool WasSetNavigationThrottleCalled() const
+    {
+        return setNavigationThrottleCalled_;
+    }
+
+    std::shared_ptr<NWebNavigationThrottleHandler> GetLastThrottleHandler() const
+    {
+        return lastThrottleHandler_;
+    }
+
+    uint64_t GetLastDeferId() const
+    {
+        return lastDeferId_;
+    }
+
+    bool GetLastDeferProceed() const
+    {
+        return lastDeferProceed_;
     }
 
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value)
@@ -1136,7 +1187,7 @@ public:
         return onInactiveCalled_;
     }
 
-    std::string GetLastPostMessageURL()
+    std::string GetLastPostMessageUrl()
     {
         return "";
     }
@@ -1196,6 +1247,7 @@ public:
     static bool webDebuggingAccess_;
     static int32_t webDebuggingPort_;
     static bool g_terminateRenderProcessShouldFail;
+    static bool g_setNavigationThrottleShouldFail;
     static bool setAutoReloadShouldFail_;
 
 private:
@@ -1226,6 +1278,10 @@ private:
     bool getScrollOffsetCalled_;
     bool slideScrollCalled_;
     bool requestFocusCalled_;
+    bool setNavigationThrottleCalled_ = false;
+    std::shared_ptr<NWebNavigationThrottleHandler> lastThrottleHandler_ = nullptr;
+    uint64_t lastDeferId_ = 0;
+    bool lastDeferProceed_ = false;
     bool autoReloadEnabled_;
     bool navEntryUserDataSetCalled_ = false;
     bool navEntryUserDataGetCalled_ = false;
@@ -1234,13 +1290,14 @@ private:
     std::shared_ptr<HitTestResult> mockHitTestResult_;
 };
 
-std::set<std::string> WebviewController::webTagSet_;
-std::mutex WebviewController::webTagMtx_;
-bool WebviewController::existNweb_ = false;
-bool WebviewController::webDebuggingAccess_ = false;
-int32_t WebviewController::webDebuggingPort_ = 0;
-bool WebviewController::g_terminateRenderProcessShouldFail = false;
-bool WebviewController::setAutoReloadShouldFail_ = false;
+inline std::set<std::string> WebviewController::webTagSet_;
+inline std::mutex WebviewController::webTagMtx_;
+inline bool WebviewController::existNweb_ = false;
+inline bool WebviewController::webDebuggingAccess_ = false;
+inline int32_t WebviewController::webDebuggingPort_ = 0;
+inline bool WebviewController::g_terminateRenderProcessShouldFail = false;
+inline bool WebviewController::g_setNavigationThrottleShouldFail = false;
+inline bool WebviewController::setAutoReloadShouldFail_ = false;
 
 } // namespace NWeb
 } // namespace OHOS

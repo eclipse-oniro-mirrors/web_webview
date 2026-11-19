@@ -113,7 +113,12 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProcAndWait_001, Tes
     SetForkMockValue(producerPid);
     SetWaitpidEintrCount(0);
     SetWaitpidMockValue(producerPid, 0, 0);
+#if defined(webview_x86_64)
+    EXPECT_FALSE(CreateRelroFileInSubProcAndWait());
+    EXPECT_EQ(GetWaitpidMockCallCount(), 0);
+#else
     EXPECT_TRUE(CreateRelroFileInSubProcAndWait());
+#endif
     OHOS::system::SetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, savedPackageName);
 }
 

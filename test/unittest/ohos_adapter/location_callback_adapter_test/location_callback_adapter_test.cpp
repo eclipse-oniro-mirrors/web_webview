@@ -32,31 +32,47 @@ public:
     void TearDown();
 };
 
-void LocationCallbackAdapterTest::SetUpTestCase(void)
-{}
+void LocationCallbackAdapterTest::SetUpTestCase(void) {}
 
-void LocationCallbackAdapterTest::TearDownTestCase(void)
-{}
+void LocationCallbackAdapterTest::TearDownTestCase(void) {}
 
-void LocationCallbackAdapterTest::SetUp(void)
-{}
+void LocationCallbackAdapterTest::SetUp(void) {}
 
-void LocationCallbackAdapterTest::TearDown(void)
-{}
+void LocationCallbackAdapterTest::TearDown(void) {}
 
 class LocationCallbackAdapterMock : public LocationCallbackAdapter {
 public:
     LocationCallbackAdapterMock() = default;
 
-    void OnLocationReport(
-        const std::shared_ptr<LocationInfo> location)  override
-    {}
+    void OnLocationReport(const std::shared_ptr<LocationInfo> location) override {}
+
+    void OnLocatingStatusChange(const int status) override {}
+
+    void OnErrorReport(const int errorCode) override {}
+};
+
+class CountingLocationCallbackAdapter : public LocationCallbackAdapter {
+public:
+    CountingLocationCallbackAdapter() = default;
+
+    void OnLocationReport(const std::shared_ptr<LocationInfo> location) override
+    {
+        ++reportCount;
+    }
 
     void OnLocatingStatusChange(const int status) override
-    {}
+    {
+        ++statusCount;
+    }
 
     void OnErrorReport(const int errorCode) override
-    {}
+    {
+        ++errorCount;
+    }
+
+    int reportCount = 0;
+    int statusCount = 0;
+    int errorCount = 0;
 };
 
 /**
@@ -125,5 +141,70 @@ HWTEST_F(LocationCallbackAdapterTest, LocationCallbackAdapterTest_GetInstance_00
     locationImpl->OnLocationReport(location);
     locationImpl->OnLocatingStatusChange(0);
     locationImpl->OnErrorReport(0);
+}
+
+/**
+ * @tc.name: LocationCallbackAdapterTest_DetachedState_003
+ * @tc.desc: MarkDetached/IsDetached.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LocationCallbackAdapterTest, LocationCallbackAdapterTest_DetachedState_003, TestSize.Level1)
+{
+    std::shared_ptr<LocationCallbackAdapter> adapter = std::make_shared<LocationCallbackAdapterMock>();
+    auto locationImpl = std::make_shared<LocationCallbackImpl>(adapter);
+    EXPECT_FALSE(locationImpl->IsDetached());
+    locationImpl->MarkDetached();
+    EXPECT_TRUE(locationImpl->IsDetached());
+}
+
+/**
+ * @tc.name: LocationCallbackAdapterTest_DetachedSkipsCallbacks_004
+ * @tc.desc: Callbacks are ignored after the callback is detached.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LocationCallbackAdapterTest, LocationCallbackAdapterTest_DetachedSkipsCallbacks_004, TestSize.Level1)
+{
+    auto adapter = std::make_shared<CountingLocationCallbackAdapter>();
+    auto locationImpl = std::make_shared<LocationCallbackImpl>(adapter);
+    locationImpl->MarkDetached();
+
+    OHOS::MessageParcel data;
+    OHOS::MessageParcel reply;
+    OHOS::MessageOption option;
+    data.WriteInterfaceToken(locationImpl->GetDescriptor());
+    EXPECT_EQ(locationImpl->OnRemoteRequest(0, data, reply, option), -1);
+
+    std::unique_ptr<OHOS::Location::Location> location = std::make_unique<OHOS::Location::Location>();
+    locationImpl->OnLocationReport(location);
+    locationImpl->OnLocatingStatusChange(0);
+    locationImpl->OnErrorReport(0);
+
+    EXPECT_EQ(adapter->reportCount, 0);
+    EXPECT_EQ(adapter->statusCount, 0);
+    EXPECT_EQ(adapter->errorCount, 0);
+}
+
+/**
+ * @tc.name: LocationCallbackAdapterTest_NotDetachedForwards_005
+ * @tc.desc: Callbacks are forwarded when the callback is not detached.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LocationCallbackAdapterTest, LocationCallbackAdapterTest_NotDetachedForwards_005, TestSize.Level1)
+{
+    auto adapter = std::make_shared<CountingLocationCallbackAdapter>();
+    auto locationImpl = std::make_shared<LocationCallbackImpl>(adapter);
+    EXPECT_FALSE(locationImpl->IsDetached());
+
+    std::unique_ptr<OHOS::Location::Location> location = std::make_unique<OHOS::Location::Location>();
+    locationImpl->OnLocationReport(location);
+    locationImpl->OnLocatingStatusChange(0);
+    locationImpl->OnErrorReport(0);
+
+    EXPECT_EQ(adapter->reportCount, 1);
+    EXPECT_EQ(adapter->statusCount, 1);
+    EXPECT_EQ(adapter->errorCount, 1);
 }
 } // namespace OHOS

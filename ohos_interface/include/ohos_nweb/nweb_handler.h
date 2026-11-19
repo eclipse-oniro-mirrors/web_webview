@@ -29,6 +29,7 @@
 #include "nweb_controller_handler.h"
 #include "nweb_custom_keyboard_handler.h"
 #include "nweb_data_resubmission_callback.h"
+#include "nweb_color_chooser.h"
 #include "nweb_date_time_chooser.h"
 #include "nweb_drag_data.h"
 #include "nweb_file_selector_params.h"
@@ -1559,6 +1560,62 @@ public:
      */
     virtual void OnMonitoredBlankScreen(
         const std::string& url, int32_t reason, const std::string& extraMsg) {}
+
+    /**
+     * @brief Called when a color chooser popup should be shown.
+     *
+     * @param color The initial color value in HEX format (e.g. "#ff0000").
+     * @param suggestions The list of suggested colors.
+     * @param callback The callback to receive color selection results.
+     */
+    virtual void OnColorChooserPopup(const std::string& color,
+        const std::vector<NWebColorSuggestion>& suggestions,
+        std::shared_ptr<NWebColorChooserCallback> callback) {}
+
+    /**
+     * @brief Called when the color chooser popup should be closed.
+     */
+    virtual void OnColorChooserClose() {}
+
+    /**
+     * @brief Called when CDP Input.cancelDragging requests drag cancellation.
+     */
+    virtual void OnDragCancel() {}
+
+    /**
+     * @brief Synchronous callback to get window bounds from the NWeb host.
+     *
+     * Called by the engine (e.g. CDP Browser domain) to query the current
+     * window position, size, and state from the arkui WebPattern.
+     *
+     * @param x output: x coordinate.
+     * @param y output: y coordinate.
+     * @param w output: width.
+     * @param h output: height.
+     * @param state output: window state ("normal"|"minimized"|"maximized"|"fullscreen").
+     * @return true if the host provided bounds.
+     */
+    virtual bool OnGetWindowBounds(int32_t& x, int32_t& y,
+                                   uint32_t& w, uint32_t& h, std::string& state) { return false; }
+
+    /**
+     * @brief Synchronous callback to set window bounds on the NWeb host.
+     *
+     * Called by the engine (e.g. CDP Browser domain) to change window
+     * position, size, and state on the arkui WebPattern. On phone devices
+     * (fixed-size fullscreen windows), the host may ignore the request and
+     * return true as a no-op; on PC/tablet (free multi-window) devices the
+     * host applies the bounds.
+     *
+     * @param x x coordinate.
+     * @param y y coordinate.
+     * @param w width.
+     * @param h height.
+     * @param state window state ("normal"|"minimized"|"maximized"|"fullscreen").
+     * @return true if the host accepted the request.
+     */
+    virtual bool OnSetWindowBounds(int32_t x, int32_t y,
+                                   uint32_t w, uint32_t h, const std::string& state) { return false; }
 };
 
 } // namespace OHOS::NWeb
