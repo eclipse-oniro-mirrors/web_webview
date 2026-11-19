@@ -147,16 +147,16 @@ public:
     static bool g_setPropertyByNameDoubleShouldFail;
 };
 
-void* AniParseUtils::g_testControllerPtr = nullptr;
-bool AniParseUtils::g_isFunctionResult = true;
-bool AniParseUtils::g_parseStringResult = true;
-std::string AniParseUtils::g_parseStringValue = "";
-std::queue<std::string> AniParseUtils::g_parseStringQueue = {};
-ani_status AniParseUtils::g_enumGetIntStatus = ANI_OK;
-ani_int AniParseUtils::g_enumGetIntResult = 0;
-bool AniParseUtils::g_createObjectVoidShouldFail = false;
-bool AniParseUtils::g_setPropertyByNameDoubleShouldFail = false;
-char AniParseUtils::g_aniMockObjectPool[ANI_MOCK_OBJECT_MAX_SIZE] = {0};
+inline void* AniParseUtils::g_testControllerPtr = nullptr;
+inline bool AniParseUtils::g_isFunctionResult = true;
+inline bool AniParseUtils::g_parseStringResult = true;
+inline std::string AniParseUtils::g_parseStringValue = "";
+inline std::queue<std::string> AniParseUtils::g_parseStringQueue = {};
+inline ani_status AniParseUtils::g_enumGetIntStatus = ANI_OK;
+inline ani_int AniParseUtils::g_enumGetIntResult = 0;
+inline bool AniParseUtils::g_createObjectVoidShouldFail = false;
+inline bool AniParseUtils::g_setPropertyByNameDoubleShouldFail = false;
+inline char AniParseUtils::g_aniMockObjectPool[ANI_MOCK_OBJECT_MAX_SIZE] = {0};
 
 } // namespace NWeb
 } // namespace OHOS

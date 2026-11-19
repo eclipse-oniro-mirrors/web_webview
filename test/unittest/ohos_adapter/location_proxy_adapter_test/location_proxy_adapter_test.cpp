@@ -17,6 +17,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "location_callback_adapter_impl.h"
+
 #define private public
 #include "location_proxy_adapter_impl.h"
 
@@ -27,6 +29,21 @@ namespace OHOS::NWeb {
 namespace {
 static constexpr double MIN_LATITUDE = -90.0;
 static constexpr double MIN_LONGITUDE = -180.0;
+
+bool g_startLocatingResult = true;
+OHOS::sptr<OHOS::Location::ILocatorCallback> g_lastStartedCallback = nullptr;
+
+bool g_fakeStartLocating(std::unique_ptr<OHOS::Location::RequestConfig>& requestConfig,
+    OHOS::sptr<OHOS::Location::ILocatorCallback>& callback)
+{
+    g_lastStartedCallback = callback;
+    return g_startLocatingResult;
+}
+
+bool g_fakeStopLocating(OHOS::sptr<OHOS::Location::ILocatorCallback>& callback)
+{
+    return true;
+}
 } // namespace
 
 class LocationProxyAdapterTest : public testing::Test {
@@ -37,31 +54,40 @@ public:
     void TearDown();
 };
 
-void LocationProxyAdapterTest::SetUpTestCase(void)
-{}
+void LocationProxyAdapterTest::SetUpTestCase(void) {}
 
-void LocationProxyAdapterTest::TearDownTestCase(void)
-{}
+void LocationProxyAdapterTest::TearDownTestCase(void) {}
 
-void LocationProxyAdapterTest::SetUp(void)
-{}
+void LocationProxyAdapterTest::SetUp(void) {}
 
-void LocationProxyAdapterTest::TearDown(void)
-{}
+void LocationProxyAdapterTest::TearDown(void) {}
+
+class LocationProxyDetachedTest : public testing::Test {
+public:
+    void SetUp() override
+    {
+        g_startLocatingResult = true;
+        g_lastStartedCallback = nullptr;
+    }
+
+    void TearDown() override
+    {
+        LocationProxyAdapterImpl::startLocatingFunc_ = nullptr;
+        LocationProxyAdapterImpl::stopLocatingFunc_ = nullptr;
+        g_startLocatingResult = true;
+        g_lastStartedCallback = nullptr;
+    }
+};
 
 class LocationCallbackAdapterMock : public LocationCallbackAdapter {
 public:
     LocationCallbackAdapterMock() = default;
 
-    void OnLocationReport(
-        const std::shared_ptr<LocationInfo> location)  override
-    {}
+    void OnLocationReport(const std::shared_ptr<LocationInfo> location) override {}
 
-    void OnLocatingStatusChange(const int status) override
-    {}
+    void OnLocatingStatusChange(const int status) override {}
 
-    void OnErrorReport(const int errorCode) override
-    {}
+    void OnErrorReport(const int errorCode) override {}
 };
 
 /**
@@ -228,7 +254,7 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_006, T
     } else {
         EXPECT_FALSE(enabled);
     }
-    
+
     int32_t id = proxyAdapterImpl->StartLocating(requestConfig, nullptr);
     EXPECT_EQ(id, -1);
     id = proxyAdapterImpl->StartLocating(requestConfig, callback);
@@ -268,5 +294,77 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_007, T
     proxyAdapterImpl->stopLocatingFunc_ = nullptr;
     result = proxyAdapterImpl->StopLocating(id);
     EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: LocationProxyAdapterTest_StopLocatingMarksDetached_008
+ * @tc.desc: StopLocating marks the callback detached before stopping locating.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LocationProxyDetachedTest, LocationProxyAdapterTest_StopLocatingMarksDetached_008, TestSize.Level1)
+{
+    LocationProxyAdapterImpl proxyAdapter;
+    LocationProxyAdapterImpl::startLocatingFunc_ = g_fakeStartLocating;
+    LocationProxyAdapterImpl::stopLocatingFunc_ = g_fakeStopLocating;
+    auto requestConfig = std::make_shared<LocationRequestConfigImpl>();
+    auto callback = std::make_shared<LocationCallbackAdapterMock>();
+
+    int32_t id = proxyAdapter.StartLocating(requestConfig, callback);
+    EXPECT_GE(id, 0);
+    ASSERT_NE(g_lastStartedCallback, nullptr);
+    auto* callbackImpl = static_cast<LocationCallbackImpl*>(g_lastStartedCallback.GetRefPtr());
+    ASSERT_NE(callbackImpl, nullptr);
+    EXPECT_FALSE(callbackImpl->IsDetached());
+
+    EXPECT_TRUE(proxyAdapter.StopLocating(id));
+    EXPECT_TRUE(callbackImpl->IsDetached());
+}
+
+/**
+ * @tc.name: LocationProxyAdapterTest_StartLocatingFailMarksDetached_009
+ * @tc.desc: A failed StartLocating marks the created callback detached.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LocationProxyDetachedTest, LocationProxyAdapterTest_StartLocatingFailMarksDetached_009, TestSize.Level1)
+{
+    g_startLocatingResult = false;
+    LocationProxyAdapterImpl proxyAdapter;
+    LocationProxyAdapterImpl::startLocatingFunc_ = g_fakeStartLocating;
+    LocationProxyAdapterImpl::stopLocatingFunc_ = g_fakeStopLocating;
+    auto requestConfig = std::make_shared<LocationRequestConfigImpl>();
+    auto callback = std::make_shared<LocationCallbackAdapterMock>();
+
+    EXPECT_EQ(proxyAdapter.StartLocating(requestConfig, callback), -1);
+    ASSERT_NE(g_lastStartedCallback, nullptr);
+    auto* callbackImpl = static_cast<LocationCallbackImpl*>(g_lastStartedCallback.GetRefPtr());
+    ASSERT_NE(callbackImpl, nullptr);
+    EXPECT_TRUE(callbackImpl->IsDetached());
+}
+
+/**
+ * @tc.name: LocationProxyAdapterTest_DestructorMarksDetached_010
+ * @tc.desc: The destructor marks all registered callbacks detached before stopping locating.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LocationProxyDetachedTest, LocationProxyAdapterTest_DestructorMarksDetached_010, TestSize.Level1)
+{
+    LocationCallbackImpl* callbackImpl = nullptr;
+    {
+        LocationProxyAdapterImpl proxyAdapter;
+        LocationProxyAdapterImpl::startLocatingFunc_ = g_fakeStartLocating;
+        LocationProxyAdapterImpl::stopLocatingFunc_ = g_fakeStopLocating;
+        auto requestConfig = std::make_shared<LocationRequestConfigImpl>();
+        auto callback = std::make_shared<LocationCallbackAdapterMock>();
+
+        EXPECT_GE(proxyAdapter.StartLocating(requestConfig, callback), 0);
+        ASSERT_NE(g_lastStartedCallback, nullptr);
+        callbackImpl = static_cast<LocationCallbackImpl*>(g_lastStartedCallback.GetRefPtr());
+        ASSERT_NE(callbackImpl, nullptr);
+        EXPECT_FALSE(callbackImpl->IsDetached());
+    }
+    EXPECT_TRUE(callbackImpl->IsDetached());
 }
 } // namespace OHOS::NWeb

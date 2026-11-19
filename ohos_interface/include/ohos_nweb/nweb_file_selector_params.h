@@ -16,10 +16,12 @@
 #ifndef NWEB_FILE_SELECTOR_PARAMS_H
 #define NWEB_FILE_SELECTOR_PARAMS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "nweb_export.h"
+#include "nweb_rect.h"
 
 namespace OHOS::NWeb {
 
@@ -59,6 +61,13 @@ public:
     virtual bool IsAcceptAllOptionExcluded() { return false; }
 
     virtual const std::string Accepts() { return ""; }
+
+    /**
+     * @brief Get the rect of the focused element.
+     *
+     * @return The rect of the focused element.
+     */
+    virtual std::shared_ptr<NWebRect> GetFocusedElementRect() { return nullptr; }
 };
 
 } // namespace OHOS::NWeb

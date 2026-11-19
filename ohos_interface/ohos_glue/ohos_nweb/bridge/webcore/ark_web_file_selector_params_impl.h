@@ -48,6 +48,9 @@ public:
     bool IsAcceptAllOptionExcluded() override;
 
     const ArkWebString Accepts() override;
+
+    ArkWebRefPtr<ArkWebRect> GetFocusedElementRect() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebFileSelectorParams> nweb_file_selector_params_;
 };

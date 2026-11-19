@@ -175,6 +175,14 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
     { "settingConfig/disableNextPreviousFlag",
         [](std::string& contentStr) {
             return contentStr == "true" ? std::string("--ohos-disable-next-previous-flag") : std::string();
+        } },
+    { "mediaConfig/enable_speechSynthesis",
+        [](std::string& contentStr) {
+            return contentStr == "false" ? std::string("--disable-speech-synthesis-api") : std::string();
+        } },
+    { "mediaConfig/enable_speechRecognition",
+        [](std::string& contentStr) {
+            return contentStr == "false" ? std::string("--disable-speech-recognition-api") : std::string();
         } }
 };
 } // namespace

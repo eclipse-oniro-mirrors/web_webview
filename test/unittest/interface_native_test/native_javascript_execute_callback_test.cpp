@@ -42,6 +42,128 @@ void NativeJavascriptExecuteCallbackTest::TearDown(void) {}
 
 void CallbackNative(const char* message) {}
 
+class MockHapValue : public NWebHapValue {
+public:
+    Type GetType() override
+    {
+        return type_;
+    }
+    void SetType(Type type) override
+    {
+        type_ = type;
+    }
+    int GetInt() override
+    {
+        return 0;
+    }
+    void SetInt(int value) override {}
+    bool GetBool() override
+    {
+        return false;
+    }
+    void SetBool(bool value) override {}
+    double GetDouble() override
+    {
+        return 0;
+    }
+    void SetDouble(double value) override {}
+    std::string GetString() override
+    {
+        return str_;
+    }
+    void SetString(const std::string& value) override
+    {
+        str_ = value;
+    }
+    const char* GetBinary(int& length) override
+    {
+        return nullptr;
+    }
+    void SetBinary(int length, const char* value) override {}
+    std::map<std::string, std::shared_ptr<NWebHapValue>> GetDictValue() override
+    {
+        return {};
+    }
+    std::vector<std::shared_ptr<NWebHapValue>> GetListValue() override
+    {
+        return {};
+    }
+    std::shared_ptr<NWebHapValue> NewChildValue() override
+    {
+        return nullptr;
+    }
+    void SaveDictChildValue(const std::string& key) override {}
+    void SaveListChildValue() override {}
+
+    Type type_ = Type::NONE;
+    std::string str_;
+};
+
+/**
+ * @tc.name  : OHNativeJavascriptExecuteCallbackTest_OnReceiveValue_04
+ * @tc.desc  : Test OnReceiveValue with null result
+ */
+HWTEST_F(NativeJavascriptExecuteCallbackTest, OHNativeJavascriptExecuteCallbackTest_OnReceiveValue_04, TestSize.Level1)
+{
+    std::function<void(const char*)> callback = CallbackNative;
+    NativeJavaScriptExecuteCallback nativeJSExecuteCallback(callback);
+    nativeJSExecuteCallback.OnReceiveValue(nullptr);
+}
+
+/**
+ * @tc.name  : OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_01
+ * @tc.desc  : Test OnReceiveValueV2 with null callback
+ */
+HWTEST_F(
+    NativeJavascriptExecuteCallbackTest, OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_01, TestSize.Level1)
+{
+    std::function<void(const char*)> callback = nullptr;
+    NativeJavaScriptExecuteCallback nativeJSExecuteCallback(callback);
+    std::shared_ptr<MockHapValue> value = std::make_shared<MockHapValue>();
+    nativeJSExecuteCallback.OnReceiveValueV2(value);
+}
+
+/**
+ * @tc.name  : OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_02
+ * @tc.desc  : Test OnReceiveValueV2 with null value
+ */
+HWTEST_F(
+    NativeJavascriptExecuteCallbackTest, OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_02, TestSize.Level1)
+{
+    std::function<void(const char*)> callback = CallbackNative;
+    NativeJavaScriptExecuteCallback nativeJSExecuteCallback(callback);
+    nativeJSExecuteCallback.OnReceiveValueV2(nullptr);
+}
+
+/**
+ * @tc.name  : OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_03
+ * @tc.desc  : Test OnReceiveValueV2 with non-string value
+ */
+HWTEST_F(
+    NativeJavascriptExecuteCallbackTest, OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_03, TestSize.Level1)
+{
+    std::function<void(const char*)> callback = CallbackNative;
+    NativeJavaScriptExecuteCallback nativeJSExecuteCallback(callback);
+    std::shared_ptr<MockHapValue> value = std::make_shared<MockHapValue>();
+    value->SetType(NWebHapValue::Type::INTEGER);
+    nativeJSExecuteCallback.OnReceiveValueV2(value);
+}
+
+/**
+ * @tc.name  : OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_04
+ * @tc.desc  : Test OnReceiveValueV2 with string value
+ */
+HWTEST_F(
+    NativeJavascriptExecuteCallbackTest, OHNativeJavascriptExecuteCallbackTest_OnReceiveValueV2_04, TestSize.Level1)
+{
+    std::function<void(const char*)> callback = CallbackNative;
+    NativeJavaScriptExecuteCallback nativeJSExecuteCallback(callback);
+    std::shared_ptr<MockHapValue> value = std::make_shared<MockHapValue>();
+    value->SetType(NWebHapValue::Type::STRING);
+    value->SetString("test");
+    nativeJSExecuteCallback.OnReceiveValueV2(value);
+}
+
 /**
  * @tc.name  : OHNativeJavascriptExecuteCallbackTest_OnReceiveValue_01
  * @tc.desc  : Test OnReceiveValue

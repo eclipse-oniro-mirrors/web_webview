@@ -205,6 +205,50 @@ int32_t IMFTextListenerAdapterImpl::SetPreviewText(const std::u16string& text, c
     return -1;
 }
 
+int32_t IMFTextListenerAdapterImpl::SetPreviewTextWithStyle(const std::u16string &text,
+                                                            const MiscServices::Range &range,
+                                                            const PreviewTextStyleInner &style)
+{
+    if (!previewTextAdapter_) {
+        previewTextAdapter_ = std::make_shared<IMFPreviewTextStyleAdapterImpl>();
+    }
+    IMFAdapterUnderlineStyle adapterStyle = IMFAdapterUnderlineStyle::NONE;
+    auto underlineStyle = static_cast<MiscServices::UnderlineStyle>(style.underlineStyle);
+    switch (underlineStyle) {
+        case MiscServices::UnderlineStyle::SOLID: {
+            adapterStyle = IMFAdapterUnderlineStyle::SOLID;
+            break;
+        }
+        case MiscServices::UnderlineStyle::WAVY: {
+            adapterStyle = IMFAdapterUnderlineStyle::WAVY;
+            break;
+        }
+        case MiscServices::UnderlineStyle::DASHED: {
+            adapterStyle = IMFAdapterUnderlineStyle::DASHED;
+            break;
+        }
+        default: {
+            adapterStyle = IMFAdapterUnderlineStyle::NONE;
+        }
+    }
+
+    previewTextAdapter_->SetUnderlineStyle(adapterStyle);
+    previewTextAdapter_->SetUnderlineColor(style.underlineColor);
+    previewTextAdapter_->SetHasUnderlineColor(style.hasUnderlineColor);
+    if (listener_) {
+        return listener_->SetPreviewTextWithStyle(text, range.start, range.end, previewTextAdapter_);
+    }
+    return -1;
+}
+
+bool IMFTextListenerAdapterImpl::IsSupportPreviewTextWithStyle()
+{
+    if (listener_) {
+        return listener_->IsSupportPreviewTextWithStyle();
+    }
+    return false;
+}
+
 void IMFTextListenerAdapterImpl::FinishTextPreview()
 {
     if (listener_) {

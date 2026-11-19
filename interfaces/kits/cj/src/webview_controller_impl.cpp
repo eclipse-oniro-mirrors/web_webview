@@ -1624,12 +1624,12 @@ namespace OHOS::Webview {
         return nweb_ptr->GetAutoReloadEnabled();
     }
 
-    std::string WebviewControllerImpl::GetLastPostMessageURL()
+    std::string WebviewControllerImpl::GetLastPostMessageUrl()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
         if (!nweb_ptr) {
             return "";
         }
-        return nweb_ptr->GetLastPostMessageURL();
+        return nweb_ptr->GetLastPostMessageUrl();
     }
 }

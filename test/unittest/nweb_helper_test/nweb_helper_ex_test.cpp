@@ -32,6 +32,7 @@
 #include "application_context.h"
 #include "arkweb_utils.h"
 #include "scene_board_judgement.h"
+#include "nweb_remove_visited_links_callback.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -305,6 +306,23 @@ public:
         return process_mode_;
     }
 
+    void SetWebNavigationConfigMode(int32_t mode) override
+    {
+        navConfigModeSetCalled_ = true;
+        navConfigMode_ = mode;
+    }
+
+    int32_t GetWebNavigationConfigMode() override
+    {
+        return navConfigMode_;
+    }
+
+    void SetGlobalWebSiteConfigCallback(std::shared_ptr<NWebWebSiteConfigCallback> callback) override
+    {
+        webSiteConfigCallbackSetCalled_ = true;
+        webSiteConfigCallback_ = callback;
+    }
+
     void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list) {}
 
     void WarmupServiceWorker(const std::string& url) {}
@@ -329,6 +347,17 @@ public:
     void EnableBackForwardCache(bool nativeEmbed, bool mediaTakeOver) {}
 
     void RemoveAllCache(bool include_disk_files) {}
+
+    void RemoveVisitedLinksSince(
+        int64_t timeMs, std::shared_ptr<NWebRemoveVisitedLinksCallback> callback) override
+    {
+        removeVisitedLinksCalled_ = true;
+        lastTimeMs_ = timeMs;
+        lastCallback_ = callback;
+        if (callback) {
+            callback->OnRemoveComplete();
+        }
+    }
 
     void EnablePrivateNetworkAccess(bool enable) {}
 
@@ -372,6 +401,15 @@ private:
     RenderProcessMode process_mode_ = RenderProcessMode::SINGLE_MODE;
     bool userAgentClientHintsEnabled_ = false;
     std::shared_ptr<NWebUserAgentMetadata> metadata_ = nullptr;
+
+public:
+    bool removeVisitedLinksCalled_ = false;
+    int64_t lastTimeMs_ = -1;
+    std::shared_ptr<NWebRemoveVisitedLinksCallback> lastCallback_ = nullptr;
+    bool navConfigModeSetCalled_ = false;
+    int32_t navConfigMode_ = 0;
+    bool webSiteConfigCallbackSetCalled_ = false;
+    std::shared_ptr<NWebWebSiteConfigCallback> webSiteConfigCallback_ = nullptr;
 };
 
 void NwebHelperTest::SetUpTestCase(void)
@@ -1993,5 +2031,330 @@ HWTEST_F(NwebHelperTest, NWebHelper_CreateNWeb_Success_001, TestSize.Level1)
     NWebHelper::Instance().nwebEngine_ = savedEngine;
     NWebHelper::Instance().initWebEngine_ = false;
 }
-} // namespace OHOS::NWeb
+
+// Test callback implementation for RemoveVisitedLinksSince.
+class NWebRemoveVisitedLinksCallbackTestImpl : public NWebRemoveVisitedLinksCallback {
+public:
+    NWebRemoveVisitedLinksCallbackTestImpl() = default;
+    ~NWebRemoveVisitedLinksCallbackTestImpl() override = default;
+    void OnRemoveComplete() override { completed_ = true; }
+    bool IsCompleted() const { return completed_; }
+private:
+    bool completed_ = false;
+};
+
+class NWebHelperRemoveVisitedLinksTest : public testing::Test {
+public:
+    static void SetUpTestCase(void) {}
+    static void TearDownTestCase(void) {}
+    void SetUp() {}
+    void TearDown() {}
+};
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_LoadFailWithCallback_001
+ * @tc.desc: Branch 1a: engine load fails, non-null callback → OnRemoveComplete invoked.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_LoadFailWithCallback_001, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    NWebHelper::Instance().RemoveVisitedLinksSince(1000, callback);
+    EXPECT_TRUE(callback->IsCompleted());
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
 }
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_LoadFailWithNullCallback_002
+ * @tc.desc: Branch 1b: engine load fails, null callback → no crash, state unchanged.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest,
+    NWebHelperRemoveVisitedLinksTest_LoadFailWithNullCallback_002, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(2000, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+    EXPECT_FALSE(NWebHelper::Instance().initFlag_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_NormalPath_003
+ * @tc.desc: Branch 3: engine available, delegates to engine with correct params.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_NormalPath_003, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    EXPECT_FALSE(nwebEngineMock->removeVisitedLinksCalled_);
+    NWebHelper::Instance().RemoveVisitedLinksSince(12345, callback);
+    EXPECT_TRUE(nwebEngineMock->removeVisitedLinksCalled_);
+    EXPECT_EQ(nwebEngineMock->lastTimeMs_, 12345);
+    EXPECT_NE(nwebEngineMock->lastCallback_, nullptr);
+    EXPECT_TRUE(callback->IsCompleted());
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_NormalPathNullCallback_004
+ * @tc.desc: Branch 3 with null callback: engine available, delegates with nullptr, no crash.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_NormalPathNullCallback_004, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(6789, nullptr);
+    EXPECT_TRUE(nwebEngineMock->removeVisitedLinksCalled_);
+    EXPECT_EQ(nwebEngineMock->lastTimeMs_, 6789);
+    EXPECT_EQ(nwebEngineMock->lastCallback_, nullptr);
+    EXPECT_FALSE(callback->IsCompleted());
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+class NWebHelperGetDefaultUserAgentLiteTest : public testing::Test {
+public:
+    static void SetUpTestCase(void) {}
+    static void TearDownTestCase(void) {}
+    void SetUp() {}
+    void TearDown() {}
+};
+
+/**
+ * @tc.name: NWebHelperGetDefaultUserAgentLiteTest_EngineAvailable_001
+ * @tc.desc: Engine is already loaded, the lite UA is forwarded to the engine
+ *           without initializing it.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperGetDefaultUserAgentLiteTest,
+    NWebHelperGetDefaultUserAgentLiteTest_EngineAvailable_001, TestSize.Level1)
+{
+    class UserAgentLiteMockNWebEngine : public MockNWebEngine {
+    public:
+        std::string GetDefaultUserAgentLite() override
+        {
+            return "lite-ua";
+        }
+    };
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = std::make_shared<UserAgentLiteMockNWebEngine>();
+    NWebHelper::Instance().initFlag_ = false;
+    EXPECT_EQ(NWebHelper::Instance().GetDefaultUserAgentLite(), "lite-ua");
+    EXPECT_FALSE(NWebHelper::Instance().initFlag_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperGetDefaultUserAgentLiteTest_EmptyFromEngine_002
+ * @tc.desc: The engine returns an empty UA, which is propagated unchanged.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperGetDefaultUserAgentLiteTest,
+    NWebHelperGetDefaultUserAgentLiteTest_EmptyFromEngine_002, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().initFlag_ = false;
+    EXPECT_EQ(NWebHelper::Instance().GetDefaultUserAgentLite(), "");
+    EXPECT_FALSE(NWebHelper::Instance().initFlag_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+// Test callback implementation for SetGlobalWebSiteConfigCallback.
+class NWebWebSiteConfigCallbackTestImpl : public NWebWebSiteConfigCallback {
+public:
+    NWebWebSiteConfigCallbackTestImpl() = default;
+    ~NWebWebSiteConfigCallbackTestImpl() override = default;
+    std::shared_ptr<NWebWebSiteConfigResult> QueryWebSiteConfig(
+        std::shared_ptr<NWebWebSiteConfigParams> params) override
+    {
+        return nullptr;
+    }
+};
+
+class NWebHelperWebNavigationConfigTest : public testing::Test {
+public:
+    static void SetUpTestCase(void) {}
+    static void TearDownTestCase(void) {}
+    void SetUp() {}
+    void TearDown() {}
+};
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_SetMode_EngineAvailable_001
+ * @tc.desc: SetWebNavigationConfigMode with engine available, mode is forwarded to engine.
+ * @tc.type: FUNC
+ */
+HWTEST_F(
+    NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_SetMode_EngineAvailable_001, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    EXPECT_FALSE(nwebEngineMock->navConfigModeSetCalled_);
+    NWebHelper::Instance().SetWebNavigationConfigMode(42);
+    EXPECT_TRUE(nwebEngineMock->navConfigModeSetCalled_);
+    EXPECT_EQ(nwebEngineMock->navConfigMode_, 42);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+}
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_SetMode_LoadFail_002
+ * @tc.desc: SetWebNavigationConfigMode when LoadWebEngine fails, engine is not invoked.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_SetMode_LoadFail_002, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    std::string savedBundlePath = NWebHelper::Instance().bundlePath_;
+    auto savedContext = g_applicationContext;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().bundlePath_.clear();
+    g_applicationContext.reset();
+    NWebHelper::Instance().SetWebNavigationConfigMode(7);
+    // void 方法在引擎加载失败时仅能观测到引擎状态未被创建。
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr) << "engine must stay null when LoadWebEngine fails";
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().bundlePath_ = savedBundlePath;
+    g_applicationContext = savedContext;
+}
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_GetMode_EngineAvailable_003
+ * @tc.desc: GetWebNavigationConfigMode with engine available, returns engine value.
+ * @tc.type: FUNC
+ */
+HWTEST_F(
+    NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_GetMode_EngineAvailable_003, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    nwebEngineMock->navConfigMode_ = 9;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    EXPECT_EQ(NWebHelper::Instance().GetWebNavigationConfigMode(), 9);
+    nwebEngineMock->navConfigMode_ = 0;
+    EXPECT_EQ(NWebHelper::Instance().GetWebNavigationConfigMode(), 0);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+}
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_GetMode_LoadFail_004
+ * @tc.desc: GetWebNavigationConfigMode when LoadWebEngine fails, returns 0.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_GetMode_LoadFail_004, TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    std::string savedBundlePath = NWebHelper::Instance().bundlePath_;
+    auto savedContext = g_applicationContext;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().bundlePath_.clear();
+    g_applicationContext.reset();
+    EXPECT_EQ(NWebHelper::Instance().GetWebNavigationConfigMode(), 0);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().bundlePath_ = savedBundlePath;
+    g_applicationContext = savedContext;
+}
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_SetWebSiteConfigCallback_Normal_005
+ * @tc.desc: SetGlobalWebSiteConfigCallback with initialized engine, callback is forwarded.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_SetWebSiteConfigCallback_Normal_005,
+    TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    auto callback = std::make_shared<NWebWebSiteConfigCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    EXPECT_FALSE(nwebEngineMock->webSiteConfigCallbackSetCalled_);
+    NWebHelper::Instance().SetGlobalWebSiteConfigCallback(callback);
+    EXPECT_TRUE(nwebEngineMock->webSiteConfigCallbackSetCalled_);
+    EXPECT_EQ(nwebEngineMock->webSiteConfigCallback_, callback);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_SetWebSiteConfigCallback_NotInit_006
+ * @tc.desc: SetGlobalWebSiteConfigCallback when not initialized, engine is not invoked.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_SetWebSiteConfigCallback_NotInit_006,
+    TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = false;
+    auto callback = std::make_shared<NWebWebSiteConfigCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().SetGlobalWebSiteConfigCallback(callback);
+    EXPECT_FALSE(nwebEngineMock->webSiteConfigCallbackSetCalled_);
+    EXPECT_EQ(nwebEngineMock->webSiteConfigCallback_, nullptr);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+/**
+ * @tc.name: NWebHelperWebNavigationConfigTest_SetWebSiteConfigCallback_NullEngine_007
+ * @tc.desc: SetGlobalWebSiteConfigCallback when engine is nullptr, callback is not forwarded.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperWebNavigationConfigTest, NWebHelperWebNavigationConfigTest_SetWebSiteConfigCallback_NullEngine_007,
+    TestSize.Level1)
+{
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    bool savedInitFlag = NWebHelper::Instance().initFlag_;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().initFlag_ = true;
+    auto callback = std::make_shared<NWebWebSiteConfigCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().SetGlobalWebSiteConfigCallback(callback);
+    // 引擎为空时仅能观测到引擎状态保持为空且未发生崩溃。
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr)
+        << "engine must stay null when callback is set with null engine";
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initFlag_ = savedInitFlag;
+}
+
+} // namespace NWeb
+} // namespace OHOS

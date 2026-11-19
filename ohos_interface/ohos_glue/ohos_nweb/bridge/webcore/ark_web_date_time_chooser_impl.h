@@ -43,6 +43,8 @@ public:
 
     size_t GetSuggestionIndex() override;
 
+    ArkWebRefPtr<ArkWebRect> GetFocusedElementRect() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebDateTimeChooser> nweb_date_time_chooser_;
 };

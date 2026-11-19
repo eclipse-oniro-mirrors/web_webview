@@ -14,6 +14,7 @@
  */
 
 #include <cstring>
+#include <dlfcn.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -21,15 +22,73 @@
 #include "cert_manager_api.h"
 #include "hm_cert_revocation.h"
 #include "nativetoken_kit.h"
-#include "token_setproc.h"
+#include "network_security_config.h"
 #include "securec.h"
 #include "syspara/parameters.h"
+#include "token_setproc.h"
 
 #define private public
 #include "cert_mgr_adapter_impl.h"
 
 using namespace testing;
 using namespace testing::ext;
+
+namespace {
+// -1: disabled; otherwise fails the (g_mallocFailCountdown)-th malloc call after arming.
+int g_mallocFailCountdown = -1;
+bool g_failMemset = false;
+} // namespace
+
+extern "C" void* malloc(size_t size)
+{
+    static void* (*realMalloc)(size_t) = []() {
+        void* fn = nullptr;
+        *reinterpret_cast<void**>(&fn) = dlsym(RTLD_NEXT, "malloc");
+        return reinterpret_cast<void* (*)(size_t)>(fn);
+    }();
+    if (g_mallocFailCountdown >= 0) {
+        if (g_mallocFailCountdown == 0) {
+            g_mallocFailCountdown = -1;
+            return nullptr;
+        }
+        g_mallocFailCountdown--;
+    }
+    return realMalloc(size);
+}
+
+extern "C" errno_t memset_s(void* dest, size_t destMax, int c, size_t count)
+{
+    static errno_t (*realMemset)(void*, size_t, int, size_t) = []() {
+        void* fn = nullptr;
+        *reinterpret_cast<void**>(&fn) = dlsym(RTLD_NEXT, "memset_s");
+        return reinterpret_cast<errno_t (*)(void*, size_t, int, size_t)>(fn);
+    }();
+    if (g_failMemset) {
+        return EINVAL;
+    }
+    return realMemset(dest, destMax, c, count);
+}
+
+namespace OHOS::NetManagerStandard {
+namespace {
+int32_t g_pinSetRet = 0;
+int32_t g_trustAnchorsRet = 0;
+std::string g_pinsString;
+std::vector<std::string> g_trustAnchors;
+} // namespace
+
+int32_t NetworkSecurityConfig::GetPinSetForHostName(const std::string& hostname, std::string& pins)
+{
+    pins = g_pinsString;
+    return g_pinSetRet;
+}
+
+int32_t NetworkSecurityConfig::GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs)
+{
+    certs = g_trustAnchors;
+    return g_trustAnchorsRet;
+}
+} // namespace OHOS::NetManagerStandard
 
 namespace OHOS::NWeb {
 namespace {
@@ -439,6 +498,239 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetPinSetForHostName_008, TestSi
     std::vector<std::string> pins;
     bool result = adapter.GetPinSetForHostName(hostname, pins);
     EXPECT_TRUE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_SignV2Algorithm_009
+ * @tc.desc: SignV2 covers SSL_SIGN_RSA_PSS_RSAE_SHA256 spec case.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_SignV2Algorithm_009, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    uint8_t uriData[] = "oh:t=ak;o=inner020;u=0;a=0";
+    uint32_t signDataLen = 1000;
+    int32_t result = adapter.SignV2(uriData, nullptr, 0, nullptr, &signDataLen, 0x0804);
+    EXPECT_EQ(result, -1);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_GetCertDataBySubject_010
+ * @tc.desc: GetCertDataBySubject match/fail branches.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetCertDataBySubject_010, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    uint8_t* certData = static_cast<uint8_t*>(malloc(MAX_LEN_CERTIFICATE));
+    EXPECT_NE(certData, nullptr);
+    char subjectName[] = "";
+
+    // subject matched and cert info query succeeds.
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertInfo(_, _, _)).Times(1).WillOnce(Return(0));
+    int32_t result = adapter.GetCertDataBySubject(subjectName, certData, CM_USER_TRUSTED_STORE);
+    EXPECT_EQ(result, CM_SUCCESS);
+
+    // subject matched but cert info query fails.
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertInfo(_, _, _)).Times(1).WillOnce(Return(-1));
+    result = adapter.GetCertDataBySubject(subjectName, certData, CM_USER_TRUSTED_STORE);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    // cert list query fails.
+    EXPECT_CALL(*mockCmApi_, CmGetCertList(_, _)).Times(1).WillOnce(Return(-1));
+    result = adapter.GetCertDataBySubject(subjectName, certData, CM_SYSTEM_TRUSTED_STORE);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    // cert data copy fails because cert size exceeds the limit.
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertInfo(_, _, _))
+        .Times(1)
+        .WillOnce(Invoke([](const struct CmBlob*, uint32_t, struct CertInfo* info) {
+            info->certInfo.size = MAX_LEN_CERTIFICATE + 1;
+            return 0;
+        }));
+    result = adapter.GetCertDataBySubject(subjectName, certData, CM_USER_TRUSTED_STORE);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    free(certData);
+    certData = nullptr;
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_GetSytemRootCertData_011
+ * @tc.desc: GetSytemRootCertData invalid certCount and copy failure.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetSytemRootCertData_011, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    uint8_t* certData = static_cast<uint8_t*>(malloc(MAX_LEN_CERTIFICATE));
+    EXPECT_NE(certData, nullptr);
+
+    EXPECT_CALL(*mockCmApi_, CmGetCertList(_, _)).Times(1).WillOnce(Return(0));
+    int32_t result = adapter.GetSytemRootCertData(MAX_COUNT_CERTIFICATE, certData);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    EXPECT_CALL(*mockCmApi_, CmGetCertList(_, _)).Times(1).WillOnce(Return(0));
+    EXPECT_CALL(*mockCmApi_, CmGetCertInfo(_, _, _))
+        .Times(1)
+        .WillOnce(Invoke([](const struct CmBlob*, uint32_t, struct CertInfo* info) {
+            info->certInfo.size = MAX_LEN_CERTIFICATE + 1;
+            return 0;
+        }));
+    result = adapter.GetSytemRootCertData(0, certData);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    free(certData);
+    certData = nullptr;
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_GetUserRootCertData_012
+ * @tc.desc: GetUserRootCertData null certData and copy failure.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetUserRootCertData_012, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    int32_t result = adapter.GetUserRootCertData(0, nullptr);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    uint8_t* certData = static_cast<uint8_t*>(malloc(MAX_LEN_CERTIFICATE));
+    EXPECT_NE(certData, nullptr);
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertInfo(_, _, _))
+        .Times(1)
+        .WillOnce(Invoke([](const struct CmBlob*, uint32_t, struct CertInfo* info) {
+            info->certInfo.size = MAX_LEN_CERTIFICATE + 1;
+            return 0;
+        }));
+    result = adapter.GetUserRootCertData(0, certData);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    free(certData);
+    certData = nullptr;
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_GetAppCert_013
+ * @tc.desc: GetAppCert copy failure.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetAppCert_013, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    uint8_t uriData[] = "oh:t=ak;o=inner020;u=0;a=0";
+    uint32_t len = 0;
+    uint8_t* certData = static_cast<uint8_t*>(malloc(MAX_LEN_CERTIFICATE_CHAIN));
+    EXPECT_NE(certData, nullptr);
+
+    EXPECT_CALL(*mockCmApi_, CmGetAppCert(_, _, _))
+        .Times(1)
+        .WillOnce(Invoke([](const struct CmBlob*, uint32_t, struct Credential* cred) {
+            cred->credData.size = MAX_LEN_CERTIFICATE_CHAIN + 1;
+            return 0;
+        }));
+    int32_t result = adapter.GetAppCert(uriData, certData, &len);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    free(certData);
+    certData = nullptr;
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_NetworkSecurityConfig_014
+ * @tc.desc: GetTrustAnchorsForHostName and GetPinSetForHostName branches.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_NetworkSecurityConfig_014, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> certs;
+    std::vector<std::string> pins;
+
+    NetManagerStandard::g_trustAnchorsRet = 0;
+    NetManagerStandard::g_trustAnchors = { "cert1" };
+    EXPECT_TRUE(adapter.GetTrustAnchorsForHostName("host", certs));
+    EXPECT_EQ(certs.size(), 1);
+
+    NetManagerStandard::g_trustAnchorsRet = -1;
+    EXPECT_FALSE(adapter.GetTrustAnchorsForHostName("host", certs));
+
+    NetManagerStandard::g_pinSetRet = -1;
+    EXPECT_FALSE(adapter.GetPinSetForHostName("host", pins));
+
+    NetManagerStandard::g_pinSetRet = 0;
+    NetManagerStandard::g_pinsString = "";
+    EXPECT_TRUE(adapter.GetPinSetForHostName("host", pins));
+
+    NetManagerStandard::g_pinsString = "pin1;pin2;pin3";
+    pins.clear();
+    EXPECT_TRUE(adapter.GetPinSetForHostName("host", pins));
+    EXPECT_EQ(pins.size(), 3);
+
+    NetManagerStandard::g_pinsString = "pin1";
+    pins.clear();
+    EXPECT_TRUE(adapter.GetPinSetForHostName("host", pins));
+    EXPECT_EQ(pins.size(), 1);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_MallocFail_015
+ * @tc.desc: Allocation and memset failure branches.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_MallocFail_015, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+
+    // InitCertList: first malloc fails.
+    g_mallocFailCountdown = 0;
+    struct CertList* certList = nullptr;
+    int32_t result = adapter.InitCertList(&certList);
+    EXPECT_EQ(result, CMR_ERROR_MALLOC_FAIL);
+    EXPECT_EQ(certList, nullptr);
+
+    // InitCertList: second malloc (certAbstract) fails.
+    g_mallocFailCountdown = 1;
+    certList = nullptr;
+    result = adapter.InitCertList(&certList);
+    EXPECT_EQ(result, CMR_ERROR_MALLOC_FAIL);
+    EXPECT_EQ(certList, nullptr);
+
+    // InitCertInfo: malloc fails.
+    struct CertInfo certInfo;
+    g_mallocFailCountdown = 0;
+    result = adapter.InitCertInfo(&certInfo);
+    EXPECT_EQ(result, CMR_ERROR_MALLOC_FAIL);
+
+    // GetAppCert: malloc fails.
+    uint8_t uriData[] = "oh:t=ak;o=inner020;u=0;a=0";
+    uint32_t len = 0;
+    uint8_t certData[16] = { 0 };
+    g_mallocFailCountdown = 0;
+    result = adapter.GetAppCert(uriData, certData, &len);
+    EXPECT_EQ(result, CM_FAILURE);
+
+    // GetSytemRootCertData: memset_s fails.
+    uint8_t* sysCertData = static_cast<uint8_t*>(malloc(MAX_LEN_CERTIFICATE));
+    EXPECT_NE(sysCertData, nullptr);
+    EXPECT_CALL(*mockCmApi_, CmGetCertList(_, _)).Times(1).WillOnce(Return(0));
+    g_failMemset = true;
+    result = adapter.GetSytemRootCertData(0, sysCertData);
+    EXPECT_EQ(result, CM_FAILURE);
+    g_failMemset = false;
+    free(sysCertData);
+    sysCertData = nullptr;
 }
 
 /**

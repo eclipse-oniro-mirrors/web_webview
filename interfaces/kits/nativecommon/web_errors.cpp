@@ -48,6 +48,10 @@ const std::string RESOURCE_HANDLER_INVALID_MSG = "The resource handler is invali
 const std::string NOT_ALLOWED_PORT_MSG = "The port number is not within the allowed range.";
 const std::string COMMAND_FORMAT_ERROR_MSG = "Command format error. The command parameter does not conform to "
     "the JSON format requirements.";
+const std::string ENGINE_ALREADY_INITIALIZED_MSG = "Engine initialized error. The API must be called before "
+    "initializeWebEngine.";
+const std::string SUFFIX_ALREADY_SET_MSG = "The data directory suffix has already been set. The API can be "
+    "called only once in an application lifecycle.";
 const std::string UNKNOWN_ERROR_MSG = "Unknown error message.";
 const std::string INVALID_NET_ERROR_MSG = "The errorCode is either ARKWEB_NET_OK or "
     "outside the range of error codes in WebNetErrorList";
@@ -101,6 +105,8 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {RESOURCE_HANDLER_INVALID, RESOURCE_HANDLER_INVALID_MSG},
     {NOT_ALLOWED_PORT, NOT_ALLOWED_PORT_MSG},
     {COMMAND_FORMAT_ERROR, COMMAND_FORMAT_ERROR_MSG},
+    {ENGINE_ALREADY_INITIALIZED, ENGINE_ALREADY_INITIALIZED_MSG},
+    {SUFFIX_ALREADY_SET, SUFFIX_ALREADY_SET_MSG},
     {INVALID_NET_ERROR, INVALID_NET_ERROR_MSG},
 };
 

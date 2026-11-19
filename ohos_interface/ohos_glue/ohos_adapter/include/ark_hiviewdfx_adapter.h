@@ -36,6 +36,13 @@ public:
 
     /*--ark web()--*/
     virtual uint64_t DfxCollectAsyncStack() = 0;
+
+    /*--ark web()--*/
+    virtual void WebComponentLoad(int64_t navigationId) = 0;
+
+    /*--ark web()--*/
+    virtual void WebContentPaintComplete(int64_t navigationId,
+							             int64_t largestContentPaintTime) = 0;
 };
 
 } // namespace OHOS::ArkWeb

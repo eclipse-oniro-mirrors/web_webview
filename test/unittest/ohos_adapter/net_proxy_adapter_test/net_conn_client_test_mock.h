@@ -27,8 +27,14 @@ public:
     static void SetAppId(uint32_t appId);
 
     static bool IsAppExist(uint32_t appId);
+
+    static void SetDefaultHttpProxyResult(int32_t ret);
+
+    static void SetAppHttpProxy(HttpProxy httpProxy);
+
+    static HttpProxy GetAppHttpProxy();
 };
-}
-}
+} // namespace NetManagerStandard
+} // namespace OHOS
 
 #endif // NET_CONN_CLIENT_TEST_MOCK

@@ -16,6 +16,7 @@
 #ifndef WEBVIEW_JAVA_SCRIPT_RESULT_CALLBACK_H
 #define WEBVIEW_JAVA_SCRIPT_RESULT_CALLBACK_H
 
+#include <mutex>
 #include <string>
 
 #include "webview_ffi.h"
@@ -193,6 +194,17 @@ public:
     }
 
 private:
+    // The following helpers expect objectMutex_ to be held by the caller.
+    bool RemoveNamedObjectLocked(const std::string& name);
+
+    JavaScriptOb::ObjectID AddNamedObjectLocked(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::vector<std::string>& methodList, const std::string& objName);
+
+    JavaScriptOb::ObjectID AddObjectLocked(const std::vector<std::function<char*(const char*)>>& cjFuncs);
+
+    bool FindObjectIdInJsTdLocked(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::vector<std::string>& methodList, JavaScriptOb::ObjectID& objectId);
+
     bool RemoveNamedObject(const std::string& name);
 
     JavaScriptOb::ObjectID AddNamedObject(const std::vector<std::function<char*(const char*)>>& cjFuncs,
@@ -222,6 +234,9 @@ private:
     
     int32_t nwebId_ = -1;
 
+    // Protects nextObjectId_, namedObjects_ and objects_. Register/DeleteJavaScriptRegister run on
+    // CJ application threads while the JS proxy callbacks below run on the Chromium renderer thread.
+    std::mutex objectMutex_;
     JavaScriptOb::ObjectID nextObjectId_ = 1;
     NamedObjectMap namedObjects_;
     ObjectMap objects_;

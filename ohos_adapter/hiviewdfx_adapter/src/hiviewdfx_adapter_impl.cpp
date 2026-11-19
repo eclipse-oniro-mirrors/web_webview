@@ -19,6 +19,9 @@
 #include "async_stack.h"
 #endif
 
+#include "nweb_log.h"
+#include "perf_monitor_adapter.h"
+
 namespace OHOS::NWeb {
 HiViewDfxAdapterImpl& HiViewDfxAdapterImpl::GetInstance()
 {
@@ -61,4 +64,20 @@ uint64_t HiViewDfxAdapterImpl::DfxCollectAsyncStack()
     return 0;
 #endif
 }
+
+void HiViewDfxAdapterImpl::WebComponentLoad(int64_t navigationId)
+{
+    WVLOG_D("HiViewDfxAdapterImpl WebComponentLoad");
+    OHOS::HiviewDFX::PerfMonitorAdapter::GetInstance()
+        .WebComponentLoad(navigationId);
+}
+
+void HiViewDfxAdapterImpl::WebContentPaintComplete(int64_t navigationId,
+                                                   int64_t largestContentPaintTime)
+{
+    WVLOG_D("HiViewDfxAdapterImpl WebContentPaintComplete");
+    OHOS::HiviewDFX::PerfMonitorAdapter::GetInstance()
+        .WebContentPaintComplete(navigationId, largestContentPaintTime);
+}
+
 } // namespace OHOS::NWeb

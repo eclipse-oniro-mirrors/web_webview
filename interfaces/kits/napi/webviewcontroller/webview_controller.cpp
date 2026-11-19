@@ -32,6 +32,8 @@
 #include "native_arkweb_utils.h"
 #include "native_interface_arkweb.h"
 #include "native_media_player_impl.h"
+#include "query_navigation_config_impl.h"
+#include "web_site_config_callback_impl.h"
 
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
@@ -259,8 +261,16 @@ void WebviewController::SetWebDetach(int32_t nwebId)
         return;
     }
 
-    if (attachState_ != AttachState::NOT_ATTACHED) {
-        attachState_ = AttachState::NOT_ATTACHED;
+    bool stateChanged = false;
+    {
+        std::unique_lock<std::mutex> attachLock(attachMtx_);
+        if (attachState_ != AttachState::NOT_ATTACHED) {
+            attachState_ = AttachState::NOT_ATTACHED;
+            stateChanged = true;
+        }
+    }
+
+    if (stateChanged) {
         TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
     }
 }
@@ -520,6 +530,17 @@ ErrCode WebviewController::RemoveNavigationEntryUserData(const std::string& key)
         return NWebError::INIT_ERROR;
     }
     nweb_ptr->RemoveNavigationEntryUserData(key);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::SetNavigationThrottle(
+    std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    nweb_ptr->SetNavigationThrottle(std::move(handler));
     return NWebError::NO_ERROR;
 }
 
@@ -1828,6 +1849,31 @@ void WebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_ref callbac
     nweb_ptr->OnCreateNativeMediaPlayer(callbackImpl);
 }
 
+void WebviewController::OnQueryNavigationConfig(napi_env env, napi_ref callback)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        napi_delete_reference(env, callback);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<NWebQueryNavigationConfigCallbackImpl>(nwebId_, env, callback);
+    nweb_ptr->OnQueryNavigationConfig(callbackImpl);
+}
+
+void WebviewController::PutWebSiteConfigCallback(napi_env env, napi_ref callback)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        WVLOG_E("PutWebSiteConfigCallback, nweb ptr is null, nwebId=%{public}d", nwebId_);
+        napi_delete_reference(env, callback);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<NWebWebSiteConfigCallbackImpl>(env, callback);
+    nweb_ptr->PutWebSiteConfigCallback(callbackImpl);
+}
+
 bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::string &script)
 {
     napi_valuetype valueType;
@@ -2883,7 +2929,7 @@ std::shared_ptr<NWebUserAgentMetadata> WebviewController::GetUserAgentMetadata(c
     return nweb_ptr->GetUserAgentMetadata(userAgent);
 }
 
-std::string WebviewController::GetLastPostMessageURL()
+std::string WebviewController::GetLastPostMessageUrl()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -2891,7 +2937,7 @@ std::string WebviewController::GetLastPostMessageURL()
         return "";
     }
 
-    return nweb_ptr->GetLastPostMessageURL();
+    return nweb_ptr->GetLastPostMessageUrl();
 }
 
 ErrCode WebviewController::SetZoomFactor(double factor)

@@ -130,6 +130,8 @@ public:
         QM_EF_CAN_SELECT_ALL = 1 << 4,
         QM_EF_CAN_AI_WRITE = 1 << 5,
         QM_EF_CAN_AUTOFILL = 1 << 6,
+        // QuickMenu translation input capability and callback command; not selected-text translation.
+        QM_EF_CAN_TRANSLATE_INPUT = 1 << 7,
     };
 
     virtual ~NWebQuickMenuParams() = default;

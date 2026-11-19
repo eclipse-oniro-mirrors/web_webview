@@ -30,6 +30,10 @@ ohos_unittest("battery_mgr_adapter_test") {
 
   configs = [ ":module_private_config" ]
 
+  # Destructor_001 uses EXPECT_NO_THROW, which expands to try/catch and
+  # requires exceptions (same as native_common_test).
+  use_exceptions = true
+
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [

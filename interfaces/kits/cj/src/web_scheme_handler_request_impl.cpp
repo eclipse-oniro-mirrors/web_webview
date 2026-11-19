@@ -14,6 +14,7 @@
  */
 
 #include <cstdint>
+#include <memory>
 #include <thread>
 #include "web_scheme_handler_request.h"
 #include "webview_javascript_execute_callback.h"
@@ -230,10 +231,12 @@ namespace OHOS::Webview {
         WebSchemeHandlerImpl::webSchemeHandlerMap_;
     std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandlerImpl*>
         WebSchemeHandlerImpl::arkWebSchemeHandlerMap_;
+    std::mutex WebSchemeHandlerImpl::mapMutex_;
 
     const ArkWeb_SchemeHandler* WebSchemeHandlerImpl::GetArkWebSchemeHandler(
         WebSchemeHandlerImpl* handler)
     {
+        std::lock_guard<std::mutex> lock(mapMutex_);
         return WebSchemeHandlerImpl::webSchemeHandlerMap_.find(handler) !=
             WebSchemeHandlerImpl::webSchemeHandlerMap_.end() ?
             WebSchemeHandlerImpl::webSchemeHandlerMap_[handler] : nullptr;
@@ -241,6 +244,7 @@ namespace OHOS::Webview {
 
     WebSchemeHandlerImpl* WebSchemeHandlerImpl::GetWebSchemeHandler(const ArkWeb_SchemeHandler* handler)
     {
+        std::lock_guard<std::mutex> lock(mapMutex_);
         return WebSchemeHandlerImpl::arkWebSchemeHandlerMap_.find(handler) !=
             WebSchemeHandlerImpl::arkWebSchemeHandlerMap_.end() ?
             WebSchemeHandlerImpl::arkWebSchemeHandlerMap_[handler] : nullptr;
@@ -259,6 +263,7 @@ namespace OHOS::Webview {
         OH_ArkWebSchemeHandler_SetOnRequestStart(handler, onRequestStart_);
         OH_ArkWebSchemeHandler_SetOnRequestStop(handler, onRequestStop_);
         OH_ArkWebSchemeHandler_SetFromEts(handler, true);
+        std::lock_guard<std::mutex> lock(mapMutex_);
         webSchemeHandlerMap_.insert(std::make_pair(this, handler));
         arkWebSchemeHandlerMap_.insert(std::make_pair(handler, this));
     }
@@ -266,14 +271,25 @@ namespace OHOS::Webview {
     WebSchemeHandlerImpl::~WebSchemeHandlerImpl()
     {
         WEBVIEWLOGD("WebSchemeHandler::~WebSchemeHandler");
+        if (is_stop_callback_valid_) {
+            is_stop_callback_valid_->store(false, std::memory_order_release);
+        }
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            request_start_callback_ = nullptr;
+            request_stop_callback_ = nullptr;
+        }
         ArkWeb_SchemeHandler* handler =
             const_cast<ArkWeb_SchemeHandler*>(GetArkWebSchemeHandler(this));
         if (!handler) {
             WEBVIEWLOGD("~WebSchemeHandler not found ArkWeb_SchemeHandler");
             return;
         }
-        webSchemeHandlerMap_.erase(this);
-        arkWebSchemeHandlerMap_.erase(handler);
+        {
+            std::lock_guard<std::mutex> lock(mapMutex_);
+            webSchemeHandlerMap_.erase(this);
+            arkWebSchemeHandlerMap_.erase(handler);
+        }
         OH_ArkWeb_DestroySchemeHandler(handler);
     }
 
@@ -283,7 +299,12 @@ namespace OHOS::Webview {
         bool* intercept)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::RequestStart");
-        if (!request_start_callback_) {
+        std::function<bool(int64_t, int64_t)> callback;
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            callback = request_start_callback_;
+        }
+        if (!callback) {
             WEBVIEWLOGE("[SchemeHandler] :RequestStart not exists.");
             return;
         }
@@ -302,60 +323,86 @@ namespace OHOS::Webview {
         } else {
             resourceHandler->IncStrongRef(nullptr);
         }
-        *intercept = request_start_callback_(schemeHandlerRequest->GetID(), resourceHandler->GetID());
+        *intercept = callback(schemeHandlerRequest->GetID(), resourceHandler->GetID());
         if (!*intercept) {
             resourceHandler->SetFinishFlag();
             resourceHandler->DecStrongRef(nullptr);
         }
     }
 
-    void WebSchemeHandlerImpl::RequestStopAfterWorkCb(RequestStopParam* param)
+    void WebSchemeHandlerImpl::RequestStopAfterWorkCb(std::unique_ptr<RequestStopParam> param)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::RequestStopAfterWorkCb");
-        if (!param->callbackRef_) {
-            WEBVIEWLOGI("scheme handler onRequestStop not exists");
-            delete param;
+        if (param == nullptr) {
             return;
         }
-        param->callbackRef_(param->request_->GetID());
-        WebResourceHandlerImpl* resourceHandler =
-            reinterpret_cast<WebResourceHandlerImpl*>(
-                OH_ArkWebResourceRequest_GetUserData(param->arkWebRequest_));
-        if (resourceHandler) {
-            resourceHandler->SetFinishFlag();
+        bool isCallbackValid = param->isCallbackValid_ != nullptr &&
+            param->isCallbackValid_->load(std::memory_order_acquire);
+        if (!isCallbackValid || !param->callbackRef_ || param->request_ == nullptr) {
+            WEBVIEWLOGI("scheme handler onRequestStop not exists or invalid");
+            if (param->request_ != nullptr) {
+                // The request was never handed over to CJ, so its FFIData entry has to be released here.
+                FFIData::Release(param->request_->GetID());
+                param->request_ = nullptr;
+            }
+        } else {
+            param->callbackRef_(param->request_->GetID());
+            WebResourceHandlerImpl* resourceHandler = param->resourceHandler_;
+            if (resourceHandler) {
+                resourceHandler->SetFinishFlag();
+            }
         }
-        delete param;
-        param = nullptr;
+        if (param->resourceHandler_ != nullptr) {
+            // Release the extra reference taken by RequestStart via OH_ArkWebResourceRequest_SetUserData.
+            param->resourceHandler_->DecStrongRef(nullptr);
+            param->resourceHandler_ = nullptr;
+        }
     }
 
     void WebSchemeHandlerImpl::RequestStop(const ArkWeb_ResourceRequest* resourceRequest)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::RequestStop");
-        RequestStopParam *param = new (std::nothrow) RequestStopParam();
-        if (param == nullptr) {
+        if (resourceRequest == nullptr) {
+            WEBVIEWLOGE("[SchemeHandler] WebSchemeHandlerImpl::RequestStop request is nullptr");
             return;
         }
-        param->callbackRef_ = request_stop_callback_;
+        auto param = std::make_unique<RequestStopParam>();
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            param->callbackRef_ = request_stop_callback_;
+        }
+        param->isCallbackValid_ = is_stop_callback_valid_;
         param->request_ = FFIData::Create<WebSchemeHandlerRequestImpl>(resourceRequest);
         if (param->request_ == nullptr) {
-            delete param;
             return;
         }
-        param->arkWebRequest_ = resourceRequest;
-        std::thread([param]() {
-            RequestStopAfterWorkCb(param);
+        // The ArkWeb_ResourceRequest is owned by the engine and may be released as soon as
+        // OnRequestStop returns, so the user data is resolved here instead of being dereferenced
+        // later from the worker thread. The resource handler stays alive because RequestStart took
+        // an extra reference on it; that reference is released once the work is done.
+        param->resourceHandler_ = reinterpret_cast<WebResourceHandlerImpl*>(
+            OH_ArkWebResourceRequest_GetUserData(resourceRequest));
+        std::thread([stopParam = std::move(param)]() mutable {
+            RequestStopAfterWorkCb(std::move(stopParam));
         }).detach();
     }
 
     void WebSchemeHandlerImpl::PutRequestStart(std::function<bool(int64_t, int64_t)> callback)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::PutRequestStart");
+        std::lock_guard<std::mutex> lock(callbackMutex_);
         request_start_callback_ = callback;
     }
 
     void WebSchemeHandlerImpl::PutRequestStop(std::function<void(int64_t)> callback)
     {
         WEBVIEWLOGI("WebSchemeHandlerImpl::PutRequestStop");
-        request_stop_callback_ = callback;
+        {
+            std::lock_guard<std::mutex> lock(callbackMutex_);
+            request_stop_callback_ = callback;
+        }
+        if (is_stop_callback_valid_) {
+            is_stop_callback_valid_->store(true, std::memory_order_release);
+        }
     }
 }

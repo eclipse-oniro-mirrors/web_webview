@@ -43,6 +43,7 @@ import cameraPicker from '@ohos.multimedia.cameraPicker'
 import camera from '@ohos.multimedia.camera'
 import deviceInfo from '@ohos.deviceInfo'
 import { UIContext } from '@ohos.arkui.UIContext'
+import { HandednessFollowMode } from '@ohos.arkui.dialog'
 import picker from '@ohos.file.picker'
 import fileIo, { Watcher, WatchEventListener } from '@ohos.file.fs'
 import fileUri from '@ohos.file.fileuri'
@@ -62,6 +63,11 @@ class SelectorDialog {
   private customDialogComponentId: int = 0
 
   defaultOnShowFileSelector(param: FileSelectorParam, result: FileSelectorResult) {
+    this.defaultOnShowFileSelectorWithHandedness(param, result, 0)
+  }
+
+  defaultOnShowFileSelectorWithHandedness(param: FileSelectorParam, result: FileSelectorResult,
+    adaptToHandedness: int) {
     console.info('defaultOnShowFileSelector implementation')
 
     const event: OnShowFileSelectorEvent = { fileSelector: param, result: result }
@@ -70,6 +76,8 @@ class SelectorDialog {
       UIContext.resolveUIContext()?.getPromptAction()
         .openCustomDialog({
           builder: () => this.fileSelectorDialog(event),
+          adaptToHandedness: adaptToHandedness === HandednessFollowMode.FOLLOW_ANCHOR ?
+            HandednessFollowMode.FOLLOW_ANCHOR : HandednessFollowMode.NONE,
           onWillDismiss: (dismissDialogAction: DismissDialogAction) => {
             console.info('reason: ' + JSON.stringify(dismissDialogAction.reason))
             console.log('dialog onWillDismiss')

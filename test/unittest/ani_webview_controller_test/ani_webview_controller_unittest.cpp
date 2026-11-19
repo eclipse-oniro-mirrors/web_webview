@@ -27,6 +27,13 @@
 #include "test_mock_ani_parse_utils.h"
 #include "web_errors.h"
 
+// Include the arkweb_utils implementation into this translation unit so that the
+// internal process-level state (g_webEngineInitFlag / g_appDataDirectorySuffix)
+// which drives the setDataDirectorySuffix return codes is directly writable
+// from the tests. The executable's own definition takes precedence over the
+// shared library copy at link time (same pattern as arkweb_utils_test).
+#include "arkweb_utils.cpp"
+
 #include "ani_webview_controller.cpp"
 
 class AniWebviewControllerTest : public testing::Test {
@@ -55,6 +62,15 @@ protected:
             return ANI_ERROR;
         }
         *result = g_referenceIsUndefinedResult;
+        return ANI_OK;
+    }
+
+    static ani_status MockReference_IsNull(ani_env* env, ani_ref ref, ani_boolean* result)
+    {
+        if (g_referenceIsNullShouldFail) {
+            return ANI_ERROR;
+        }
+        *result = g_referenceIsNullResult;
         return ANI_OK;
     }
 
@@ -100,6 +116,8 @@ protected:
         if (g_stringNewUTF8ShouldFail) {
             return ANI_ERROR;
         }
+
+        gStringNewUtf8LastStr = str != nullptr ? str : "";
         gLastCreatedUtf8 = str;
         *result = reinterpret_cast<ani_string>(GetMockObject(POOL_INDEX_STRING));
         return ANI_OK;
@@ -124,6 +142,7 @@ protected:
     // vtable offset enumeration
     enum VTableOffset {
         VT_FIND_ENUM = 16,                            // FindEnum offset
+        VT_REFERENCE_IS_NULL = 38,                    // Reference_IsNull offset
         VT_REFERENCE_IS_UNDEFINED = 39,               // Reference_IsUndefined offset
         VT_STRING_NEW_UTF8 = 47,                      // String_NewUTF8 offset
         VT_ENUM_GET_ENUM_ITEM_BY_INDEX = 86,          // Enum_GetEnumItemByIndex offset
@@ -161,6 +180,8 @@ protected:
     static bool g_findEnumShouldFail;
     static bool g_enumGetItemShouldFail;
     static bool g_referenceIsUndefinedShouldFail;
+    static bool g_referenceIsNullShouldFail;
+    static ani_boolean g_referenceIsNullResult;
     static ani_boolean g_referenceIsUndefinedResult;
     static bool g_promiseNewShouldFail;
     static bool g_enumItemGetValueShouldFail;
@@ -171,6 +192,7 @@ protected:
     static bool g_setPropertyByNameDoubleShouldFail;
     static bool g_setPropertyByNameRefShouldFail;
     static bool g_stringNewUTF8ShouldFail;
+    static std::string gStringNewUtf8LastStr;
     static std::string gLastCreatedUtf8;
     static bool g_setSiteIsolationModeShouldFail;
 
@@ -200,6 +222,7 @@ protected:
             // Set vtable function pointers
             g_fakeVtable[VT_FIND_ENUM] = (void*)MockFindEnum;
             g_fakeVtable[VT_REFERENCE_IS_UNDEFINED] = (void*)MockReference_IsUndefined;
+            g_fakeVtable[VT_REFERENCE_IS_NULL] = (void*)MockReference_IsNull;
             g_fakeVtable[VT_STRING_NEW_UTF8] = (void*)MockString_NewUTF8;
             g_fakeVtable[VT_ENUM_GET_ENUM_ITEM_BY_INDEX] = (void*)MockEnum_GetEnumItemByIndex;
             g_fakeVtable[VT_ENUMITEM_GET_VALUE_INT] = (void*)MockEnumItem_GetValue_Int;
@@ -227,6 +250,9 @@ protected:
         g_enumGetItemShouldFail = false;
         g_referenceIsUndefinedShouldFail = false;
         g_referenceIsUndefinedResult = ANI_FALSE;  // Ensure default is not undefined
+        g_referenceIsNullShouldFail = false;
+        g_referenceIsNullResult = ANI_FALSE;
+        OHOS::NWeb::WebviewController::g_setNavigationThrottleShouldFail = false;
         g_promiseNewShouldFail = false;
         g_enumItemGetValueShouldFail = false;
         g_enumItemGetValueResult = 0;
@@ -243,6 +269,11 @@ protected:
         OHOS::NWeb::AniParseUtils::g_createObjectVoidShouldFail = false;
         OHOS::NWeb::AniParseUtils::g_parseStringResult = true;
         OHOS::NWeb::AniParseUtils::g_parseStringValue = "";
+        // Reset the process-level data directory suffix state so that each case
+        // starts from "engine not loaded / suffix not set".
+        OHOS::ArkWeb::ResetDataDirectorySuffix();
+        OHOS::ArkWeb::g_webEngineInitFlag = false;
+        gStringNewUtf8LastStr = "";
     }
 
     void TearDown() override
@@ -289,8 +320,11 @@ ani_int AniWebviewControllerTest::g_objectCallMethodResult = 0;
 bool AniWebviewControllerTest::g_setPropertyByNameDoubleShouldFail = false;
 bool AniWebviewControllerTest::g_setPropertyByNameRefShouldFail = false;
 bool AniWebviewControllerTest::g_stringNewUTF8ShouldFail = false;
+std::string AniWebviewControllerTest::gStringNewUtf8LastStr = "";
 std::string AniWebviewControllerTest::gLastCreatedUtf8 = "";
 bool AniWebviewControllerTest::g_setSiteIsolationModeShouldFail = false;
+bool AniWebviewControllerTest::g_referenceIsNullShouldFail = false;
+ani_boolean AniWebviewControllerTest::g_referenceIsNullResult = ANI_FALSE;
 
 using OHOS::NWeb::OnActive;
 using OHOS::NWeb::OnInactive;
@@ -331,6 +365,10 @@ using OHOS::NWeb::SetScrollbarMode;
 using OHOS::NWeb::GetScrollable;
 using OHOS::NWeb::ExecuteAIPageCommand;
 using OHOS::NWebError::COMMAND_FORMAT_ERROR;
+using OHOS::NWeb::SetDataDirectorySuffix;
+using OHOS::NWeb::GetDataDirectorySuffix;
+using OHOS::NWebError::SUFFIX_ALREADY_SET;
+using OHOS::NWebError::ENGINE_ALREADY_INITIALIZED;
 using OHOS::NWeb::SetNavigationEntryUserData;
 using OHOS::NWeb::GetNavigationEntryUserData;
 using OHOS::NWeb::RemoveNavigationEntryUserData;
@@ -2165,6 +2203,26 @@ TEST_F(AniWebviewControllerTest, EnableAdvancedSecurityMode_ErrorScenarios)
 }
 
 /**
+ * @tc.name: GetDataDirectorySuffix_AfterSet
+ * @tc.desc: GetDataDirectorySuffix returns the suffix set by SetDataDirectorySuffix.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetDataDirectorySuffix_AfterSet)
+{
+    ani_env* env = CreateMockAniEnv();
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "account1";
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    ani_string result = GetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_));
+
+    EXPECT_NE(result, nullptr);
+    EXPECT_EQ(gStringNewUtf8LastStr, std::string("account1"));
+}
+
+/**
  * @tc.name: SetAutoReloadEnabled_Success
  * @tc.desc: SetAutoReloadEnabled.
  * @tc.type: FUNC
@@ -2273,6 +2331,150 @@ TEST_F(AniWebviewControllerTest, IsAutoReloadEnabled_ErrorScenarios)
     SetControllerInitialized(true);
 }
 
+/**
+ * @tc.name: SetDataDirectorySuffix_EnvIsNull
+ * @tc.desc: SetDataDirectorySuffix returns immediately when env is nullptr.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetDataDirectorySuffix_EnvIsNull)
+{
+    SetDataDirectorySuffix(nullptr, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+}
+
+/**
+ * @tc.name: SetDataDirectorySuffix_ParseStringFail
+ * @tc.desc: SetDataDirectorySuffix throws PARAM_CHECK_ERROR when suffix is not a string.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetDataDirectorySuffix_ParseStringFail)
+{
+    ani_env* env = CreateMockAniEnv();
+    OHOS::NWeb::AniParseUtils::g_parseStringResult = false;
+
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), PARAM_CHECK_ERROR);
+    // state untouched
+    EXPECT_EQ(OHOS::ArkWeb::getDataDirectorySuffix(), std::string(""));
+}
+
+/**
+ * @tc.name: SetDataDirectorySuffix_InvalidSuffix
+ * @tc.desc: SetDataDirectorySuffix throws PARAM_CHECK_ERROR for an invalid suffix.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetDataDirectorySuffix_InvalidSuffix)
+{
+    ani_env* env = CreateMockAniEnv();
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "a_b-c"; // illegal characters
+
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), PARAM_CHECK_ERROR);
+    EXPECT_EQ(OHOS::ArkWeb::getDataDirectorySuffix(), std::string(""));
+}
+
+/**
+ * @tc.name: SetDataDirectorySuffix_Success
+ * @tc.desc: SetDataDirectorySuffix succeeds for a valid suffix before the engine loads.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetDataDirectorySuffix_Success)
+{
+    ani_env* env = CreateMockAniEnv();
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "account1";
+
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(OHOS::ArkWeb::getDataDirectorySuffix(), std::string("account1"));
+}
+
+/**
+ * @tc.name: SetDataDirectorySuffix_AlreadySet
+ * @tc.desc: SetDataDirectorySuffix throws SUFFIX_ALREADY_SET on the second call.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetDataDirectorySuffix_AlreadySet)
+{
+    ani_env* env = CreateMockAniEnv();
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "account1";
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    // second call with another valid suffix
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "account2";
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), SUFFIX_ALREADY_SET);
+    // suffix keeps the first value
+    EXPECT_EQ(OHOS::ArkWeb::getDataDirectorySuffix(), std::string("account1"));
+}
+
+/**
+ * @tc.name: SetDataDirectorySuffix_EngineLoaded
+ * @tc.desc: SetDataDirectorySuffix throws ENGINE_ALREADY_INITIALIZED after the engine loaded.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetDataDirectorySuffix_EngineLoaded)
+{
+    ani_env* env = CreateMockAniEnv();
+    // Simulate the engine library having been loaded (checked before the other states).
+    OHOS::ArkWeb::g_webEngineInitFlag = true;
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "account1";
+
+    SetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), ENGINE_ALREADY_INITIALIZED);
+    EXPECT_EQ(OHOS::ArkWeb::getDataDirectorySuffix(), std::string(""));
+}
+
+/**
+ * @tc.name: GetDataDirectorySuffix_EnvIsNull
+ * @tc.desc: GetDataDirectorySuffix returns nullptr when env is nullptr.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetDataDirectorySuffix_EnvIsNull)
+{
+    ani_string result = GetDataDirectorySuffix(nullptr, reinterpret_cast<ani_object>(testController_));
+    EXPECT_EQ(result, nullptr);
+}
+
+/**
+ * @tc.name: GetDataDirectorySuffix_DefaultEmpty
+ * @tc.desc: GetDataDirectorySuffix returns an empty string before any suffix is set.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetDataDirectorySuffix_DefaultEmpty)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    ani_string result = GetDataDirectorySuffix(env, reinterpret_cast<ani_object>(testController_));
+
+    EXPECT_NE(result, nullptr);
+    EXPECT_EQ(gStringNewUtf8LastStr, std::string(""));
+}
 /**
  * @tc.name: SetNavigationEntryUserData_ForwardAndOverwrite
  * @tc.desc: SetNavigationEntryUserData forwards (key, value) to the controller and
@@ -2463,4 +2665,143 @@ TEST_F(AniWebviewControllerTest, NavEntryUserData_ParseStringFailure_NoOp)
 
     OHOS::NWeb::AniParseUtils::g_parseStringResult = true;
     testController_->ResetNavEntryUserData();
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ClearWithUndefinedRef
+ * @tc.desc: SetNavigationThrottle with an undefined throttle reference clears the handler.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearWithUndefinedRef)
+{
+    ani_env* env = CreateMockAniEnv();
+    g_referenceIsUndefinedResult = ANI_TRUE;
+
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_ref>(testController_));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasSetNavigationThrottleCalled());
+    EXPECT_EQ(testController_->GetLastThrottleHandler(), nullptr);
+
+    g_referenceIsUndefinedResult = ANI_FALSE;
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ClearWithNullRef
+ * @tc.desc: SetNavigationThrottle with a null throttle reference clears the handler.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearWithNullRef)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasSetNavigationThrottleCalled());
+    EXPECT_EQ(testController_->GetLastThrottleHandler(), nullptr);
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ErrorScenarios
+ * @tc.desc: SetNavigationThrottle error paths.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ErrorScenarios)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // env is nullptr: safe return, no throw
+    OHOS::NWeb::AniSetNavigationThrottle(nullptr, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Controller is null
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller is not initialized
+    SetControllerInitialized(false);
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+
+    // Controller returns an error
+    OHOS::NWeb::WebviewController::g_setNavigationThrottleShouldFail = true;
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), PARAM_CHECK_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::WebviewController::g_setNavigationThrottleShouldFail = false;
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ClearThenHasCallback
+ * @tc.desc: Mock controller reflects the registered handler state.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearThenHasCallback)
+{
+    class TestThrottleHandler : public OHOS::NWeb::NWebNavigationThrottleHandler {
+    public:
+        OHOS::NWeb::NWebThrottleAction OnThrottleEvent(OHOS::NWeb::NWebThrottleStage stage,
+            const OHOS::NWeb::NWebNavigationThrottleInfo& info, uint64_t deferId) override
+        {
+            return OHOS::NWeb::NWebThrottleAction::PROCEED;
+        }
+    };
+
+    EXPECT_FALSE(testController_->HasThrottleCallback());
+
+    auto handler = std::make_shared<TestThrottleHandler>();
+    EXPECT_EQ(testController_->SetNavigationThrottle(handler), OHOS::NWebError::NO_ERROR);
+    EXPECT_TRUE(testController_->HasThrottleCallback());
+
+    EXPECT_EQ(testController_->SetNavigationThrottle(nullptr), OHOS::NWebError::NO_ERROR);
+    EXPECT_FALSE(testController_->HasThrottleCallback());
+}
+
+/**
+ * @tc.name: GetDefaultUserAgentLite_001
+ * @tc.desc: GetDefaultUserAgentLite returns a string created via the mock env and
+ *           degrades safely when the env is null or string creation fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetDefaultUserAgentLite_001)
+{
+    // env is nullptr
+    ani_string result = OHOS::NWeb::GetDefaultUserAgentLite(nullptr, nullptr);
+    EXPECT_EQ(result, nullptr);
+
+    // mock env: returns the pooled mock ani_string
+    ani_env* env = CreateMockAniEnv();
+    g_stringNewUTF8ShouldFail = false;
+    result = OHOS::NWeb::GetDefaultUserAgentLite(env, nullptr);
+    EXPECT_EQ(result, reinterpret_cast<ani_string>(GetMockObject(POOL_INDEX_STRING)));
+
+    // String_NewUTF8 fails
+    g_stringNewUTF8ShouldFail = true;
+    result = OHOS::NWeb::GetDefaultUserAgentLite(env, nullptr);
+    EXPECT_EQ(result, nullptr);
+    g_stringNewUTF8ShouldFail = false;
+}
+
+/**
+ * @tc.name: StsNavigationThrottleInit_EnvIsNull
+ * @tc.desc: StsNavigationThrottleInit with a null env returns ANI_ERROR.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, StsNavigationThrottleInit_EnvIsNull)
+{
+    EXPECT_EQ(OHOS::NWeb::StsNavigationThrottleInit(nullptr), ANI_ERROR);
 }
