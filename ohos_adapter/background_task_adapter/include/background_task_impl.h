@@ -37,6 +37,8 @@ public:
     ~BackgroundTaskAdapterImpl() override = default;
     bool RequestBackgroundTaskRunning(bool running, BackgroundModeAdapter bgMode) override;
     void RegisterBackgroundTaskPolicyCallback(std::shared_ptr<BackgroundStateChangeCallbackAdapter> callback) override;
+    bool RequestBackgroundTaskRunningWithRenderPids(bool running, BackgroundModeAdapter bgMode,
+                                                    const std::vector<int32_t>& renderPids) override;
 private:
     std::shared_ptr<ApplicationStateChangeCallbackImpl> applicationStateChangeCallback_;
 };

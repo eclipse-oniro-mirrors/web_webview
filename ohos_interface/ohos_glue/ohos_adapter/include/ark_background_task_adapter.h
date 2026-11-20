@@ -44,6 +44,14 @@ public:
     /*--ark web()--*/
     virtual void RegisterBackgroundTaskPolicyCallback(
         ArkWebRefPtr<ArkBackgroundStateChangeCallbackAdapter> callback) = 0;
+
+    /*--ark web()--*/
+    static bool RequestBackgroundRunningWithRenderPids(bool running, int32_t bgMode,
+                                                       const ArkWebInt32Vector& renderPids);
+ 
+    /*--ark web()--*/
+    virtual bool RequestBackgroundTaskRunningWithRenderPids(bool running, int32_t bgMode,
+                                                            const ArkWebInt32Vector& renderPids) = 0;
 };
 
 } // namespace OHOS::ArkWeb

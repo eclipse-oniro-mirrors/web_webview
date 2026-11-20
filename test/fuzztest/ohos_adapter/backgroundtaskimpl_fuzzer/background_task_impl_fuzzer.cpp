@@ -17,11 +17,15 @@
 #include <cstdint>
 #include <unistd.h>
 #include <memory>
+#include <vector>
 #include "background_task_adapter.h"
 #include "background_task_impl.h"
 
 using namespace OHOS::NWeb;
-
+namespace {
+    constexpr size_t RENDER_PID_DATA_INDEX = 2;
+    constexpr size_t MIN_SIZE_WITH_RENDER_PID = 3;
+}
 class BackgroundStateChangeCallbackAdapterMock : public BackgroundStateChangeCallbackAdapter {
 public:
     BackgroundStateChangeCallbackAdapterMock() = default;
@@ -46,6 +50,13 @@ namespace OHOS {
             std::make_shared<BackgroundTaskAdapterImpl>();
         adapter->RegisterBackgroundTaskPolicyCallback(callback);
         adapter->RequestBackgroundTaskRunning(running, bgMode);
+        // Fuzz RequestBackgroundRunningWithRenderPids / RequestBackgroundTaskRunningWithRenderPids.
+        if (size >= MIN_SIZE_WITH_RENDER_PID) { // data[2]: render pid
+            std::vector<int32_t> renderPids;
+            renderPids.emplace_back(static_cast<int32_t>(data[RENDER_PID_DATA_INDEX]));
+            BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(running, bgMode, renderPids);
+            adapter->RequestBackgroundTaskRunningWithRenderPids(running, bgMode, renderPids);
+        }
         return true;
     }
 }

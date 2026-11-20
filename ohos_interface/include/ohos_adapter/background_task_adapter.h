@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 namespace OHOS::NWeb {
 
@@ -53,6 +54,16 @@ public:
 
     virtual void RegisterBackgroundTaskPolicyCallback(
         std::shared_ptr<BackgroundStateChangeCallbackAdapter> callback) = 0;
+
+    // |renderPids| identifies the renderer processes that own the audio
+    // playback. It is empty when no renderer pid could be resolved.
+    static bool RequestBackgroundRunningWithRenderPids(bool running, BackgroundModeAdapter bgMode,
+                                                       const std::vector<int32_t>& renderPids);
+    virtual bool RequestBackgroundTaskRunningWithRenderPids(bool running, BackgroundModeAdapter bgMode,
+                                                            const std::vector<int32_t>& renderPids)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

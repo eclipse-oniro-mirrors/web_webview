@@ -15,6 +15,7 @@
 
 #include <cstdint>
 #include <unistd.h>
+#include <vector>
 
 #include "background_mode.h"
 #include "background_task_adapter.h"
@@ -51,6 +52,24 @@ BackgroundMode::Type ConvertBackgroundMode(BackgroundModeAdapter mode)
     }
 }
 
+namespace {
+bool RequestBackgroundRunningWithRenderPidsInner(bool running, BackgroundModeAdapter bgMode,
+                                                 const std::vector<int32_t>& renderPids)
+{
+    auto uid = getuid();
+    WVLOG_I("RequestBackgroundRunningWithRenderPids uid: %{public}d, running: %{public}d, "
+        "renderPids size: %{public}zu", uid, running, renderPids.size());
+    ContinuousTaskParamForInner taskParam { uid, ConvertBackgroundMode(bgMode), running };
+    taskParam.SetRenderPids({ renderPids.begin(), renderPids.end() });
+    ErrCode errCode = BackgroundTaskMgrHelper::RequestBackgroundRunningForInner(taskParam);
+    if (errCode != ERR_OK) {
+        WVLOG_E("RequestBackgroundRunningWithRenderPids failed, error code: %{public}d", errCode);
+        return false;
+    }
+    return true;
+}
+} // namespace
+
 bool BackgroundTaskAdapter::RequestBackgroundRunning(bool running, BackgroundModeAdapter bgMode)
 {
     auto uid = getuid();
@@ -62,6 +81,12 @@ bool BackgroundTaskAdapter::RequestBackgroundRunning(bool running, BackgroundMod
         return false;
     }
     return true;
+}
+
+bool BackgroundTaskAdapter::RequestBackgroundRunningWithRenderPids(bool running, BackgroundModeAdapter bgMode,
+                                                                   const std::vector<int32_t>& renderPids)
+{
+    return RequestBackgroundRunningWithRenderPidsInner(running, bgMode, renderPids);
 }
 
 ApplicationStateChangeCallbackImpl::ApplicationStateChangeCallbackImpl(
@@ -124,5 +149,12 @@ void BackgroundTaskAdapterImpl::RegisterBackgroundTaskPolicyCallback(
         WVLOG_E("BackgroundTaskAdapterImpl::failed to get application context.");
         return;
     }
+}
+
+bool BackgroundTaskAdapterImpl::RequestBackgroundTaskRunningWithRenderPids(bool running,
+                                                                           BackgroundModeAdapter bgMode,
+                                                                           const std::vector<int32_t>& renderPids)
+{
+    return RequestBackgroundRunningWithRenderPidsInner(running, bgMode, renderPids);
 }
 } // namespace OHOS::NWeb
