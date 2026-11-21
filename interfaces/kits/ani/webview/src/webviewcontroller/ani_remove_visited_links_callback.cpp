@@ -27,43 +27,71 @@ const std::string REMOVE_VISITED_LINKS_TASK_ID = "removeVisitedLinksSince";
 } // namespace
 
 AniRemoveVisitedLinksCallback::AniRemoveVisitedLinksCallback(ani_env* env, ani_resolver resolver)
-    : env_(env), resolver_(resolver) {}
-
-void AniRemoveVisitedLinksCallback::OnRemoveComplete()
+    : resolver_(resolver)
 {
-    if (!env_) {
+    if (env == nullptr) {
         WVLOG_E("env is nullptr");
         return;
     }
-    auto runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
-    if (!runner) {
-        WVLOG_E("get main event runner failed");
+    ani_status status = env->GetVM(&vm_);
+    if (status != ANI_OK) {
+        vm_ = nullptr;
+        WVLOG_E("GetVM failed, status=%{public}d", static_cast<int>(status));
         return;
     }
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
-    if (!handler) {
-        WVLOG_E("create event handler failed");
-        return;
-    }
-    ani_env* env = env_;
-    ani_resolver resolver = resolver_;
-    auto task = [env, resolver]() {
-        ani_ref resultRef = nullptr;
-        if (env->GetUndefined(&resultRef) != ANI_OK) {
-            WVLOG_E("GetUndefined failed, rejecting promise to avoid pending state");
-            ani_ref jsError = NWebError::AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
-            if (env->PromiseResolver_Reject(resolver, reinterpret_cast<ani_error>(jsError)) != ANI_OK) {
-                WVLOG_E("PromiseResolver_Reject failed after GetUndefined failure");
-            }
+}
+
+void AniRemoveVisitedLinksCallback::OnRemoveComplete()
+{
+    if (!mainHandler_) {
+        std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::GetMainEventRunner();
+        if (!runner) {
+            WVLOG_E("get main event runner failed");
             return;
         }
-        if (env->PromiseResolver_Resolve(resolver, resultRef) != ANI_OK) {
-            WVLOG_E("PromiseResolver_Resolve failed");
+        if (runner->IsCurrentRunnerThread()) {
+            ResolvePromise();
+            return;
         }
-    };
-    if (!handler->PostTask(std::move(task), REMOVE_VISITED_LINKS_TASK_ID, 0,
-        OHOS::AppExecFwk::EventQueue::Priority::HIGH, {})) {
+        mainHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+        if (!mainHandler_) {
+            WVLOG_E("create event handler failed");
+            return;
+        }
+    }
+
+    auto sharedThis = shared_from_this();
+    auto task = [sharedThis]() { sharedThis->ResolvePromise(); };
+    if (!mainHandler_->PostTask(std::move(task), REMOVE_VISITED_LINKS_TASK_ID, 0,
+        AppExecFwk::EventQueue::Priority::HIGH, {})) {
         WVLOG_E("PostTask failed for removeVisitedLinksSince callback");
+    }
+}
+
+void AniRemoveVisitedLinksCallback::ResolvePromise()
+{
+    if (vm_ == nullptr || resolver_ == nullptr) {
+        WVLOG_E("vm or resolver is nullptr");
+        return;
+    }
+
+    ani_env* env = nullptr;
+    if (vm_->GetEnv(ANI_VERSION_1, &env) != ANI_OK || env == nullptr) {
+        WVLOG_E("GetEnv failed");
+        return;
+    }
+
+    ani_ref resultRef = nullptr;
+    if (env->GetUndefined(&resultRef) != ANI_OK) {
+        WVLOG_E("GetUndefined failed, rejecting promise to avoid pending state");
+        ani_ref jsError = NWebError::AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
+        if (env->PromiseResolver_Reject(resolver_, reinterpret_cast<ani_error>(jsError)) != ANI_OK) {
+            WVLOG_E("PromiseResolver_Reject failed after GetUndefined failure");
+        }
+        return;
+    }
+    if (env->PromiseResolver_Resolve(resolver_, resultRef) != ANI_OK) {
+        WVLOG_E("PromiseResolver_Resolve failed");
     }
 }
 
