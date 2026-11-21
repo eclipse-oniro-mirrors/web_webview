@@ -39,6 +39,7 @@ ohos_unittest("display_manager_adapter_impl_test") {
     "init:libbegetutil",
     "window_manager:libdm",
     "window_manager:libdm_ndk",
+    "window_manager:libwmutil_base",
   ]
 }
 

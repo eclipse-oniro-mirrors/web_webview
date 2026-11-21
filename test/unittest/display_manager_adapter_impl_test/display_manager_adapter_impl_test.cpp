@@ -925,5 +925,199 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_034, TestS
     EXPECT_EQ(displayManagerAdapterImpl->IsSinglePhysicalDisplayForFold(), result);
     EXPECT_EQ(displayManagerAdapterImpl2->IsSinglePhysicalDisplayForFold(), result);
 }
+
+
+class TestDisplay : public OHOS::Rosen::Display {
+public:
+    TestDisplay(const std::string& name, sptr<OHOS::Rosen::DisplayInfo> info)
+        : OHOS::Rosen::Display(name, info) {}
+};
+
+void FoldChangeCallBack(NativeDisplayManager_FoldDisplayMode displayMode);
+
+/**
+ * @tc.name: IsDefaultPortrait_DeviceTypes_037.
+ * @tc.desc: IsDefaultPortrait for phone/tablet/default/other device types.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, IsDefaultPortrait_DeviceTypes_037, TestSize.Level1)
+{
+    auto displayManagerAdapterImpl = std::make_shared<DisplayManagerAdapterImpl>();
+    ASSERT_NE(displayManagerAdapterImpl, nullptr);
+    std::string origin = g_deviceType;
+    g_deviceType = "phone";
+    EXPECT_TRUE(displayManagerAdapterImpl->IsDefaultPortrait());
+    g_deviceType = "tablet";
+    EXPECT_TRUE(displayManagerAdapterImpl->IsDefaultPortrait());
+    g_deviceType = "default";
+    EXPECT_TRUE(displayManagerAdapterImpl->IsDefaultPortrait());
+    g_deviceType = "other";
+    EXPECT_FALSE(displayManagerAdapterImpl->IsDefaultPortrait());
+    g_deviceType = origin;
+}
+
+/**
+ * @tc.name: UnregisterDisplayListener_Success_038.
+ * @tc.desc: unregister a registered display listener successfully.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, UnregisterDisplayListener_Success_038, TestSize.Level1)
+{
+    auto displayManagerAdapterImpl = std::make_shared<DisplayManagerAdapterImpl>();
+    ASSERT_NE(displayManagerAdapterImpl, nullptr);
+    auto listener = std::make_shared<DisplayListenerAdapterTest>();
+    uint32_t id = displayManagerAdapterImpl->RegisterDisplayListener(listener);
+    g_unregister = DMError::DM_OK;
+    if (id != 0) {
+        EXPECT_TRUE(displayManagerAdapterImpl->UnregisterDisplayListener(id));
+    }
+    g_unregister = DMError::DM_ERROR_NULLPTR;
+}
+
+/**
+ * @tc.name: UnregisterFoldStatusListener_Success_039.
+ * @tc.desc: unregister a registered fold status listener successfully.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, UnregisterFoldStatusListener_Success_039, TestSize.Level1)
+{
+    auto displayManagerAdapterImpl = std::make_shared<DisplayManagerAdapterImpl>();
+    ASSERT_NE(displayManagerAdapterImpl, nullptr);
+    auto listener = std::make_shared<FoldStatusListenerAdapterTest>();
+    uint32_t id = displayManagerAdapterImpl->RegisterFoldStatusListener(listener);
+    if (id != 0) {
+        EXPECT_TRUE(displayManagerAdapterImpl->UnregisterFoldStatusListener(id));
+    }
+}
+
+/**
+ * @tc.name: CheckOnlyRefreshRateDecreased_EqualRefresh_040.
+ * @tc.desc: cached info equals current info, refresh rate unchanged -> false.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, CheckOnlyRefreshRateDecreased_EqualRefresh_040, TestSize.Level1)
+{
+    auto displayListenerAdapterImpl = std::make_unique<DisplayListenerAdapterImpl>(nullptr);
+    ASSERT_NE(displayListenerAdapterImpl, nullptr);
+    auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
+    ASSERT_NE(displayPtr, nullptr);
+    auto displayInfo = displayPtr->GetDisplayInfo();
+    ASSERT_NE(displayInfo, nullptr);
+    displayListenerAdapterImpl->cachedDisplayedInfo_ =
+        displayListenerAdapterImpl->ConvertDisplayInfo(*displayInfo);
+    EXPECT_FALSE(displayListenerAdapterImpl->CheckOnlyRefreshRateDecreased(
+        DisplayManager::GetInstance().GetDefaultDisplayId()));
+}
+
+/**
+ * @tc.name: FoldChangeCallBack_Notify_041.
+ * @tc.desc: FoldChangeCallBack dispatches to listeners and tolerates an empty map.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, FoldChangeCallBack_Notify_041, TestSize.Level1)
+{
+    auto listener = std::make_shared<FoldStatusListenerAdapterTest>();
+    sptr<FoldStatusListenerAdapterImpl> reg = new FoldStatusListenerAdapterImpl(listener);
+    {
+        std::lock_guard<std::mutex> lock(DisplayManagerAdapterImpl::foldStatusRegMutex);
+        DisplayManagerAdapterImpl::foldStatusReg_.clear();
+        DisplayManagerAdapterImpl::foldStatusReg_.emplace(std::make_pair(1, reg));
+    }
+    FoldChangeCallBack(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB);
+    EXPECT_EQ(listener->GetLastStatus(), OHOS::NWeb::FoldStatus::SUB);
+    {
+        std::lock_guard<std::mutex> lock(DisplayManagerAdapterImpl::foldStatusRegMutex);
+        DisplayManagerAdapterImpl::foldStatusReg_.clear();
+    }
+    FoldChangeCallBack(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL);
+}
+
+/**
+ * @tc.name: DisplayAdapterImpl_ZeroDpi_043.
+ * @tc.desc: xDpi/yDpi below EPS -> GetDpi returns -1.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayAdapterImpl_ZeroDpi_043, TestSize.Level1)
+{
+    sptr<OHOS::Rosen::DisplayInfo> info = new OHOS::Rosen::DisplayInfo();
+    info->SetDisplayId(12345);
+    info->SetWidth(1080);
+    info->SetHeight(2340);
+    info->SetXDpi(0);
+    info->SetYDpi(0);
+    sptr<OHOS::Rosen::Display> display = new TestDisplay("test", info);
+    DisplayAdapterImpl displayAdapterImpl(display);
+    EXPECT_EQ(displayAdapterImpl.GetDpi(), -1);
+}
+
+/**
+ * @tc.name: DisplayAdapterImpl_ZeroPhysicalLength_044.
+ * @tc.desc: physical screen length below EPS -> GetDpi returns -1.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayAdapterImpl_ZeroPhysicalLength_044, TestSize.Level1)
+{
+    sptr<OHOS::Rosen::DisplayInfo> info = new OHOS::Rosen::DisplayInfo();
+    info->SetDisplayId(12345);
+    info->SetWidth(0);
+    info->SetHeight(0);
+    info->SetXDpi(480);
+    info->SetYDpi(480);
+    sptr<OHOS::Rosen::Display> display = new TestDisplay("test", info);
+    DisplayAdapterImpl displayAdapterImpl(display);
+    EXPECT_EQ(displayAdapterImpl.GetDpi(), -1);
+}
+
+/**
+ * @tc.name: DisplayAdapterImpl_ControlledDisplayInfo_045.
+ * @tc.desc: all getters read the controlled DisplayInfo values.
+ * @tc.type: FUNC
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayAdapterImpl_ControlledDisplayInfo_045, TestSize.Level1)
+{
+    sptr<OHOS::Rosen::DisplayInfo> info = new OHOS::Rosen::DisplayInfo();
+    info->SetDisplayId(12345);
+    info->SetWidth(1080);
+    info->SetHeight(2340);
+    info->SetPhysicalWidth(1080);
+    info->SetPhysicalHeight(2340);
+    info->SetRefreshRate(60);
+    info->SetVirtualPixelRatio(2.0f);
+    info->SetXDpi(480);
+    info->SetYDpi(480);
+    info->SetRotation(OHOS::Rosen::Rotation::ROTATION_90);
+    info->SetOrientation(OHOS::Rosen::Orientation::VERTICAL);
+    info->SetDisplayOrientation(OHOS::Rosen::DisplayOrientation::PORTRAIT);
+    info->SetAvailableWidth(1000);
+    info->SetAvailableHeight(2000);
+    info->SetAliveStatus(true);
+    info->SetDisplayState(OHOS::Rosen::DisplayState::ON);
+    info->SetDpi(480);
+    info->SetX(10);
+    info->SetY(20);
+    info->SetDisplaySourceMode(OHOS::Rosen::DisplaySourceMode::MAIN);
+    info->SetDefaultVirtualPixelRatio(2.0f);
+    sptr<OHOS::Rosen::Display> display = new TestDisplay("test_display", info);
+    DisplayAdapterImpl displayAdapterImpl(display);
+    EXPECT_EQ(displayAdapterImpl.GetId(), 12345);
+    EXPECT_EQ(displayAdapterImpl.GetWidth(), 1080);
+    EXPECT_EQ(displayAdapterImpl.GetHeight(), 2340);
+    EXPECT_FLOAT_EQ(displayAdapterImpl.GetVirtualPixelRatio(), 2.0f);
+    EXPECT_EQ(displayAdapterImpl.GetRotation(), RotationType::ROTATION_90);
+    EXPECT_EQ(displayAdapterImpl.GetOrientation(), OrientationType::VERTICAL);
+    EXPECT_EQ(displayAdapterImpl.GetDisplayOrientation(), DisplayOrientation::PORTRAIT);
+    EXPECT_EQ(displayAdapterImpl.GetName(), "");
+    EXPECT_EQ(displayAdapterImpl.GetAvailableWidth(), 1000);
+    EXPECT_EQ(displayAdapterImpl.GetAvailableHeight(), 2000);
+    EXPECT_EQ(displayAdapterImpl.GetAliveStatus(), true);
+    EXPECT_EQ(displayAdapterImpl.GetDisplayState(), DisplayState::ON);
+    EXPECT_EQ(displayAdapterImpl.GetDensityDpi(), 480);
+    EXPECT_EQ(displayAdapterImpl.GetX(), 10);
+    EXPECT_EQ(displayAdapterImpl.GetY(), 20);
+    EXPECT_EQ(displayAdapterImpl.GetDisplaySourceMode(), DisplaySourceMode::MAIN);
+    EXPECT_EQ(displayAdapterImpl.GetPhysicalWidth(), 1080);
+    EXPECT_EQ(displayAdapterImpl.GetPhysicalHeight(), 2340);
+    EXPECT_FLOAT_EQ(displayAdapterImpl.GetDefaultVirtualPixelRatio(), 2.0f);
+}
 }
 }
