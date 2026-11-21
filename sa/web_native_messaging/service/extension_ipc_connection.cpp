@@ -348,9 +348,9 @@ int32_t ExtensionIpcConnection::DisconnectNative(int32_t connectionId, bool& res
 
 void ExtensionIpcConnection::DumpMesg(int fd)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     dprintf(fd, "    callerTokenId:%d;targetBundleName:%s;targetAbilityName:%s;targetExtensionPid:%d;status:%d\n",
         callerTokenId_, targetBundleName_.c_str(), targetAbilityName_.c_str(), targetExtensionPid_, status_);
-    std::lock_guard<std::mutex> lock(mutex_);
     dprintf(fd, "    pendingList:\n");
     for (auto& request : pendingRequests_) {
         if (request) {

@@ -630,8 +630,12 @@ bool WebNativeMessagingManager::Init()
         WNMLOG_E("failed to create service handler.");
         return false;
     }
-    delayExitTask_ = std::make_shared<ServiceDelayExitTask>(serviceHandler_, [this]() {
-        this->ExitSaProcess();
+    std::weak_ptr<WebNativeMessagingManager> weakThis = shared_from_this();
+    delayExitTask_ = std::make_shared<ServiceDelayExitTask>(serviceHandler_, [weakThis]() {
+        auto self = weakThis.lock();
+        if (self) {
+            self->ExitSaProcess();
+        }
     });
     if (!delayExitTask_) {
         WNMLOG_E("failed to create a delay exit task");
