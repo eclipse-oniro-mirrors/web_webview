@@ -574,8 +574,11 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordVector& data)
     PasteData pData;
     if (!PasteboardClient::GetInstance()->HasPasteData()) {
         WVLOG_I("there is no data in clipboard");
-        isLocalPaste_ = false;
-        tokenId_ = 0;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            isLocalPaste_ = false;
+            tokenId_ = 0;
+        }
         return false;
     }
     std::shared_ptr<GetDataParams> params = std::make_shared<GetDataParams>();
@@ -588,8 +591,11 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordVector& data)
     if (result != static_cast<int32_t>(PasteboardError::E_OK)) {
         WVLOG_E("get data from clipboard failed, errcode=%{public}d", result);
         ReportPasteboardErrorEvent(result, pData.AllRecords().size(), GetPasteMimeTypeExtention(data));
-        isLocalPaste_ = false;
-        tokenId_ = 0;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            isLocalPaste_ = false;
+            tokenId_ = 0;
+        }
         if (params->info != nullptr) {
             delete params->info;
             params->info = nullptr;
@@ -599,8 +605,11 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordVector& data)
     for (auto& record: pData.AllRecords()) {
         data.push_back(std::make_shared<PasteDataRecordAdapterImpl>(record));
     }
-    tokenId_ = pData.GetTokenId();
-    isLocalPaste_ = pData.IsLocalPaste();
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        tokenId_ = pData.GetTokenId();
+        isLocalPaste_ = pData.IsLocalPaste();
+    }
     if (params->info != nullptr) {
         delete params->info;
         params->info = nullptr;
@@ -665,11 +674,13 @@ int32_t PasteBoardClientAdapterImpl::OpenRemoteUri(const std::string& path)
 
 bool PasteBoardClientAdapterImpl::IsLocalPaste()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return isLocalPaste_;
 }
 
 uint32_t PasteBoardClientAdapterImpl::GetTokenId()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return tokenId_;
 }
 
