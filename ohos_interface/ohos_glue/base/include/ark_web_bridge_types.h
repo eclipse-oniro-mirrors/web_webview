@@ -157,6 +157,7 @@ enum ArkWebBridgeType {
     ARK_WEB_WEB_SITE_CONFIG_RESULT = 136,
     ARK_WEB_WEB_SITE_CONFIG_CALLBACK = 137,
     ARK_WEB_RECT = 138,
+    ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK = 139,
     /*Note: The end of nweb interface bridge type*/
     ARK_WEB_NWEB_INTERFACE_BUTT,
 
@@ -321,7 +322,6 @@ enum ArkWebBridgeType {
     ARK_VPE_VIDEO_ADAPTER = 10155,
     ARK_HI_VIEW_DFX_ADAPTER = 10156,
     ARK_IMFPREVIEW_TEXT_STYLE_ADAPTER = 10157,
-    ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK = 10158,
     /*Note: The end of adapter interface bridge type*/
     ARK_WEB_ADAPTER_INTERFACE_BUTT,
 };

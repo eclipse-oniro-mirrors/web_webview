@@ -16,8 +16,10 @@
 #ifndef ANI_REMOVE_VISITED_LINKS_CALLBACK_H
 #define ANI_REMOVE_VISITED_LINKS_CALLBACK_H
 
-#include <ani.h>
+#include <memory>
 
+#include "ani.h"
+#include "event_handler.h"
 #include "nweb_log.h"
 
 #include "nweb_remove_visited_links_callback.h"
@@ -25,7 +27,8 @@
 namespace OHOS {
 namespace NWeb {
 
-class AniRemoveVisitedLinksCallback : public NWebRemoveVisitedLinksCallback {
+class AniRemoveVisitedLinksCallback : public std::enable_shared_from_this<AniRemoveVisitedLinksCallback>,
+                                      public NWebRemoveVisitedLinksCallback {
 public:
     AniRemoveVisitedLinksCallback(ani_env* env, ani_resolver resolver);
     ~AniRemoveVisitedLinksCallback() = default;
@@ -33,8 +36,11 @@ public:
     void OnRemoveComplete() override;
 
 private:
-    ani_env* env_ = nullptr;
+    void ResolvePromise();
+
+    ani_vm* vm_ = nullptr;
     ani_resolver resolver_ = nullptr;
+    std::shared_ptr<AppExecFwk::EventHandler> mainHandler_;
 };
 
 } // namespace NWeb
