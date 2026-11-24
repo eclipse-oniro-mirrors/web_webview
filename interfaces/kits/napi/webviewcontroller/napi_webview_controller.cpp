@@ -1378,10 +1378,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             static_cast<int32_t>(NWebPageTransition::CHAIN_END))),
         DECLARE_NAPI_STATIC_PROPERTY("CLIENT_REDIRECT", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(NWebPageTransition::CLIENT_REDIRECT))),
-        DECLARE_NAPI_STATIC_PROPERTY("SERVER_REDIRECT", NapiParseUtils::ToInt32Value(env,
-            static_cast<int32_t>(NWebPageTransition::SERVER_REDIRECT))),
-        DECLARE_NAPI_STATIC_PROPERTY("IS_REDIRECT_MASK", NapiParseUtils::ToInt32Value(env,
-            static_cast<int32_t>(NWebPageTransition::IS_REDIRECT_MASK))),
         DECLARE_NAPI_STATIC_PROPERTY("QUALIFIER_MASK", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(NWebPageTransition::QUALIFIER_MASK))),
     };

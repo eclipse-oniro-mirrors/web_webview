@@ -203,8 +203,6 @@ export default namespace webview {
         CHAIN_START = 0x10000000,
         CHAIN_END = 0x20000000,
         CLIENT_REDIRECT = 0x40000000,
-        SERVER_REDIRECT = -2147483648,  // 0x80000000
-        IS_REDIRECT_MASK = -1073741824, // 0xC0000000
         QUALIFIER_MASK = -256           // 0xFFFFFF00
     }
 
