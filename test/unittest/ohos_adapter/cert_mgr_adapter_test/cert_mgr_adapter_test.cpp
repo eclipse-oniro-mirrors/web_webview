@@ -746,12 +746,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_MallocFail_015, TestSize.Level1)
 }
 
 /**
- * @tc.name: CertMgrAdapterTest_CheckCertRevocation_NoStrategyData_009
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_NoStrategyData_016
  * @tc.desc: CheckCertRevocation with no strategy data (CF_SUCCESS, not revoked).
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_NoStrategyData_009, TestSize.Level1)
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_NoStrategyData_016, TestSize.Level1)
 {
     CertManagerAdapterImpl adapter;
     std::vector<std::string> cert_bytes;
@@ -771,12 +771,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_NoStrategyDa
 }
 
 /**
- * @tc.name: CertMgrAdapterTest_CheckCertRevocation_ApiError_010
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_ApiError_017
  * @tc.desc: CheckCertRevocation with API error (fail-open returns false).
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_ApiError_010, TestSize.Level1)
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_ApiError_017, TestSize.Level1)
 {
     CertManagerAdapterImpl adapter;
     std::vector<std::string> cert_bytes;
@@ -794,4 +794,116 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_ApiError_010
     bool result = adapter.CheckCertRevocation(cert_bytes);
     EXPECT_FALSE(result);
 }
-} // namespace OHOS
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_EmptyInput_018
+ * @tc.desc: CheckCertRevocation with empty cert list returns false without calling any API.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_EmptyInput_018, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+ 
+    // No certificate is created nor checked when the input list is empty.
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _)).Times(0);
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _)).Times(0);
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(0);
+ 
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_EmptyCertDer_019
+ * @tc.desc: CheckCertRevocation skips empty cert entry, resulting in empty cert set and returns false.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_EmptyCertDer_019, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+    cert_bytes.emplace_back("");
+ 
+    // Empty DER entry is skipped, so no certificate is created and no revocation check is performed.
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _)).Times(0);
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _)).Times(0);
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(0);
+ 
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_CreateFail_020
+ * @tc.desc: CheckCertRevocation returns false when HcfX509CertificateCreate fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_CreateFail_020, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+    cert_bytes.emplace_back(std::string(10, '\x30'));
+ 
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _))
+        .Times(1)
+        .WillOnce(Return(static_cast<CfResult>(-1)));
+    // Creation failed, so the cert set is empty: no revocation check and no destroy.
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _)).Times(0);
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(0);
+ 
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_CreateNullCert_021
+ * @tc.desc: CheckCertRevocation returns false when create succeeds but returns a null cert.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_CreateNullCert_021, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+    cert_bytes.emplace_back(std::string(10, '\x30'));
+ 
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgPointee<1>(static_cast<HcfX509Certificate*>(nullptr)), Return(CF_SUCCESS)));
+    // Null cert is skipped, so the cert set is empty: no revocation check and no destroy.
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _)).Times(0);
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(0);
+ 
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: CertMgrAdapterTest_CheckCertRevocation_Revoked_022
+ * @tc.desc: CheckCertRevocation returns true when the certificate chain is revoked.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_Revoked_022, TestSize.Level1)
+{
+    CertManagerAdapterImpl adapter;
+    std::vector<std::string> cert_bytes;
+    cert_bytes.emplace_back(std::string(10, '\x30'));
+ 
+    static HcfX509Certificate* dummyCert = reinterpret_cast<HcfX509Certificate*>(0x11);
+    EXPECT_CALL(*mockCmApi_, HcfX509CertificateCreate(_, _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgPointee<1>(dummyCert), Return(CF_SUCCESS)));
+    EXPECT_CALL(*mockCmApi_, HcfCertRevocationCheck(_, _))
+        .Times(1)
+        .WillOnce(DoAll(SetArgPointee<1>(0), Return(CF_ERR_CERT_REVOKED)));
+    EXPECT_CALL(*mockCmApi_, CfObjDestroy(_)).Times(1);
+ 
+    bool result = adapter.CheckCertRevocation(cert_bytes);
+    EXPECT_TRUE(result);
+}
+} // namespace OHOS::NWeb
