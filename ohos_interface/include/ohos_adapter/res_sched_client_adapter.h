@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <unistd.h>
+#include <string>
 
 namespace OHOS::NWeb {
 
@@ -92,6 +93,8 @@ public:
     // The startup scene expires in RSS; inactive only clears the synthetic window state.
     static bool ReportNWebPreloadRenderProcess(pid_t pid);
     static void ReportPreloadNWebCreate(bool isPreload);
+    // when render create start up pre read IO
+    static void ReportNWebCreate(int32_t status, pid_t pid, const std::string& bundleName);
 };
 
 } // namespace OHOS::NWeb

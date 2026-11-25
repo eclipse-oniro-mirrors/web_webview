@@ -543,4 +543,20 @@ void ResSchedClientAdapter::ReportPreloadNWebCreate(bool isPreloadNWeb)
     g_isPreloadNWeb = isPreloadNWeb;
     WVLOG_D("ReportIsPreload g_isPreloadNWeb: %{public}d", isPreloadNWeb);
 }
+
+void ResSchedClientAdapter::ReportNWebCreate(int32_t status, pid_t pid, const std::string& bundleName)
+{
+    static uint32_t resType = ResType::RES_TYPE_NWEB_CREATE;
+    if (status != ResType::NWebCreateType::NWEB_CREATE_START &&
+        status != ResType::NWebCreateType::NWEB_CREATE_COMPLETE) {
+        return;
+    }
+    std::unordered_map<std::string, std::string> mapPayload { { "uid", GetUidString() },
+        { "clientPid", std::to_string(pid) }, { "bundleName", bundleName },
+        { "isArkWebUpdate", std::to_string(0) } };
+    ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
+    WVLOG_I("ReportNWebCreate reported for pre read when render start up, resType: %{public}u, "
+        "status: %{public}d, uid: %{public}s, pid: %{public}d, bundleName: %{public}s",
+        resType, status, GetUidString().c_str(), pid, bundleName.c_str());
+}
 } // namespace OHOS::NWeb
