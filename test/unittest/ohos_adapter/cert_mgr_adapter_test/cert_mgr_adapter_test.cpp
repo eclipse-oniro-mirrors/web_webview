@@ -906,4 +906,4 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_CheckCertRevocation_Revoked_022,
     bool result = adapter.CheckCertRevocation(cert_bytes);
     EXPECT_TRUE(result);
 }
-} // namespace OHOS::NWeb
+} // namespace OHOS
