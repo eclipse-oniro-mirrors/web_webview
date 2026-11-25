@@ -6115,7 +6115,7 @@ napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info 
     }
 
     NWebPrintDocumentAdapterAdapter *adapter =
-        reinterpret_cast<NWebPrintDocumentAdapterAdapter *>(addrWebPrintDoc));
+        reinterpret_cast<NWebPrintDocumentAdapterAdapter *>(addrWebPrintDoc);
     if (adapter == nullptr) {
         WVLOG_E("NWebPrintDocumentAdapterAdapter null");
         return nullptr;
