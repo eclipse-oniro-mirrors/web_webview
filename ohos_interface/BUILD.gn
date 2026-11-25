@@ -151,7 +151,7 @@ action("webview_interface_prepare") {
     "//base/web/webview/ohos_interface/include/ohos_adapter/ohos_web_data_base_adapter.h",
     "//base/web/webview/ohos_interface/include/ohos_adapter/background_task_adapter.h",
     "//base/web/webview/ohos_interface/include/ohos_adapter/camera_manager_adapter.h",
-    "//base/web/webview/ohos_interface/include/ohos_adapter/imf_adapter.h"
+    "//base/web/webview/ohos_interface/include/ohos_adapter/imf_adapter.h",
   ]
 
   args = [
@@ -199,7 +199,7 @@ action("webview_glue_base_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/scripts/make_ctocpp_impl.py",
     "//base/web/webview/ohos_interface/ohos_glue/scripts/make_file_base.py",
     "//base/web/webview/ohos_interface/ohos_glue/scripts/system_util.py",
-    "//base/web/webview/ohos_interface/ohos_glue/scripts/translator.py"
+    "//base/web/webview/ohos_interface/ohos_glue/scripts/translator.py",
   ]
 
   args = [
@@ -224,7 +224,7 @@ action("webview_glue_nweb_generate") {
     "--stamp",
     rebase_path("${target_gen_dir}/${target_name}.stamp", root_build_dir),
   ]
-  outputs = ["${target_gen_dir}/${target_name}.stamp"]
+  outputs = [ "${target_gen_dir}/${target_name}.stamp" ]
 }
 
 action("webview_glue_nweb_prepare") {
@@ -316,6 +316,9 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_console_log.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_js_result_callback.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_hit_test_result.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_rect.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_rect_wrapper.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_rect_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_select_menu_bound.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_js_proxy_method.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_handler.h",
@@ -648,7 +651,7 @@ action("webview_glue_adapter_generate") {
     "--stamp",
     rebase_path("${target_gen_dir}/${target_name}.stamp", root_build_dir),
   ]
-  outputs = ["${target_gen_dir}/${target_name}.stamp"]
+  outputs = [ "${target_gen_dir}/${target_name}.stamp" ]
 }
 
 action("webview_glue_adapter_prepare") {
@@ -1021,7 +1024,7 @@ action("webview_glue_adapter_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_adapter/cpptoc/webview/ark_audio_device_desc_adapter_vector_cpptoc.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_adapter/cpptoc/webview/ark_video_device_descriptor_adapter_vector_cpptoc.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_adapter/cpptoc/webview/ark_paste_record_vector_cpptoc.h",
-    "//base/web/webview/ohos_interface/ohos_glue/ohos_adapter/cpptoc/webview/ark_video_device_descriptor_adapter_vector_cpptoc.cpp"
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_adapter/cpptoc/webview/ark_video_device_descriptor_adapter_vector_cpptoc.cpp",
   ]
 
   args = [
