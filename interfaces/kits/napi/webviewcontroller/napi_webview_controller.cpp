@@ -6114,8 +6114,13 @@ napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info 
         return nullptr;
     }
 
-    WebPrintDocument *webPrintDoc = new (std::nothrow) WebPrintDocument(
+    NWebPrintDocumentAdapterAdapter *adapter =
         reinterpret_cast<NWebPrintDocumentAdapterAdapter *>(addrWebPrintDoc));
+    if (adapter == nullptr) {
+        WVLOG_E("NWebPrintDocumentAdapterAdapter null");
+        return nullptr;
+    }
+    WebPrintDocument *webPrintDoc = new WebPrintDocument(adapter);
     if (webPrintDoc == nullptr) {
         WVLOG_E("new web print failed");
         return nullptr;
