@@ -80,17 +80,17 @@ public:
     // implementation builds a JS WebDevicePermissionRequest object, wraps
     // the request data inside it, and dispatches it to the application's
     // onDevicePicker callback.
-    void OnDevicePicker(int32_t nweb_id, const std::string& request_id,
-                        const NWebDevicePermissionRequestBase& request_info,
-                        const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
-                        std::shared_ptr<NWebDevicePermissionResultCallback> callback) override;
+    void OnDevicePicker(int32_t nwebId, const std::string& requestId,
+        const NWebDevicePermissionRequestBase& request_info,
+        const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
+        std::shared_ptr<NWebDevicePermissionResultCallback> callback) override;
 
-    void OnQueryDevicePermission(int32_t nweb_id,
-                                        std::shared_ptr<NWebPermissionOriginsResultCallback> callback) override;
+    void OnQueryDevicePermission(int32_t nwebId,
+        std::shared_ptr<NWebPermissionOriginsResultCallback> callback) override;
 
-    void OnPermissionRevoked(int32_t nweb_id, const NWebDevicePermissionRevokedEvent& event) override;
+    void OnPermissionRevoked(int32_t nwebId, const NWebDevicePermissionRevokedEvent& event) override;
 
-    void OnDeviceListUpdated(int32_t nweb_id, const NWebDeviceListUpdateEvent& event) override;
+    void OnDeviceListUpdated(int32_t nwebId, const NWebDeviceListUpdateEvent& event) override;
 
     // Stores the JS callback registered via onDevicePicker(callback).
     void PutOnDevicePicker(napi_env env, napi_value callback);
@@ -127,7 +127,7 @@ private:
     // ReplaceCallbackRef and ReleaseJsReferences. All other ref accesses
     // happen on the JS thread (posted lambdas), serialized against the
     // writers by the JS thread itself.
-    std::mutex refs_mutex_;
+    std::mutex refsMutex_;
 
     // Helper to safely replace a napi_ref.
     void ReplaceCallbackRef(napi_env env, napi_value callback, napi_ref &ref);

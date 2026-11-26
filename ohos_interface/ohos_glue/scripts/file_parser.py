@@ -356,15 +356,15 @@ _simpletypes = {
     'Type':['Type', 'NONE'],
     'unsigned char':['unsigned char', '0'],
     'ArkWebDateTime':['ArkWebDateTime', 'ark_web_date_time_default'],
-    'ArkWebDevicePermissionDeviceIdentifier':[
+    'ArkWebDevicePermissionDeviceIdentifier': [
         'ArkWebDevicePermissionDeviceIdentifier', 'ark_web_device_permission_device_identifier_default'],
-    'ArkWebDevicePermissionRequestBase':[
+    'ArkWebDevicePermissionRequestBase': [
         'ArkWebDevicePermissionRequestBase', 'ark_web_device_permission_request_base_default'],
-    'ArkWebDevicePermissionDeviceIdentifierVector':[
+    'ArkWebDevicePermissionDeviceIdentifierVector': [
         'ArkWebDevicePermissionDeviceIdentifierVector', 'ark_web_device_permission_device_identifier_vector_default'],
-    'ArkWebDevicePermissionRevokedEvent':[
+    'ArkWebDevicePermissionRevokedEvent': [
         'ArkWebDevicePermissionRevokedEvent', 'ark_web_device_permission_revoked_event_default'],
-    'ArkWebDeviceListUpdateEvent':[
+    'ArkWebDeviceListUpdateEvent': [
         'ArkWebDeviceListUpdateEvent', 'ark_web_device_list_update_event_default'],
     'AccessMode':['AccessMode', 'NEVER_ALLOW'],
     'TextDirection':['TextDirection', 'SP_UNKNOWN'],
@@ -1651,6 +1651,21 @@ class obj_argument:
     return ''
 
 
+def _split_attached_ref_ptr(type_str, name):
+    """ Split a by-ref / by-addr marker attached to the name or the type. """
+    isbyref = False
+    isbyaddr = False
+    if name is not None and name and name[0] in '&*':
+        isbyref = name[0] == '&'
+        isbyaddr = not isbyref
+        name = name[1:]
+    elif type_str.endswith('&') or type_str.endswith('*'):
+        isbyref = type_str.endswith('&')
+        isbyaddr = not isbyref
+        type_str = type_str[:-1].strip()
+    return isbyref, isbyaddr, type_str, name
+
+
 class obj_analysis:
   """ Class representing an analysis of a data type value. """
 
@@ -1687,30 +1702,10 @@ class obj_analysis:
     # combine the data type
     self.type = ' '.join(partlist)
 
-    # initialize the by-ref / by-addr flags
-    self.isbyref = False
-    self.isbyaddr = False
-
     # Handle the case where & or * is attached to the end of the type
     # (e.g. "const ArkWebString& url" or "const char* web_tag") rather than
     # to the beginning of the name (e.g. "const char *web_tag").
-    if self.name is not None:
-      endchar = self.name[0]
-      if endchar == '&':
-        self.isbyref = True
-        self.name = self.name[1:]
-      elif endchar == '*':
-        self.isbyaddr = True
-        self.name = self.name[1:]
-
-    if not self.isbyref and not self.isbyaddr:
-      # & or * may be attached to the type instead of the name
-      if self.type.endswith('&'):
-        self.isbyref = True
-        self.type = self.type[:-1].strip()
-      elif self.type.endswith('*'):
-        self.isbyaddr = True
-        self.type = self.type[:-1].strip()
+    self.isbyref, self.isbyaddr, self.type, self.name = _split_attached_ref_ptr(self.type, self.name)
 
     # see if the value is directly identifiable
     if self._check_advanced(self.type):

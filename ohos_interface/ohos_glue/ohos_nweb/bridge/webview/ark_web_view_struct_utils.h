@@ -42,8 +42,7 @@ OHOS::NWeb::NWebDevicePermissionRequestBase ArkWebDevicePermissionRequestBaseStr
 ArkWebDevicePermissionDeviceIdentifierVector ArkWebDevicePermissionDeviceIdentifierVectorClassToStruct(
     const std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier>& class_value);
 
-std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier>
-ArkWebDevicePermissionDeviceIdentifierVectorStructToClass(
+std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier> ArkWebDevicePermissionDeviceIdentifierVectorStructToClass(
     const ArkWebDevicePermissionDeviceIdentifierVector& struct_value);
 
 void ArkWebDevicePermissionDeviceIdentifierVectorStructRelease(

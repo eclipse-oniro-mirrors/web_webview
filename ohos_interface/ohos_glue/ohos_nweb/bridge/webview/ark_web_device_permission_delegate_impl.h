@@ -21,7 +21,6 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebDevicePermissionDelegateImpl : public ArkWebDevicePermissionDelegate {
-
 public:
     explicit ArkWebDevicePermissionDelegateImpl(std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> ref);
     ~ArkWebDevicePermissionDelegateImpl() = default;

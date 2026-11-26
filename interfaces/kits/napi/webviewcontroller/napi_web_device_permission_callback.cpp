@@ -45,11 +45,16 @@ struct PermissionOriginsCallbackHolder {
 constexpr unsigned char JSON_CONTROL_CHAR_MAX = 0x20;
 constexpr size_t JSON_UNICODE_ESCAPE_BUF_SIZE = 8;
 
+// Room reserved for the pair of JSON quotes that enclose the escaped string
+// at the call sites.
+constexpr size_t JSON_ENCLOSING_QUOTES_SIZE = 2;
+
 // Appends one control character as a \uXXXX escape sequence.
 void AppendControlCharEscape(std::string& output, unsigned char c)
 {
     char buf[JSON_UNICODE_ESCAPE_BUF_SIZE] = {0};
-    if (snprintf_s(buf, sizeof(buf), sizeof(buf) - 1, "\\u%04x", c) > 0) {
+    if (snprintf_s(buf, sizeof(buf), sizeof(buf) - 1, "\\u%04x",
+            static_cast<unsigned int>(c)) > 0) {
         output += buf;
     }
 }
@@ -58,7 +63,7 @@ void AppendControlCharEscape(std::string& output, unsigned char c)
 std::string EscapeJsonString(const std::string& input)
 {
     std::string output;
-    output.reserve(input.size() + 2);
+    output.reserve(input.size() + JSON_ENCLOSING_QUOTES_SIZE);
     for (char c : input) {
         switch (c) {
             case '"':

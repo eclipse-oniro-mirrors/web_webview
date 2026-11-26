@@ -21,7 +21,6 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebDevicePermissionResultCallbackImpl : public ArkWebDevicePermissionResultCallback {
-
 public:
     explicit ArkWebDevicePermissionResultCallbackImpl(
         std::shared_ptr<OHOS::NWeb::NWebDevicePermissionResultCallback> ref);

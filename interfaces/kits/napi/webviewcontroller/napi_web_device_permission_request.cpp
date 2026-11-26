@@ -269,17 +269,17 @@ napi_value NapiWebDevicePermissionRequest::Init(napi_env env, napi_value exports
         DECLARE_NAPI_FUNCTION("select", JS_Select),
         DECLARE_NAPI_FUNCTION("cancel", JS_Cancel),
     };
-    const std::string WEB_DEVICE_PERMISSION_REQUEST = "WebPermissionRequest";
+    const std::string webDevicePermissionRequest = "WebPermissionRequest";
     napi_value klass = nullptr;
-    napi_status status = napi_define_class(env, WEB_DEVICE_PERMISSION_REQUEST.c_str(),
-        WEB_DEVICE_PERMISSION_REQUEST.length(), JS_Constructor, nullptr,
+    napi_status status = napi_define_class(env, webDevicePermissionRequest.c_str(),
+        webDevicePermissionRequest.length(), JS_Constructor, nullptr,
         sizeof(properties) / sizeof(properties[0]), properties, &klass);
     if (status != napi_ok) {
         WVLOG_E("NapiWebDevicePermissionRequest::Init define class failed, ret=%{public}d",
                 static_cast<int32_t>(status));
         return exports;
     }
-    status = napi_set_named_property(env, exports, WEB_DEVICE_PERMISSION_REQUEST.c_str(), klass);
+    status = napi_set_named_property(env, exports, webDevicePermissionRequest.c_str(), klass);
     if (status != napi_ok) {
         WVLOG_E("NapiWebDevicePermissionRequest::Init set named property failed, ret=%{public}d",
                 static_cast<int32_t>(status));

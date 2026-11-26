@@ -106,8 +106,7 @@ ArkWebDevicePermissionDeviceIdentifierVector ArkWebDevicePermissionDeviceIdentif
     return struct_value;
 }
 
-std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier>
-ArkWebDevicePermissionDeviceIdentifierVectorStructToClass(
+std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier> ArkWebDevicePermissionDeviceIdentifierVectorStructToClass(
     const ArkWebDevicePermissionDeviceIdentifierVector& struct_value)
 {
     std::vector<OHOS::NWeb::NWebDevicePermissionDeviceIdentifier> class_value;

@@ -31,8 +31,8 @@ namespace NWeb {
 
 namespace {
 // Maps nwebId -> delegate. Mirrors the pattern used by WebDownloadManager.
-std::unordered_map<int32_t, std::shared_ptr<WebDevicePermissionDelegate>> g_web_device_permission_delegate_map;
-std::mutex g_web_device_permission_delegate_mutex;
+std::unordered_map<int32_t, std::shared_ptr<WebDevicePermissionDelegate>> g_webDevicePermissionDelegateMap;
+std::mutex g_webDevicePermissionDelegateMutex;
 } // namespace
 
 WebDevicePermissionDelegate::WebDevicePermissionDelegate(napi_env env) : env_(env)
@@ -46,11 +46,11 @@ WebDevicePermissionDelegate::~WebDevicePermissionDelegate()
     // ZERO NAPI operations — all napi_refs have already been deleted on the
     // JS thread by ReleaseJsReferences() (from the JS wrapper's napi_wrap
     // finalizer), so this is pure C++ cleanup and safe on any thread.
-    std::lock_guard<std::mutex> lock(g_web_device_permission_delegate_mutex);
-    auto it = g_web_device_permission_delegate_map.begin();
-    while (it != g_web_device_permission_delegate_map.end()) {
+    std::lock_guard<std::mutex> lock(g_webDevicePermissionDelegateMutex);
+    auto it = g_webDevicePermissionDelegateMap.begin();
+    while (it != g_webDevicePermissionDelegateMap.end()) {
         if (it->second.get() == this) {
-            it = g_web_device_permission_delegate_map.erase(it);
+            it = g_webDevicePermissionDelegateMap.erase(it);
         } else {
             ++it;
         }
@@ -71,9 +71,9 @@ void WebDevicePermissionDelegate::ReleaseJsReferences(napi_env env)
                            &on_permission_revoked_callback_, &on_device_list_updated_callback_};
     const char *names[] = {"onDeviceSelect", "onQueryDevicePermission",
                            "onDevicePermissionRevoke", "onDeviceListUpdate"};
-    // Hold refs_mutex_ while deleting/nulling: a kernel thread may be reading
+    // Hold refsMutex_ while deleting/nulling: a kernel thread may be reading
     // these refs concurrently (OnDevicePicker's early null-check).
-    std::lock_guard<std::mutex> lock(refs_mutex_);
+    std::lock_guard<std::mutex> lock(refsMutex_);
     for (size_t i = 0; i < sizeof(members) / sizeof(members[0]); ++i) {
         if (*members[i] != nullptr) {
             napi_status status = napi_delete_reference(env, *members[i]);
@@ -202,7 +202,7 @@ void WebDevicePermissionDelegate::PostToJsThread(const std::function<void()> &ha
 }
 
 void WebDevicePermissionDelegate::DispatchCallback(napi_env env, napi_ref ref, napi_value arg,
-                                                    const std::function<void()> &fallback)
+    const std::function<void()> &fallback)
 {
     if (!env) {
         WVLOG_E("DispatchCallback nil env");
@@ -236,9 +236,9 @@ void WebDevicePermissionDelegate::ReplaceCallbackRef(napi_env env, napi_value ca
         WVLOG_E("ReplaceCallbackRef nil env");
         return;
     }
-    // Hold refs_mutex_ while deleting/replacing: a kernel thread may be
+    // Hold refsMutex_ while deleting/replacing: a kernel thread may be
     // reading the ref concurrently (OnDevicePicker's early null-check).
-    std::lock_guard<std::mutex> lock(refs_mutex_);
+    std::lock_guard<std::mutex> lock(refsMutex_);
     if (ref) {
         napi_status status = napi_delete_reference(env, ref);
         if (status != napi_ok) {
@@ -285,30 +285,30 @@ void WebDevicePermissionDelegate::DispatchPickerRequest(const PickerRequestArgs 
     BuildAndDispatchRequest(env_, callbackFunc, args);
 }
 
-void WebDevicePermissionDelegate::OnDevicePicker(int32_t nweb_id, const std::string& request_id,
-                                                 const NWebDevicePermissionRequestBase& request_info,
-                                                 const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
-                                                 std::shared_ptr<NWebDevicePermissionResultCallback> callback)
+void WebDevicePermissionDelegate::OnDevicePicker(int32_t nwebId, const std::string& requestId,
+    const NWebDevicePermissionRequestBase& request_info,
+    const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
+    std::shared_ptr<NWebDevicePermissionResultCallback> callback)
 {
     WVLOG_I("WebDevicePermissionDelegate::OnDevicePicker nwebId=%{public}d requestId=%{public}s "
             "deviceCount=%{public}zu",
-            nweb_id, request_id.c_str(), devices.size());
+            nwebId, requestId.c_str(), devices.size());
     if (env_ == nullptr) {
         WVLOG_E("OnDevicePicker nil env");
         if (callback) { callback->OnCancel(); }
         return;
     }
     // This may run on a kernel thread while the JS thread replaces/releases
-    // the callback refs. Snapshot the null-check under refs_mutex_ to avoid
+    // the callback refs. Snapshot the null-check under refsMutex_ to avoid
     // a data race; the queued JS-thread work re-checks under JS-thread
     // ordering, so a ref released right after this check is still handled
     // safely.
-    bool has_picker_callback = false;
+    bool hasPickerCallback = false;
     {
-        std::lock_guard<std::mutex> lock(refs_mutex_);
-        has_picker_callback = on_device_picker_callback_ != nullptr;
+        std::lock_guard<std::mutex> lock(refsMutex_);
+        hasPickerCallback = on_device_picker_callback_ != nullptr;
     }
-    if (!has_picker_callback) {
+    if (!hasPickerCallback) {
         WVLOG_E("OnDevicePicker on_device_picker_callback_ is null, cancelling request");
         // The application never registered onDevicePicker; resolve with
         // cancel so the kernel request is not left dangling.
@@ -318,8 +318,8 @@ void WebDevicePermissionDelegate::OnDevicePicker(int32_t nweb_id, const std::str
     // SEC-THREAD-02: the kernel may call this on a non-JS thread; marshal all
     // NAPI work to the JS thread via the env's uv loop.
     PickerRequestArgs args;
-    args.nwebId = nweb_id;
-    args.requestId = request_id;
+    args.nwebId = nwebId;
+    args.requestId = requestId;
     args.requestInfo = request_info;
     args.devices = devices;
     args.callback = callback;
@@ -416,10 +416,10 @@ void WebDevicePermissionDelegate::BuildAndDispatchRequest(
 }
 
 void WebDevicePermissionDelegate::OnQueryDevicePermission(
-    int32_t nweb_id,
+    int32_t nwebId,
     std::shared_ptr<NWebPermissionOriginsResultCallback> callback)
 {
-    WVLOG_I("OnQueryDevicePermission nwebId=%{public}d", nweb_id);
+    WVLOG_I("OnQueryDevicePermission nwebId=%{public}d", nwebId);
     if (env_ == nullptr) {
         WVLOG_E("OnQueryDevicePermission nil env");
         if (callback) { callback->OnReply(""); }
@@ -427,7 +427,7 @@ void WebDevicePermissionDelegate::OnQueryDevicePermission(
     }
     // SEC-THREAD-02: marshal the JS interaction to the JS thread.
     PostToJsThread(
-        [this, nweb_id, callback]() {
+        [this, nwebId, callback]() {
             if (env_ == nullptr || on_query_permission_origins_callback_ == nullptr) {
                 // Either the finalizer released the refs while this work was
                 // queued, or the application never registered
@@ -459,9 +459,9 @@ void WebDevicePermissionDelegate::OnQueryDevicePermission(
 }
 
 void WebDevicePermissionDelegate::OnPermissionRevoked(
-    int32_t nweb_id, const NWebDevicePermissionRevokedEvent& event)
+    int32_t nwebId, const NWebDevicePermissionRevokedEvent& event)
 {
-    WVLOG_D("OnPermissionRevoked nwebId=%{public}d", nweb_id);
+    WVLOG_D("OnPermissionRevoked nwebId=%{public}d", nwebId);
     if (env_ == nullptr) {
         WVLOG_E("OnPermissionRevoked nil env");
         return;
@@ -483,9 +483,9 @@ void WebDevicePermissionDelegate::OnPermissionRevoked(
 }
 
 void WebDevicePermissionDelegate::OnDeviceListUpdated(
-    int32_t nweb_id, const NWebDeviceListUpdateEvent& event)
+    int32_t nwebId, const NWebDeviceListUpdateEvent& event)
 {
-    WVLOG_I("OnDeviceListUpdated nwebId=%{public}d", nweb_id);
+    WVLOG_I("OnDeviceListUpdated nwebId=%{public}d", nwebId);
     if (env_ == nullptr) {
         WVLOG_E("OnDeviceListUpdated nil env");
         return;
@@ -519,8 +519,8 @@ void AddDelegateForWeb(int32_t nwebId, std::shared_ptr<WebDevicePermissionDelega
 {
     WVLOG_I("AddDelegateForWeb nwebId=%{public}d", nwebId);
     {
-        std::lock_guard<std::mutex> lock(g_web_device_permission_delegate_mutex);
-        g_web_device_permission_delegate_map.insert_or_assign(nwebId, delegate);
+        std::lock_guard<std::mutex> lock(g_webDevicePermissionDelegateMutex);
+        g_webDevicePermissionDelegateMap.insert_or_assign(nwebId, delegate);
     }
 
     // Register the delegate with the arkweb kernel via the NWeb glue
@@ -539,11 +539,11 @@ void RemoveDelegateRef(int32_t nwebId)
 {
     std::shared_ptr<WebDevicePermissionDelegate> delegate;
     {
-        std::lock_guard<std::mutex> lock(g_web_device_permission_delegate_mutex);
-        auto it = g_web_device_permission_delegate_map.find(nwebId);
-        if (it != g_web_device_permission_delegate_map.end()) {
+        std::lock_guard<std::mutex> lock(g_webDevicePermissionDelegateMutex);
+        auto it = g_webDevicePermissionDelegateMap.find(nwebId);
+        if (it != g_webDevicePermissionDelegateMap.end()) {
             delegate = it->second;
-            g_web_device_permission_delegate_map.erase(it);
+            g_webDevicePermissionDelegateMap.erase(it);
         }
     }
     // Unregister the delegate from the arkweb kernel so no further callbacks

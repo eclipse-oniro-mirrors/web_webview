@@ -126,7 +126,7 @@ napi_value NapiWebDevicePermissionDelegate::JS_Constructor(napi_env env, napi_ca
 }
 
 static void ExportEnum(napi_env env, napi_value exports, const std::string &name,
-                        napi_property_descriptor *props, size_t propCount)
+    napi_property_descriptor *props, size_t propCount)
 {
     napi_value enumObj = nullptr;
     napi_define_class(env, name.c_str(), name.length(), CreateEnumConstructor,
@@ -186,16 +186,16 @@ napi_value NapiWebDevicePermissionDelegate::Init(napi_env env, napi_value export
         DECLARE_NAPI_FUNCTION("onDevicePermissionRevoke", JS_OnPermissionRevoked),
         DECLARE_NAPI_FUNCTION("onDeviceListUpdate", JS_OnDeviceListUpdated),
     };
-    const std::string DELEGATE_NAME = "WebDevicePermissionDelegate";
+    const std::string delegateName = "WebDevicePermissionDelegate";
     napi_value klass = nullptr;
-    napi_status status = napi_define_class(env, DELEGATE_NAME.c_str(),
-        DELEGATE_NAME.length(), JS_Constructor, nullptr,
+    napi_status status = napi_define_class(env, delegateName.c_str(),
+        delegateName.length(), JS_Constructor, nullptr,
         sizeof(properties) / sizeof(properties[0]), properties, &klass);
     if (status != napi_ok) {
         WVLOG_E("Init define class failed, ret=%{public}d", static_cast<int32_t>(status));
         return exports;
     }
-    napi_set_named_property(env, exports, DELEGATE_NAME.c_str(), klass);
+    napi_set_named_property(env, exports, delegateName.c_str(), klass);
     ExportHardwareTypeEnum(env, exports);
     ExportDeviceListUpdateActionEnum(env, exports);
     ExportGuardPolicyEnum(env, exports);

@@ -21,7 +21,6 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebPermissionOriginsResultCallbackImpl : public ArkWebPermissionOriginsResultCallback {
-
 public:
     explicit ArkWebPermissionOriginsResultCallbackImpl(
         std::shared_ptr<OHOS::NWeb::NWebPermissionOriginsResultCallback> ref);
