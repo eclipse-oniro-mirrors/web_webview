@@ -107,4 +107,14 @@ bool ArkIMFAdapterImpl::SendPrivateCommand(const ArkWebString& commandKey, const
     return real_->SendPrivateCommand(key, value);
 }
 
+bool ArkIMFAdapterImpl::IsQuickTranslateAvailable()
+{
+    return real_->IsQuickTranslateAvailable();
+}
+
+bool ArkIMFAdapterImpl::RequestQuickTranslate()
+{
+    return real_->RequestQuickTranslate();
+}
+
 } // namespace OHOS::ArkWeb

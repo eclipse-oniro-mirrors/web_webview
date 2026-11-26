@@ -166,6 +166,10 @@ public:
 
     bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue) override;
 
+    bool IsQuickTranslateAvailable() override;
+
+    bool RequestQuickTranslate() override;
+
 private:
     sptr<MiscServices::OnTextChangedListener> textListener_ = nullptr;
 

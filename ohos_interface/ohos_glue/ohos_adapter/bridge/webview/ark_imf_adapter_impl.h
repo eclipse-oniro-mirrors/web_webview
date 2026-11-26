@@ -46,6 +46,10 @@ public:
 
     bool SendPrivateCommand(const ArkWebString& commandKey, const ArkWebString& commandValue) override;
 
+    bool IsQuickTranslateAvailable() override;
+
+    bool RequestQuickTranslate() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::IMFAdapter> real_;
 

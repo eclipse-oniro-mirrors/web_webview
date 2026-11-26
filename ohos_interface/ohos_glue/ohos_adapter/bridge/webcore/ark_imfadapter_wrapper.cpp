@@ -114,4 +114,14 @@ bool ArkIMFAdapterWrapper::SendPrivateCommand(const std::string& commandKey, con
     return result;
 }
 
+bool ArkIMFAdapterWrapper::IsQuickTranslateAvailable()
+{
+    return ctocpp_->IsQuickTranslateAvailable();
+}
+
+bool ArkIMFAdapterWrapper::RequestQuickTranslate()
+{
+    return ctocpp_->RequestQuickTranslate();
+}
+
 } // namespace OHOS::ArkWeb

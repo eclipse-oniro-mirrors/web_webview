@@ -568,4 +568,34 @@ void IMFTextListenerAdapterImpl::NotifyPanelStatusInfo(const MiscServices::Panel
         }
     }
 }
+
+bool IMFAdapterImpl::IsQuickTranslateAvailable()
+{
+    auto controller = MiscServices::InputMethodController::GetInstance();
+    if (!controller) {
+        WVLOG_E("quick translate input method controller unavailable");
+        return false;
+    }
+    auto property = controller->GetCurrentInputMethod();
+    if (!property) {
+        WVLOG_E("quick translate current input method unavailable");
+        return false;
+    }
+    return property->name == "com.huawei.hmos.inputmethod";
+}
+
+bool IMFAdapterImpl::RequestQuickTranslate()
+{
+    auto controller = MiscServices::InputMethodController::GetInstance();
+    if (!controller) {
+        WVLOG_E("quick translate input method controller unavailable");
+        return false;
+    }
+    const auto ret = controller->RequestSystemInputCapability(MiscServices::InputCapabilityType::TRANSLATION);
+    if (ret != 0) {
+        WVLOG_E("quick translate capability request failed, ret=%{public}d", ret);
+    }
+    return ret == 0;
+}
+
 } // namespace OHOS::NWeb
