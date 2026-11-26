@@ -50,8 +50,6 @@ enum class NWebPageTransition : int32_t {
     CHAIN_START = 0x10000000,
     CHAIN_END = 0x20000000,
     CLIENT_REDIRECT = 0x40000000,
-    SERVER_REDIRECT = (-2147483647 - 1),
-    IS_REDIRECT_MASK = (-1073741824),
     QUALIFIER_MASK = (-256),
 };
 
