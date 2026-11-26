@@ -50,11 +50,10 @@ constexpr size_t JSON_UNICODE_ESCAPE_BUF_SIZE = 8;
 constexpr size_t JSON_ENCLOSING_QUOTES_SIZE = 2;
 
 // Appends one control character as a \uXXXX escape sequence.
-void AppendControlCharEscape(std::string& output, unsigned char c)
+void AppendControlCharEscape(std::string& output, unsigned int c)
 {
     char buf[JSON_UNICODE_ESCAPE_BUF_SIZE] = {0};
-    if (snprintf_s(buf, sizeof(buf), sizeof(buf) - 1, "\\u%04x",
-            static_cast<unsigned int>(c)) > 0) {
+    if (snprintf_s(buf, sizeof(buf), sizeof(buf) - 1, "\\u%04x", c) > 0) {
         output += buf;
     }
 }
