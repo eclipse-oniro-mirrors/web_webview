@@ -356,6 +356,16 @@ _simpletypes = {
     'Type':['Type', 'NONE'],
     'unsigned char':['unsigned char', '0'],
     'ArkWebDateTime':['ArkWebDateTime', 'ark_web_date_time_default'],
+    'ArkWebDevicePermissionDeviceIdentifier':[
+        'ArkWebDevicePermissionDeviceIdentifier', 'ark_web_device_permission_device_identifier_default'],
+    'ArkWebDevicePermissionRequestBase':[
+        'ArkWebDevicePermissionRequestBase', 'ark_web_device_permission_request_base_default'],
+    'ArkWebDevicePermissionDeviceIdentifierVector':[
+        'ArkWebDevicePermissionDeviceIdentifierVector', 'ark_web_device_permission_device_identifier_vector_default'],
+    'ArkWebDevicePermissionRevokedEvent':[
+        'ArkWebDevicePermissionRevokedEvent', 'ark_web_device_permission_revoked_event_default'],
+    'ArkWebDeviceListUpdateEvent':[
+        'ArkWebDeviceListUpdateEvent', 'ark_web_device_list_update_event_default'],
     'AccessMode':['AccessMode', 'NEVER_ALLOW'],
     'TextDirection':['TextDirection', 'SP_UNKNOWN'],
     'CacheModeFlag':['CacheModeFlag', 'USE_NO_CACHE'],
@@ -1677,22 +1687,30 @@ class obj_analysis:
     # combine the data type
     self.type = ' '.join(partlist)
 
-    # extract the last character of the data type
-    endchar = self.name[0]
+    # initialize the by-ref / by-addr flags
+    self.isbyref = False
+    self.isbyaddr = False
 
-    # check if the value is passed by reference
-    if endchar == '&':
-      self.isbyref = True
-      self.name = self.name[1:]
-    else:
-      self.isbyref = False
+    # Handle the case where & or * is attached to the end of the type
+    # (e.g. "const ArkWebString& url" or "const char* web_tag") rather than
+    # to the beginning of the name (e.g. "const char *web_tag").
+    if self.name is not None:
+      endchar = self.name[0]
+      if endchar == '&':
+        self.isbyref = True
+        self.name = self.name[1:]
+      elif endchar == '*':
+        self.isbyaddr = True
+        self.name = self.name[1:]
 
-    # check if the value is passed by address
-    if endchar == '*':
-      self.isbyaddr = True
-      self.name = self.name[1:]
-    else:
-      self.isbyaddr = False
+    if not self.isbyref and not self.isbyaddr:
+      # & or * may be attached to the type instead of the name
+      if self.type.endswith('&'):
+        self.isbyref = True
+        self.type = self.type[:-1].strip()
+      elif self.type.endswith('*'):
+        self.isbyaddr = True
+        self.type = self.type[:-1].strip()
 
     # see if the value is directly identifiable
     if self._check_advanced(self.type):

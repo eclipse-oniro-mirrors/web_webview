@@ -31,6 +31,7 @@
 #include "webview_controller.h"
 #endif
 #include "nweb_remove_visited_links_callback.h"
+#include "web_device_permission_request.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -90,6 +91,25 @@ struct PDFMarginConfig {
     double bottom = TEN_MILLIMETER_TO_INCH;
     double right = TEN_MILLIMETER_TO_INCH;
     double left = TEN_MILLIMETER_TO_INCH;
+};
+
+// Parsed arguments of revokeDevicePermissions(hardwareType, origin?, device?, isIncognito?).
+struct RevokeArgs {
+    int32_t hardwareType = 0;
+    std::string origin;
+    bool hasOrigin = false;
+    WebDeviceIdentifier device;
+    bool hasDevice = false;
+    bool isIncognito = false;
+};
+
+// Parsed arguments of setGuardPolicy(hardwareType, policy, origin?, isIncognito?).
+struct GuardPolicyArgs {
+    int32_t hardwareType = 0;
+    int32_t policy = 0;
+    std::string origin;
+    bool hasOrigin = false;
+    bool isIncognito = false;
 };
 
 class NapiWebviewController {
@@ -293,6 +313,31 @@ private:
     static napi_value SetDownloadDelegate(napi_env env, napi_callback_info info);
 
     static napi_value StartDownload(napi_env env, napi_callback_info info);
+
+    static napi_value SetDevicePermissionDelegate(napi_env env, napi_callback_info info);
+
+    static napi_value RevokeDevicePermissions(napi_env env, napi_callback_info info);
+
+    static napi_value SetGuardPolicy(napi_env env, napi_callback_info info);
+
+    static napi_value GetDeviceGuardPolicy(napi_env env, napi_callback_info info);
+
+    // Device permission parameter parsing helpers. Return true on success,
+    // false on error (with error already thrown via BusinessError).
+    static bool ParseHardwareTypeArg(napi_env env, napi_value arg, int32_t& out);
+    static bool ParseOptionalOriginArg(napi_env env, napi_value arg, int32_t argc,
+                                        std::string& origin, bool& hasOrigin);
+    static bool ParseOptionalIsIncognitoArg(napi_env env, napi_value arg, int32_t argc,
+                                             bool& isIncognito);
+    static bool ParseOptionalDeviceArg(napi_env env, napi_value arg, int32_t argc,
+                                        WebDeviceIdentifier& device, bool& hasDevice);
+
+    // Parses the full argv of RevokeDevicePermissions / SetGuardPolicy into
+    // the corresponding args struct. Returns true on success, false on error
+    // (with error already thrown via BusinessError).
+    static bool ParseRevokeArgs(napi_env env, size_t argc, napi_value argv[], RevokeArgs &args);
+    static bool ParseGuardPolicyArgs(napi_env env, size_t argc, napi_value argv[],
+                                      GuardPolicyArgs &args);
 
     static napi_value SetConnectionTimeout(napi_env env, napi_callback_info info);
 

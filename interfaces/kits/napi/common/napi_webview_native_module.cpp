@@ -32,6 +32,8 @@
 #include "napi_web_download_manager.h"
 #include "napi_web_download_item.h"
 #include "napi_web_download_delegate.h"
+#include "napi_web_device_permission_delegate.h"
+#include "napi_web_device_permission_request.h"
 #include "napi_web_scheme_handler_request.h"
 #include "napi_back_forward_cache_options.h"
 #include "napi_prefetch_options.h"
@@ -56,6 +58,8 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     NapiWebDownloadItem::Init(env, exports);
     NapiWebDownloadManager::Init(env, exports);
     NapiWebDownloadDelegate::Init(env, exports);
+    NapiWebDevicePermissionDelegate::Init(env, exports);
+    NapiWebDevicePermissionRequest::Init(env, exports);
     NapiWebSchemeHandlerRequest::Init(env, exports);
     NapiWebSchemeHandlerResponse::Init(env, exports);
     NapiWebSchemeHandler::Init(env, exports);

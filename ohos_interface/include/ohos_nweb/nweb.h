@@ -27,6 +27,7 @@
 #include "nweb_accessibility_node_info.h"
 #include "nweb_agent_manager.h"
 #include "nweb_download_callback.h"
+#include "nweb_device_permission_delegate.h"
 #include "nweb_drag_data.h"
 #include "nweb_command_action_info.h"
 #include "nweb_command_action_manager.h"
@@ -2896,6 +2897,66 @@ public:
      */
     virtual bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
                                  const std::string& state) { return false; }
+
+    /**
+     * Sets the NWebDevicePermissionDelegate that will receive device permission
+     * requests (e.g. navigator.usb.requestDevice()). This will replace the
+     * current handler.
+     *
+     * @param delegate NWebDevicePermissionDelegate.
+     */
+    virtual void SetDevicePermissionDelegate(
+        std::shared_ptr<NWebDevicePermissionDelegate> delegate) {}
+
+    /**
+     * Revokes device permissions. If origin is empty, applies to all origins.
+     * If device_key is empty, applies to all devices of the specified hardware
+     * type. If isIncognito is specified, only permissions matching the given
+     * incognito mode flag are revoked; otherwise permissions in both normal and
+     * incognito mode are revoked.
+     *
+     * @param hardwareType Hardware device type.
+     * @param origin Website origin. Empty means all origins.
+     * @param device Device identifier. Empty device_key means all devices.
+     * @param isIncognito Whether the permission is granted in incognito mode.
+     */
+    virtual void RevokeDevicePermissions(
+        NWebDevicePermissionHardwareType hardwareType,
+        const std::string& origin,
+        const NWebDevicePermissionDeviceIdentifier& device,
+        bool isIncognito) {}
+
+    /**
+     * Sets the guard policy for the specified hardware device type. When origin
+     * is empty, the policy applies globally to all websites. When origin is
+     * specified, the policy applies only to that website; a per-origin policy of
+     * DEFAULT means the website falls back to the global policy.
+     *
+     * @param hardwareType Hardware device type.
+     * @param policy Guard policy to set.
+     * @param origin Website origin. Empty means all origins (global policy).
+     * @param isIncognito Whether the policy applies to incognito mode.
+     */
+    virtual void SetGuardPolicy(
+        NWebDevicePermissionHardwareType hardwareType,
+        NWebDeviceGuardPolicy policy,
+        const std::string& origin,
+        bool isIncognito) {}
+
+    /**
+     * Gets the effective guard policy for the specified hardware device type
+     * and origin. A per-origin policy takes precedence over the global policy;
+     * when neither is set, ASK is returned.
+     *
+     * @param hardwareType Hardware device type.
+     * @param origin Website origin. Empty queries the global policy.
+     * @param isIncognito Whether to query the incognito mode policy.
+     * @return The effective guard policy.
+     */
+    virtual NWebDeviceGuardPolicy GetGuardPolicy(
+        NWebDevicePermissionHardwareType hardwareType,
+        const std::string& origin,
+        bool isIncognito) { return NWebDeviceGuardPolicy::ASK; }
 };
 } // namespace OHOS::NWeb
 

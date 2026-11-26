@@ -24,6 +24,7 @@ action("webview_interface_prepare") {
   outputs = [ output_file ]
   inputs = [
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_download_callback.h",
+    "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_device_permission_delegate.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_js_ssl_error_result.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_find_callback.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_web_storage.h",
@@ -628,6 +629,19 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_js_call_info_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_js_call_info_wrapper.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_navigation_throttle_info.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_device_permission_delegate.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_device_permission_delegate_impl.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_device_permission_delegate_impl.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore/ark_web_device_permission_result_callback_impl.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore/ark_web_device_permission_result_callback_impl.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_device_permission_result_callback_wrapper.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_device_permission_result_callback_wrapper.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore/ark_web_permission_origins_result_callback_impl.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore/ark_web_permission_origins_result_callback_impl.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_permission_origins_result_callback_wrapper.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_permission_origins_result_callback_wrapper.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore/ark_web_device_permission_delegate_wrapper.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webcore/ark_web_device_permission_delegate_wrapper.h",
   ]
   args = [
     "--command-type",

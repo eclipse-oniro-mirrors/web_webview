@@ -33,6 +33,64 @@ const ArkWebDateTime ark_web_date_time_default = {
     0,
 };
 
+// Device identifier for a USB/HID/Serial/Bluetooth device.
+typedef struct {
+    int32_t vendor_id;
+    int32_t product_id;
+    ArkWebString device_key;
+    ArkWebString device_name;
+} ArkWebDevicePermissionDeviceIdentifier;
+
+const ArkWebDevicePermissionDeviceIdentifier ark_web_device_permission_device_identifier_default = {
+    0,
+};
+
+// Base metadata for a device permission request.
+typedef struct {
+    int32_t hardware_type;
+    ArkWebString origin;
+    bool is_incognito;
+} ArkWebDevicePermissionRequestBase;
+
+const ArkWebDevicePermissionRequestBase ark_web_device_permission_request_base_default = {
+    0,
+};
+
+// Vector of ArkWebDevicePermissionDeviceIdentifier.
+typedef struct {
+    int size;
+    ArkWebDevicePermissionDeviceIdentifier* value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
+} ArkWebDevicePermissionDeviceIdentifierVector;
+
+const ArkWebDevicePermissionDeviceIdentifierVector ark_web_device_permission_device_identifier_vector_default = {
+    0,
+};
+
+// Event data for permission revocation notification.
+typedef struct {
+    int32_t hardware_type;
+    ArkWebString origin;
+    bool is_incognito;
+    ArkWebDevicePermissionDeviceIdentifier device;
+} ArkWebDevicePermissionRevokedEvent;
+
+const ArkWebDevicePermissionRevokedEvent ark_web_device_permission_revoked_event_default = {
+    0,
+};
+
+// Event data for device list updates during picker display.
+typedef struct {
+    ArkWebString request_id;
+    int32_t action;
+    ArkWebDevicePermissionDeviceIdentifierVector devices;
+} ArkWebDeviceListUpdateEvent;
+
+const ArkWebDeviceListUpdateEvent ark_web_device_list_update_event_default = {
+    {0}, 0, {0},
+};
+
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 
 typedef void (*NativeArkWebOnValidCallback)(const char*);
