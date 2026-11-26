@@ -137,11 +137,10 @@ ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
 **示例**: `LoadComponentAPI()` 加载组件相关函数
 
 ```cpp
-#define ARKWEB_NATIVE_FOR_EACH_COMPONENT_API_FN(DO)           \
-    DO(onControllerAttached, OH_ArkWeb_OnControllerAttached); \
-    DO(onPageBegin, OH_ArkWeb_OnPageBegin);                   \
-    DO(onPageEnd, OH_ArkWeb_OnPageEnd);                       \
-    DO(onDestroy, OH_ArkWeb_OnDestroy)
+LoadFunction("OH_ArkWeb_OnControllerAttached", &(componentApi->onControllerAttached));
+LoadFunction("OH_ArkWeb_OnPageBegin", &(componentApi->onPageBegin));
+LoadFunction("OH_ArkWeb_OnPageEnd", &(componentApi->onPageEnd));
+LoadFunction("OH_ArkWeb_OnDestroy", &(componentApi->onDestroy));
 ```
 
 **加载过程**:

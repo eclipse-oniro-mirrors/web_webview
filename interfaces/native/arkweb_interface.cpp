@@ -23,54 +23,6 @@
 #include "arkweb_error_code.h"
 
 namespace {
-#define ARKWEB_NATIVE_FOR_EACH_COMPONENT_API_FN(DO)           \
-    DO(onControllerAttached, OH_ArkWeb_OnControllerAttached); \
-    DO(onPageBegin, OH_ArkWeb_OnPageBegin);                   \
-    DO(onPageEnd, OH_ArkWeb_OnPageEnd);                       \
-    DO(onDestroy, OH_ArkWeb_OnDestroy)
-
-#define ARKWEB_NATIVE_FOR_EACH_COMPONENT_GLOBAL_API_FN(DO)    \
-    DO(onScroll, OH_ArkWeb_OnScroll)
-
-#define ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN(DO)                          \
-    DO(runJavaScript, OH_ArkWeb_RunJavaScript);                               \
-    DO(registerJavaScriptProxy, OH_ArkWeb_RegisterJavaScriptProxy);           \
-    DO(deleteJavaScriptRegister, OH_ArkWeb_DeleteJavaScriptProxy);            \
-    DO(refresh, OH_ArkWeb_Refresh);                                           \
-    DO(registerAsyncJavaScriptProxy, OH_ArkWeb_RegisterAsyncJavaScriptProxy); \
-    DO(createWebMessagePorts, OH_ArkWeb_CreateWebMessagePorts);               \
-    DO(destroyWebMessagePorts, OH_ArkWeb_DestroyWebMessagePorts);             \
-    DO(postWebMessage, OH_ArkWeb_PostWebMessage);                             \
-    DO(getLastJavascriptProxyCallingFrameUrl, OH_ArkWeb_GetLastJavascriptProxyCallingFrameUrl)
-
-#define ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN_2(DO)                        \
-    DO(registerJavaScriptProxyEx,                                             \
-        OH_ArkWeb_RegisterJavaScriptProxyEx);                                 \
-    DO(registerAsyncJavaScriptProxyEx,                                        \
-        OH_ArkWeb_RegisterAsyncJavaScriptProxyEx)
-
-#define ARKWEB_NATIVE_FOR_EACH_WEBMESSAGEPORT_API_FN(DO) \
-    DO(postMessage, OH_WebMessage_PostMessage);          \
-    DO(close, OH_WebMessage_Close);                      \
-    DO(setMessageEventHandler, OH_WebMessage_SetMessageEventHandler)
-
-#define ARKWEB_NATIVE_FOR_EACH_WEBMESSAGE_API_FN(DO)        \
-    DO(createWebMessage, OH_WebMessage_CreateWebMessage);   \
-    DO(destroyWebMessage, OH_WebMessage_DestroyWebMessage); \
-    DO(setType, OH_WebMessage_SetType);                     \
-    DO(getType, OH_WebMessage_GetType);                     \
-    DO(setData, OH_WebMessage_SetData);                     \
-    DO(getData, OH_WebMessage_GetData)
-
-#define ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(DO)                \
-    DO(fetchCookieSync, OH_CookieManager_FetchCookieSync);                \
-    DO(configCookieSync, OH_CookieManager_ConfigCookieSync);              \
-    DO(existCookies, OH_CookieManager_ExistCookies);                      \
-    DO(clearAllCookiesSync, OH_CookieManager_ClearAllCookiesSync);        \
-    DO(clearSessionCookiesSync, OH_CookieManager_ClearSessionCookiesSync)
-
-#define ARKWEB_NATIVE_FOR_EACH_JAVASCRIPTVALUE_API_FN(DO)             \
-    DO(createJavaScriptValue, OH_JavaScript_CreateJavaScriptValue)
 
 std::atomic<ArkWeb_ComponentAPI*> g_ComponentImpl{nullptr};
 std::atomic<ArkWeb_ControllerAPI*> g_ControllerImpl{nullptr};
@@ -119,9 +71,10 @@ static bool LoadComponentAPI()
         delete componentApi;
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(componentApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_COMPONENT_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_ArkWeb_OnControllerAttached", &(componentApi->onControllerAttached));
+    LoadFunction("OH_ArkWeb_OnPageBegin", &(componentApi->onPageBegin));
+    LoadFunction("OH_ArkWeb_OnPageEnd", &(componentApi->onPageEnd));
+    LoadFunction("OH_ArkWeb_OnDestroy", &(componentApi->onDestroy));
 
     ArkWeb_ComponentAPI* expected = nullptr;
     if (!g_ComponentImpl.compare_exchange_strong(
@@ -151,9 +104,7 @@ static bool LoadComponentGlobalAPI()
         return false;
     }
 
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(componentGlobalApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_COMPONENT_GLOBAL_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_ArkWeb_OnScroll", &(componentGlobalApi->onScroll));
 
     ArkWeb_ComponentGlobalAPI* expected = nullptr;
     if (!g_ComponentGlobalImpl.compare_exchange_strong(
@@ -181,13 +132,18 @@ static bool LoadControllerAPI()
         delete controllerApi;
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(controllerApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
-
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(controllerApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN_2(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_ArkWeb_RunJavaScript", &(controllerApi->runJavaScript));
+    LoadFunction("OH_ArkWeb_RegisterJavaScriptProxy", &(controllerApi->registerJavaScriptProxy));
+    LoadFunction("OH_ArkWeb_DeleteJavaScriptProxy", &(controllerApi->deleteJavaScriptRegister));
+    LoadFunction("OH_ArkWeb_Refresh", &(controllerApi->refresh));
+    LoadFunction("OH_ArkWeb_RegisterAsyncJavaScriptProxy", &(controllerApi->registerAsyncJavaScriptProxy));
+    LoadFunction("OH_ArkWeb_CreateWebMessagePorts", &(controllerApi->createWebMessagePorts));
+    LoadFunction("OH_ArkWeb_DestroyWebMessagePorts", &(controllerApi->destroyWebMessagePorts));
+    LoadFunction("OH_ArkWeb_PostWebMessage", &(controllerApi->postWebMessage));
+    LoadFunction("OH_ArkWeb_GetLastJavascriptProxyCallingFrameUrl",
+        &(controllerApi->getLastJavascriptProxyCallingFrameUrl));
+    LoadFunction("OH_ArkWeb_RegisterJavaScriptProxyEx", &(controllerApi->registerJavaScriptProxyEx));
+    LoadFunction("OH_ArkWeb_RegisterAsyncJavaScriptProxyEx", &(controllerApi->registerAsyncJavaScriptProxyEx));
 
     ArkWeb_ControllerAPI* expected = nullptr;
     if (!g_ControllerImpl.compare_exchange_strong(
@@ -215,9 +171,9 @@ static bool LoadWebMessagePortAPI()
         delete webMessagePortApi;
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(webMessagePortApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_WEBMESSAGEPORT_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_WebMessage_PostMessage", &(webMessagePortApi->postMessage));
+    LoadFunction("OH_WebMessage_Close", &(webMessagePortApi->close));
+    LoadFunction("OH_WebMessage_SetMessageEventHandler", &(webMessagePortApi->setMessageEventHandler));
 
     ArkWeb_WebMessagePortAPI* expected = nullptr;
     if (!g_WebMessagePortImpl.compare_exchange_strong(
@@ -245,9 +201,12 @@ static bool LoadWebMessageAPI()
         delete webMessageApi;
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(webMessageApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_WEBMESSAGE_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_WebMessage_CreateWebMessage", &(webMessageApi->createWebMessage));
+    LoadFunction("OH_WebMessage_DestroyWebMessage", &(webMessageApi->destroyWebMessage));
+    LoadFunction("OH_WebMessage_SetType", &(webMessageApi->setType));
+    LoadFunction("OH_WebMessage_GetType", &(webMessageApi->getType));
+    LoadFunction("OH_WebMessage_SetData", &(webMessageApi->setData));
+    LoadFunction("OH_WebMessage_GetData", &(webMessageApi->getData));
 
     ArkWeb_WebMessageAPI* expected = nullptr;
     if (!g_WebMessageImpl.compare_exchange_strong(
@@ -277,9 +236,11 @@ static bool LoadCookieManagerAPI()
         delete cookieManagerApi;
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(cookieManagerApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_CookieManager_FetchCookieSync", &(cookieManagerApi->fetchCookieSync));
+    LoadFunction("OH_CookieManager_ConfigCookieSync", &(cookieManagerApi->configCookieSync));
+    LoadFunction("OH_CookieManager_ExistCookies", &(cookieManagerApi->existCookies));
+    LoadFunction("OH_CookieManager_ClearAllCookiesSync", &(cookieManagerApi->clearAllCookiesSync));
+    LoadFunction("OH_CookieManager_ClearSessionCookiesSync", &(cookieManagerApi->clearSessionCookiesSync));
 
     ArkWeb_CookieManagerAPI* expected = nullptr;
     if (!g_CookieManagerImpl.compare_exchange_strong(
@@ -308,9 +269,7 @@ static bool LoadJavaScriptValueAPI()
         delete javaScriptValueApi;
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(javaScriptValueApi->fn))
-    ARKWEB_NATIVE_FOR_EACH_JAVASCRIPTVALUE_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
-#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    LoadFunction("OH_JavaScript_CreateJavaScriptValue", &(javaScriptValueApi->createJavaScriptValue));
 
     ArkWeb_JavaScriptValueAPI* expected = nullptr;
     if (!g_JavaScriptValueImpl.compare_exchange_strong(
