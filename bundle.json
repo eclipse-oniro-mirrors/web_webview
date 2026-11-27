@@ -45,6 +45,7 @@
                 "camera_framework",
                 "cellular_data",
                 "certificate_manager",
+                "certificate_framework",
                 "cJSON",
                 "common_event_service",
                 "config_policy",

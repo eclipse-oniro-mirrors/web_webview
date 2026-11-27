@@ -54,6 +54,8 @@ public:
 
     bool GetPinSetForHostName(const std::string& hostname, std::vector<std::string>& pins) override;
 
+    bool CheckCertRevocation(const std::vector<std::string>& cert_bytes) override;
+
 private:
     ArkWebRefPtr<ArkCertManagerAdapter> ctocpp_;
 };

@@ -54,6 +54,8 @@ public:
 
     bool GetPinSetForHostName(const ArkWebString& hostname, ArkWebStringVector& pins) override;
 
+    bool CheckCertRevocation(const ArkWebStringVector& cert_bytes) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::CertManagerAdapter> real_;
 

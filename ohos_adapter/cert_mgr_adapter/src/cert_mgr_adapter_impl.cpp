@@ -18,6 +18,8 @@
 #include "cert_mgr_adapter_impl.h"
 #include "net_manager_constants.h"
 #include "network_security_config.h"
+#include "cf_object_base.h"
+#include "hm_cert_revocation.h"
 #include "nweb_log.h"
 #include "securec.h"
 
@@ -573,5 +575,54 @@ bool CertManagerAdapterImpl::GetPinSetForHostName(
     }
     pins.emplace_back(pinsString.substr(start));
     return true;
+}
+
+bool CertManagerAdapterImpl::CheckCertRevocation(const std::vector<std::string>& cert_bytes)
+{
+    if (cert_bytes.empty()) {
+        return false;
+    }
+ 
+    std::vector<HcfX509Certificate*> certs;
+    for (const auto& certDer : cert_bytes) {
+        if (certDer.empty()) {
+            continue;
+        }
+ 
+        CfEncodingBlob inStream = {0};
+        inStream.data = reinterpret_cast<uint8_t*>(const_cast<char*>(certDer.data()));
+        inStream.len = certDer.size();
+        inStream.encodingFormat = CF_FORMAT_DER;
+ 
+        HcfX509Certificate* cert = nullptr;
+        CfResult result = HcfX509CertificateCreate(&inStream, &cert);
+        if (result != CF_SUCCESS || cert == nullptr) {
+            WVLOG_E("CheckCertRevocation: HcfX509CertificateCreate failed, result: %{public}d", result);
+            continue;
+        }
+        certs.emplace_back(cert);
+    }
+ 
+    if (certs.empty()) {
+        return false;
+    }
+ 
+    HcfX509CertificateArray certArray = { certs.data(), static_cast<uint32_t>(certs.size()) };
+    int32_t blockedIndex = -1;
+    CfResult result = HcfCertRevocationCheck(&certArray, &blockedIndex);
+ 
+    for (auto cert : certs) {
+        CfObjDestroy(cert);
+    }
+ 
+    if (result == CF_ERR_CERT_REVOKED) {
+        WVLOG_D("CheckCertRevocation: certificate is revoked, blockedIndex: %{public}d", blockedIndex);
+        return true;
+    }
+ 
+    if (result != CF_SUCCESS) {
+        WVLOG_E("CheckCertRevocation: HcfCertRevocationCheck failed, result: %{public}d", result);
+    }
+    return false;
 }
 }

@@ -99,4 +99,12 @@ bool ArkCertManagerAdapterWrapper::GetPinSetForHostName(const std::string& hostn
     return result;
 }
 
+bool ArkCertManagerAdapterWrapper::CheckCertRevocation(const std::vector<std::string>& cert_bytes)
+{
+    ArkWebStringVector ark_cert_bytes = ArkWebStringVectorClassToStruct(cert_bytes);
+    bool result = ctocpp_->CheckCertRevocation(ark_cert_bytes);
+    ArkWebStringVectorStructRelease(ark_cert_bytes);
+    return result;
+}
+
 } // namespace OHOS::ArkWeb
