@@ -26,6 +26,7 @@
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_query_navigation_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_device_permission_delegate_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_find_callback_impl.h"
@@ -287,6 +288,61 @@ void ArkWebNWebWrapper::PutDownloadCallback(std::shared_ptr<OHOS::NWeb::NWebDown
     }
 
     ark_web_nweb_->PutDownloadCallback(new ArkWebDownloadCallbackImpl(download_listener));
+}
+
+void ArkWebNWebWrapper::SetDevicePermissionDelegate(
+    std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> delegate)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(delegate)) {
+        ark_web_nweb_->SetDevicePermissionDelegate(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->SetDevicePermissionDelegate(
+        new ArkWebDevicePermissionDelegateImpl(delegate));
+}
+
+void ArkWebNWebWrapper::RevokeDevicePermissions(
+    OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+    const std::string& origin,
+    const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device,
+    bool is_incognito)
+{
+    ArkWebString ark_origin = ArkWebStringClassToStruct(origin);
+    ArkWebDevicePermissionDeviceIdentifier ark_device =
+        ArkWebDevicePermissionDeviceIdentifierClassToStruct(device);
+
+    ark_web_nweb_->RevokeDevicePermissions(
+        static_cast<int32_t>(hardware_type), ark_origin, ark_device, is_incognito);
+
+    ArkWebStringStructRelease(ark_origin);
+    ArkWebStringStructRelease(ark_device.device_key);
+    ArkWebStringStructRelease(ark_device.device_name);
+}
+
+void ArkWebNWebWrapper::SetGuardPolicy(
+    OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+    OHOS::NWeb::NWebDeviceGuardPolicy policy,
+    const std::string& origin,
+    bool is_incognito)
+{
+    ArkWebString ark_origin = ArkWebStringClassToStruct(origin);
+    ark_web_nweb_->SetGuardPolicy(
+        static_cast<int32_t>(hardware_type), static_cast<int32_t>(policy),
+        ark_origin, is_incognito);
+    ArkWebStringStructRelease(ark_origin);
+}
+
+OHOS::NWeb::NWebDeviceGuardPolicy ArkWebNWebWrapper::GetGuardPolicy(
+    OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+    const std::string& origin,
+    bool is_incognito)
+{
+    ArkWebString ark_origin = ArkWebStringClassToStruct(origin);
+    int32_t policy = ark_web_nweb_->GetGuardPolicy(
+        static_cast<int32_t>(hardware_type), ark_origin, is_incognito);
+    ArkWebStringStructRelease(ark_origin);
+    return static_cast<OHOS::NWeb::NWebDeviceGuardPolicy>(policy);
 }
 
 void ArkWebNWebWrapper::PutAccessibilityEventCallback(

@@ -29,6 +29,7 @@
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_query_navigation_config_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_device_permission_delegate_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_find_callback_wrapper.h"
@@ -278,6 +279,37 @@ void ArkWebNWebImpl::PutDownloadCallback(ArkWebRefPtr<ArkWebDownloadCallback> do
     }
 
     nweb_nweb_->PutDownloadCallback(std::make_shared<ArkWebDownloadCallbackWrapper>(download_listener));
+}
+
+void ArkWebNWebImpl::SetDevicePermissionDelegate(
+    ArkWebRefPtr<ArkWebDevicePermissionDelegate> delegate)
+{
+    if (CHECK_REF_PTR_IS_NULL(delegate)) {
+        nweb_nweb_->SetDevicePermissionDelegate(nullptr);
+        return;
+    }
+
+    nweb_nweb_->SetDevicePermissionDelegate(
+        std::make_shared<ArkWebDevicePermissionDelegateWrapper>(delegate));
+}
+
+void ArkWebNWebImpl::RevokeDevicePermissions(
+    int32_t hardware_type,
+    const ArkWebString& origin,
+    const ArkWebDevicePermissionDeviceIdentifier& device,
+    bool is_incognito)
+{
+    OHOS::NWeb::NWebDevicePermissionDeviceIdentifier nweb_device;
+    nweb_device.vendor_id = device.vendor_id;
+    nweb_device.product_id = device.product_id;
+    nweb_device.device_key = ArkWebStringStructToClass(device.device_key);
+    nweb_device.device_name = ArkWebStringStructToClass(device.device_name);
+
+    nweb_nweb_->RevokeDevicePermissions(
+        static_cast<OHOS::NWeb::NWebDevicePermissionHardwareType>(hardware_type),
+        ArkWebStringStructToClass(origin),
+        nweb_device,
+        is_incognito);
 }
 
 void ArkWebNWebImpl::PutAccessibilityEventCallback(
@@ -2006,6 +2038,29 @@ bool ArkWebNWebImpl::SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t 
                                      const ArkWebString& state)
 {
     return nweb_nweb_->SetWindowBounds(x, y, w, h, ArkWebStringStructToClass(state));
+}
+
+void ArkWebNWebImpl::SetGuardPolicy(
+    int32_t hardware_type,
+    int32_t policy,
+    const ArkWebString& origin,
+    bool is_incognito)
+{
+    nweb_nweb_->SetGuardPolicy(
+        static_cast<OHOS::NWeb::NWebDevicePermissionHardwareType>(hardware_type),
+        static_cast<OHOS::NWeb::NWebDeviceGuardPolicy>(policy),
+        ArkWebStringStructToClass(origin),
+        is_incognito);
+}
+
+int32_t ArkWebNWebImpl::GetGuardPolicy(
+    int32_t hardware_type,
+    const ArkWebString& origin,
+    bool is_incognito)
+{
+    return static_cast<int32_t>(nweb_nweb_->GetGuardPolicy(
+        static_cast<OHOS::NWeb::NWebDevicePermissionHardwareType>(hardware_type),
+        ArkWebStringStructToClass(origin), is_incognito));
 }
 
 } // namespace OHOS::ArkWeb

@@ -26,6 +26,7 @@
 #include "ohos_nweb/include/ark_web_cache_options.h"
 #include "ohos_nweb/include/ark_web_create_native_media_player_callback.h"
 #include "ohos_nweb/include/ark_web_download_callback.h"
+#include "ohos_nweb/include/ark_web_device_permission_delegate.h"
 #include "ohos_nweb/include/ark_web_drag_data.h"
 #include "ohos_nweb/include/ark_web_drag_event.h"
 #include "ohos_nweb/include/ark_web_find_callback.h"
@@ -2560,6 +2561,70 @@ public:
     /*--ark web()--*/
     virtual bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
                                  const ArkWebString& state) = 0;
+
+    /**
+     * @brief Sets the NWebDevicePermissionDelegate that will receive device
+     *        permission requests (e.g. navigator.usb.requestDevice()). This
+     *        will replace the current handler.
+     *
+     * @param delegate: device permission delegate
+     */
+    /*--ark web()--*/
+    virtual void SetDevicePermissionDelegate(
+        ArkWebRefPtr<ArkWebDevicePermissionDelegate> delegate) = 0;
+
+    /**
+     * @brief Revokes device permissions. If origin is empty, applies to all
+     *        origins. If device_key is empty, applies to all devices of the
+     *        specified hardware type. If is_incognito is specified, only
+     *        permissions matching the given incognito mode flag are revoked;
+     *        otherwise permissions in both normal and incognito mode are revoked.
+     *
+     * @param hardware_type: hardware device type
+     * @param origin: website origin, empty means all origins
+     * @param device: device identifier, empty device_key means all devices
+     * @param is_incognito: whether the permission is granted in incognito mode
+     */
+    /*--ark web()--*/
+    virtual void RevokeDevicePermissions(
+        int32_t hardware_type,
+        const ArkWebString& origin,
+        const ArkWebDevicePermissionDeviceIdentifier& device,
+        bool is_incognito) = 0;
+
+    /**
+     * @brief Sets the guard policy for the specified hardware device type.
+     *        When origin is empty, the policy applies globally. When origin is
+     *        specified, the policy applies only to that website; a per-origin
+     *        policy of DEFAULT (2) falls back to the global policy.
+     *
+     * @param hardware_type: hardware device type
+     * @param policy: guard policy (0=ASK, 1=BLOCK, 2=DEFAULT)
+     * @param origin: website origin, empty means all origins (global policy)
+     * @param is_incognito: whether the policy applies to incognito mode
+     */
+    /*--ark web()--*/
+    virtual void SetGuardPolicy(
+        int32_t hardware_type,
+        int32_t policy,
+        const ArkWebString& origin,
+        bool is_incognito) = 0;
+
+    /**
+     * @brief Gets the effective guard policy for the specified hardware
+     *        device type and origin. A per-origin policy takes precedence
+     *        over the global policy; when neither is set, ASK is returned.
+     *
+     * @param hardware_type: hardware device type
+     * @param origin: website origin, empty queries the global policy
+     * @param is_incognito: whether to query the incognito mode policy
+     * @return guard policy
+     */
+    /*--ark web()--*/
+    virtual int32_t GetGuardPolicy(
+        int32_t hardware_type,
+        const ArkWebString& origin,
+        bool is_incognito) = 0;
 };
 
 } // namespace OHOS::ArkWeb

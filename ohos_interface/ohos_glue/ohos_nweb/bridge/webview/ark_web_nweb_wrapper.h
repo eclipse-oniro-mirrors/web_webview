@@ -2230,6 +2230,47 @@ public:
      */
     bool SetWindowBounds(int32_t x, int32_t y, uint32_t w, uint32_t h,
                          const std::string& state) override;
+
+    /**
+     * @brief Sets the NWebDevicePermissionDelegate that will handle device picker
+     *        requests. This will replace the current delegate.
+     *
+     * @param delegate: device permission delegate
+     */
+    void SetDevicePermissionDelegate(
+        std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> delegate) override;
+
+    /**
+     * @brief Revokes device permissions.
+     */
+    void RevokeDevicePermissions(
+        OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        const std::string& origin,
+        const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device,
+        bool is_incognito) override;
+
+    void SetGuardPolicy(
+        OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        OHOS::NWeb::NWebDeviceGuardPolicy policy,
+        const std::string& origin,
+        bool is_incognito) override;
+
+    /**
+     * @brief Get the stored device guard policy for a hardware type / origin.
+     *        Returns the stored value: a site policy set to DEFAULT is
+     *        reported back as DEFAULT, while a global policy only returns
+     *        ASK or BLOCK. When neither a site nor a global policy is stored,
+     *        ASK is returned.
+     * @param hardware_type  In: hardware type (USB only is supported).
+     * @param origin         In: site origin; empty queries the global policy.
+     * @param is_incognito   In: whether the incognito profile is queried.
+     * @return The stored guard policy (ASK/BLOCK, or DEFAULT for a site).
+     */
+    OHOS::NWeb::NWebDeviceGuardPolicy GetGuardPolicy(
+        OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        const std::string& origin,
+        bool is_incognito) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

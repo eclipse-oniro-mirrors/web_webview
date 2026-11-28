@@ -36,6 +36,7 @@
 #include "histogram_plugin_macros.h"
 #endif
 #include "napi_parse_utils.h"
+#include "napi_web_device_permission_helpers.h"
 #include "nweb_napi_scope.h"
 #include "native_engine/native_engine.h"
 #include "nweb.h"
@@ -59,6 +60,8 @@
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
+#include "napi_web_device_permission_delegate.h"
+#include "web_device_permission_delegate.h"
 #include "arkweb_scheme_handler.h"
 #include "arkweb_utils.h"
 #include "web_scheme_handler.h"
@@ -803,6 +806,10 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("prefetchPage", NapiWebviewController::PrefetchPage),
         DECLARE_NAPI_FUNCTION("setDownloadDelegate", NapiWebviewController::SetDownloadDelegate),
         DECLARE_NAPI_FUNCTION("startDownload", NapiWebviewController::StartDownload),
+        DECLARE_NAPI_FUNCTION("setDevicePermissionDelegate", NapiWebviewController::SetDevicePermissionDelegate),
+        DECLARE_NAPI_FUNCTION("revokeDevicePermissions", NapiWebviewController::RevokeDevicePermissions),
+        DECLARE_NAPI_FUNCTION("setDeviceGuardPolicy", NapiWebviewController::SetGuardPolicy),
+        DECLARE_NAPI_FUNCTION("getDeviceGuardPolicy", NapiWebviewController::GetDeviceGuardPolicy),
         DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
         DECLARE_NAPI_FUNCTION("createWebPrintDocumentAdapter", NapiWebviewController::CreateWebPrintDocumentAdapter),
         DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
@@ -6207,6 +6214,495 @@ napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info
     return nullptr;
 }
 
+namespace {
+// Unwraps the JS delegate object. Returns false on failure (401 thrown).
+bool UnwrapDevicePermissionDelegate(napi_env env, napi_value obj,
+                                    std::shared_ptr<WebDevicePermissionDelegate> &delegate)
+{
+    DelegateHolder *holder = nullptr;
+    napi_status status = napi_unwrap(env, obj, reinterpret_cast<void **>(&holder));
+    if (status != napi_ok || holder == nullptr || !holder->delegate) {
+        WVLOG_E("SetDevicePermissionDelegate delegate is null, ret=%{public}d",
+                static_cast<int32_t>(status));
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "delegate",
+                                    "WebDevicePermissionDelegate"));
+        return false;
+    }
+    delegate = holder->delegate;
+    return true;
+}
+
+// Holds a strong reference to the JS delegate object so it is not GC'd while
+// arkweb still holds the C++ pointer. Mirrors SetDownloadDelegate. Returns
+// false on napi failure.
+bool HoldDevicePermissionDelegateReference(napi_env env, napi_value obj,
+                                           const std::shared_ptr<WebDevicePermissionDelegate> &delegate)
+{
+    uint32_t result = 0;
+    if (delegate->delegate_ != nullptr) {
+        napi_status status = napi_reference_ref(env, delegate->delegate_, &result);
+        if (status != napi_ok) {
+            WVLOG_E("SetDevicePermissionDelegate ref existing delegate failed, ret=%{public}d",
+                    static_cast<int32_t>(status));
+            return false;
+        }
+        WVLOG_I("DevicePermission delegate ref count increased to %{public}d", result);
+    } else {
+        napi_status status = napi_create_reference(env, obj, 1, &delegate->delegate_);
+        if (status != napi_ok) {
+            WVLOG_E("SetDevicePermissionDelegate create reference failed, ret=%{public}d",
+                    static_cast<int32_t>(status));
+            return false;
+        }
+    }
+    return true;
+}
+} // namespace
+
+napi_value NapiWebviewController::SetDevicePermissionDelegate(napi_env env, napi_callback_info info)
+{
+    size_t argc = 1;
+    napi_value argv[1] = {0};
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+
+    if (argc < 1) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return nullptr;
+    }
+    napi_value obj = argv[0];
+    // 'delegate' is required: undefined/null (or any non-delegate value) is a
+    // parameter type error, reported as 401 by UnwrapDevicePermissionDelegate.
+    std::shared_ptr<WebDevicePermissionDelegate> delegate;
+    if (!UnwrapDevicePermissionDelegate(env, obj, delegate)) {
+        return nullptr;
+    }
+
+    // Validate the controller before touching the reference so an early
+    // return never leaves an unbalanced napi_ref behind.
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, reinterpret_cast<void **>(&webviewController)));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("SetDevicePermissionDelegate napi unwrap webviewController failed");
+        return nullptr;
+    }
+
+    if (!HoldDevicePermissionDelegateReference(env, obj, delegate)) {
+        return nullptr;
+    }
+    int32_t nwebId = webviewController->GetWebId();
+    WebDevicePermissionManager::AddDelegateForWeb(nwebId, delegate);
+    WVLOG_I("SetDevicePermissionDelegate succeeded, nwebId=%{public}d", nwebId);
+    return nullptr;
+}
+
+namespace {
+// Matches overload 1 of RevokeDevicePermissions:
+// revokeDevicePermissions(hardwareType, incognito?). Returns true when argv[1]
+// is boolean/number (the overload matched); |valid| then reports whether the
+// argument count is acceptable. Returns false when argv[1] belongs to the
+// other overloads.
+bool MatchRevokeIncognitoOnly(napi_env env, size_t argc, napi_value argv[], bool& valid)
+{
+    if (argc < 2) {
+        return false;
+    }
+    // 'incognito' is boolean, so the second argument being boolean/number
+    // can only belong to this overload.
+    napi_valuetype secondType = napi_undefined;
+    napi_typeof(env, argv[1], &secondType);
+    if (secondType != napi_boolean && secondType != napi_number) {
+        return false;
+    }
+    if (argc > 2) {
+        WVLOG_E("RevokeDevicePermissions too many arguments for (hardwareType, incognito)");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError: 401. Parameter error. 'origin' is required before 'device'/'incognito'.");
+        valid = false;
+        return true;
+    }
+    valid = true;
+    return true;
+}
+} // namespace
+
+bool NapiWebviewController::ParseRevokeArgs(napi_env env, size_t argc, napi_value argv[],
+                                            RevokeArgs &args)
+{
+    if (!ParseHardwareTypeArg(env, argv[0], args.hardwareType)) {
+        return false;
+    }
+    bool valid = false;
+    if (MatchRevokeIncognitoOnly(env, argc, argv, valid)) {
+        if (!valid) {
+            return false;
+        }
+        return ParseOptionalIsIncognitoArg(env, argv[1], static_cast<int32_t>(argc - 1),
+                                           args.isIncognito);
+    }
+    // Overload 2/3: revokeDevicePermissions(hardwareType, origin[, device][, incognito]).
+    if (!ParseOptionalOriginArg(env, argv[1], static_cast<int32_t>(argc - 1),
+                                args.origin, args.hasOrigin)) {
+        return false;
+    }
+    // The third argument of the no-device form is 'incognito' (boolean).
+    if (argc >= 3) {
+        napi_valuetype thirdType = napi_undefined;
+        napi_typeof(env, argv[2], &thirdType);
+        if (thirdType == napi_boolean || thirdType == napi_number) {
+            return ParseOptionalIsIncognitoArg(env, argv[2], static_cast<int32_t>(argc - 2),
+                                               args.isIncognito);
+        }
+    }
+    if (!ParseOptionalDeviceArg(env, argv[2], static_cast<int32_t>(argc - 2),
+                                args.device, args.hasDevice)) {
+        return false;
+    }
+    if (!ParseOptionalIsIncognitoArg(env, argv[3], static_cast<int32_t>(argc - 3),
+                                     args.isIncognito)) {
+        return false;
+    }
+    if (args.hasDevice && !args.hasOrigin) {
+        WVLOG_E("RevokeDevicePermissions device specified but origin is missing");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError: 401. Parameter error. 'origin' is required when 'device' is specified.");
+        return false;
+    }
+    return true;
+}
+
+namespace {
+// 801 capability gate for the device-permission APIs (USB only). Checked
+// locally: the cross-boundary probe sits at the vtable tail and dispatches
+// past an older glue library's vtable.
+bool IsSupportedDeviceHardwareType(int32_t hardwareType)
+{
+    return hardwareType == static_cast<int32_t>(NWebDevicePermissionHardwareType::USB);
+}
+} // namespace
+
+napi_value NapiWebviewController::RevokeDevicePermissions(napi_env env, napi_callback_info info)
+{
+    size_t argc = 4;
+    napi_value argv[4] = {0};
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, reinterpret_cast<void **>(&webviewController)));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("RevokeDevicePermissions napi unwrap failed");
+        return nullptr;
+    }
+    RevokeArgs args;
+    if (!ParseRevokeArgs(env, argc, argv, args)) {
+        return nullptr;
+    }
+    int32_t nwebId = webviewController->GetWebId();
+    WVLOG_I("RevokeDevicePermissions nwebId=%{public}d hwType=%{public}d "
+            "hasOrigin=%{public}d hasDevice=%{public}d isIncognito=%{public}d",
+            nwebId, args.hardwareType, static_cast<int32_t>(args.hasOrigin),
+            static_cast<int32_t>(args.hasDevice), static_cast<int32_t>(args.isIncognito));
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId);
+    if (!nweb_ptr) {
+        WVLOG_E("RevokeDevicePermissions GetNWeb failed for nwebId=%{public}d", nwebId);
+        return nullptr;
+    }
+    if (!IsSupportedDeviceHardwareType(args.hardwareType)) {
+        WVLOG_E("RevokeDevicePermissions unsupported hardwareType=%{public}d", args.hardwareType);
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return nullptr;
+    }
+    NWebDevicePermissionDeviceIdentifier nwebDevice;
+    if (args.hasDevice) {
+        nwebDevice.vendor_id = args.device.vendorId;
+        nwebDevice.product_id = args.device.productId;
+        nwebDevice.device_key = args.device.deviceKey;
+        nwebDevice.device_name = args.device.deviceName;
+    }
+    nweb_ptr->RevokeDevicePermissions(
+        static_cast<NWebDevicePermissionHardwareType>(args.hardwareType),
+        args.origin, nwebDevice, args.isIncognito);
+    return nullptr;
+}
+
+bool NapiWebviewController::ParseGuardPolicyArgs(napi_env env, size_t argc, napi_value argv[],
+                                                 GuardPolicyArgs &args)
+{
+    if (!ParseHardwareTypeArg(env, argv[0], args.hardwareType)) {
+        return false;
+    }
+    if (!NapiParseUtils::ParseInt32(env, argv[1], args.policy)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "policy", "WebDeviceGuardPolicy"));
+        return false;
+    }
+    if (args.policy < 0 || args.policy > DEVICE_PERM_MAX_GUARD_POLICY) {
+        WVLOG_E("SetGuardPolicy invalid policy=%{public}d", args.policy);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError: 401. Parameter error. 'policy' must be a valid WebDeviceGuardPolicy.");
+        return false;
+    }
+    if (!ParseOptionalOriginArg(env, argv[2], static_cast<int32_t>(argc - 2),
+                                args.origin, args.hasOrigin)) {
+        return false;
+    }
+    if (!ParseOptionalIsIncognitoArg(env, argv[3], static_cast<int32_t>(argc - 3),
+                                     args.isIncognito)) {
+        return false;
+    }
+    // Global policy only accepts ASK/BLOCK; DEFAULT is treated as ASK
+    // rather than rejected.
+    if (!args.hasOrigin && args.policy == static_cast<int32_t>(WebDeviceGuardPolicy::DEFAULT)) {
+        WVLOG_I("SetGuardPolicy global policy DEFAULT treated as ASK");
+        args.policy = static_cast<int32_t>(WebDeviceGuardPolicy::ASK);
+    }
+    return true;
+}
+
+napi_value NapiWebviewController::SetGuardPolicy(napi_env env, napi_callback_info info)
+{
+    size_t argc = 4;
+    napi_value argv[4] = {0};
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, reinterpret_cast<void **>(&webviewController)));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("SetGuardPolicy napi unwrap failed");
+        return nullptr;
+    }
+    GuardPolicyArgs args;
+    if (!ParseGuardPolicyArgs(env, argc, argv, args)) {
+        return nullptr;
+    }
+    int32_t nwebId = webviewController->GetWebId();
+    WVLOG_I("SetGuardPolicy nwebId=%{public}d hwType=%{public}d policy=%{public}d "
+            "hasOrigin=%{public}d isIncognito=%{public}d",
+            nwebId, args.hardwareType, args.policy, static_cast<int32_t>(args.hasOrigin),
+            static_cast<int32_t>(args.isIncognito));
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId);
+    if (!nweb_ptr) {
+        WVLOG_E("SetGuardPolicy GetNWeb failed for nwebId=%{public}d", nwebId);
+        return nullptr;
+    }
+    if (!IsSupportedDeviceHardwareType(args.hardwareType)) {
+        WVLOG_E("SetGuardPolicy unsupported hardwareType=%{public}d", args.hardwareType);
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return nullptr;
+    }
+    nweb_ptr->SetGuardPolicy(
+        static_cast<NWebDevicePermissionHardwareType>(args.hardwareType),
+        static_cast<NWebDeviceGuardPolicy>(args.policy), args.origin, args.isIncognito);
+    return nullptr;
+}
+
+napi_value NapiWebviewController::GetDeviceGuardPolicy(napi_env env, napi_callback_info info)
+{
+    size_t argc = 3;
+    napi_value argv[3] = {0};
+    napi_value thisVar = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, reinterpret_cast<void **>(&webviewController)));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("GetDeviceGuardPolicy napi unwrap failed");
+        return nullptr;
+    }
+    GuardPolicyArgs args;
+    if (!ParseHardwareTypeArg(env, argv[0], args.hardwareType)) {
+        return nullptr;
+    }
+    // getDeviceGuardPolicy(hardwareType, origin?, incognito?)
+    if (!ParseOptionalOriginArg(env, argv[1], static_cast<int32_t>(argc - 1),
+                                args.origin, args.hasOrigin)) {
+        return nullptr;
+    }
+    if (!ParseOptionalIsIncognitoArg(env, argv[2], static_cast<int32_t>(argc - 2),
+                                     args.isIncognito)) {
+        return nullptr;
+    }
+    int32_t nwebId = webviewController->GetWebId();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId);
+    if (!nweb_ptr) {
+        WVLOG_E("GetDeviceGuardPolicy GetNWeb failed for nwebId=%{public}d", nwebId);
+        return nullptr;
+    }
+    if (!IsSupportedDeviceHardwareType(args.hardwareType)) {
+        WVLOG_E("GetDeviceGuardPolicy unsupported hardwareType=%{public}d", args.hardwareType);
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return nullptr;
+    }
+    NWebDeviceGuardPolicy policy = nweb_ptr->GetGuardPolicy(
+        static_cast<NWebDevicePermissionHardwareType>(args.hardwareType),
+        args.origin, args.isIncognito);
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_create_int32(env, static_cast<int32_t>(policy), &result));
+    return result;
+}
+
+// ---- Device permission parameter parsing helpers ----
+
+bool NapiWebviewController::ParseHardwareTypeArg(napi_env env, napi_value arg, int32_t& out)
+{
+    if (!NapiParseUtils::ParseInt32(env, arg, out)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "hardwareType", "WebHardwareType"));
+        return false;
+    }
+    if (out < 0 || out > DEVICE_PERM_MAX_HARDWARE_TYPE) {
+        WVLOG_E("ParseHardwareTypeArg invalid hardwareType=%{public}d", out);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError: 401. Parameter error. 'hardwareType' must be a valid WebHardwareType.");
+        return false;
+    }
+    return true;
+}
+
+bool NapiWebviewController::ParseOptionalOriginArg(napi_env env, napi_value arg, int32_t argc,
+                                                    std::string& origin, bool& hasOrigin)
+{
+    hasOrigin = false;
+    if (argc < 1 || arg == nullptr) {
+        return true;
+    }
+    napi_valuetype type = napi_undefined;
+    napi_typeof(env, arg, &type);
+    if (type == napi_undefined || type == napi_null) {
+        return true;
+    }
+    if (!NapiParseUtils::ParseString(env, arg, origin)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "origin", "string"));
+        return false;
+    }
+    hasOrigin = true;
+    // Overlong origin -> 17100011.
+    if (origin.length() > DEVICE_PERM_MAX_ORIGIN_LENGTH) {
+        WVLOG_E("ParseOptionalOriginArg overlong origin, len=%{public}zu", origin.length());
+        BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
+        return false;
+    }
+    return true;
+}
+
+bool NapiWebviewController::ParseOptionalIsIncognitoArg(napi_env env, napi_value arg, int32_t argc,
+                                                         bool& isIncognito)
+{
+    isIncognito = false;
+    if (argc < 1 || arg == nullptr) {
+        return true;
+    }
+    napi_valuetype type = napi_undefined;
+    napi_typeof(env, arg, &type);
+    if (type == napi_undefined || type == napi_null) {
+        return true;
+    }
+    if (type == napi_number) {
+        double numVal = 0.0;
+        napi_get_value_double(env, arg, &numVal);
+        isIncognito = (numVal != 0.0);
+        return true;
+    }
+    if (type != napi_boolean) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "isIncognito", "boolean"));
+        return false;
+    }
+    napi_status status = napi_get_value_bool(env, arg, &isIncognito);
+    if (status != napi_ok) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "isIncognito", "boolean"));
+        return false;
+    }
+    return true;
+}
+
+namespace {
+// Reads the required fields (vendorId/productId/deviceKey) and the optional
+// deviceName from a JS WebDeviceIdentifier object. Returns false on any
+// missing or wrongly-typed field (throws 401 via BusinessError).
+bool ParseDeviceIdentifierFields(napi_env env, napi_value arg, WebDeviceIdentifier& device)
+{
+    napi_value val = nullptr;
+    if (napi_get_named_property(env, arg, "vendorId", &val) != napi_ok ||
+        !NapiParseUtils::ParseInt32(env, val, device.vendorId)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "device.vendorId", "number"));
+        return false;
+    }
+    if (napi_get_named_property(env, arg, "productId", &val) != napi_ok ||
+        !NapiParseUtils::ParseInt32(env, val, device.productId)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "device.productId", "number"));
+        return false;
+    }
+    if (napi_get_named_property(env, arg, "deviceKey", &val) != napi_ok ||
+        !NapiParseUtils::ParseString(env, val, device.deviceKey)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "device.deviceKey", "string"));
+        return false;
+    }
+    if (napi_get_named_property(env, arg, "deviceName", &val) == napi_ok) {
+        napi_valuetype nameType = napi_undefined;
+        napi_typeof(env, val, &nameType);
+        if (nameType != napi_undefined && nameType != napi_null) {
+            NapiParseUtils::ParseString(env, val, device.deviceName);
+        }
+    }
+    return true;
+}
+
+// Validates the value ranges of a parsed WebDeviceIdentifier. Returns false
+// on out-of-range ids or an over-long deviceKey (throws 401).
+bool ValidateDeviceIdentifierRanges(napi_env env, const WebDeviceIdentifier& device)
+{
+    if (device.vendorId < 0 || device.vendorId > 65535 ||
+        device.productId < 0 || device.productId > 65535) {
+        WVLOG_E("ValidateDeviceIdentifierRanges invalid ids vendor=%{public}d product=%{public}d",
+                device.vendorId, device.productId);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError: 401. Parameter error. 'device.vendorId/productId' must be in [0,65535].");
+        return false;
+    }
+    if (device.deviceKey.length() > 256) {
+        WVLOG_E("ValidateDeviceIdentifierRanges deviceKey too long, len=%{public}zu",
+                device.deviceKey.length());
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError: 401. Parameter error. 'device.deviceKey' length must be <= 256.");
+        return false;
+    }
+    return true;
+}
+} // namespace
+
+bool NapiWebviewController::ParseOptionalDeviceArg(napi_env env, napi_value arg, int32_t argc,
+                                                    WebDeviceIdentifier& device, bool& hasDevice)
+{
+    hasDevice = false;
+    if (argc < 1 || arg == nullptr) {
+        return true;
+    }
+    napi_valuetype type = napi_undefined;
+    napi_typeof(env, arg, &type);
+    if (type == napi_undefined || type == napi_null) {
+        return true;
+    }
+    if (!ParseDeviceIdentifierFields(env, arg, device)) {
+        return false;
+    }
+    hasDevice = true;
+    return ValidateDeviceIdentifierRanges(env, device);
+}
+
 napi_value NapiWebviewController::SetConnectionTimeout(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
@@ -6284,7 +6780,7 @@ napi_value NapiWebviewController::SetWebSchemeHandler(napi_env env, napi_callbac
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     WebviewController *webviewController = nullptr;
-    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    NAPI_CALL(env, napi_unwrap(env, thisVar, reinterpret_cast<void **>(&webviewController)));
     if (webviewController == nullptr || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         WVLOG_E("create message port failed, napi unwrap webviewController failed");

@@ -390,6 +390,21 @@ def get_nweb_base_name(ark_class_name):
     return ark_class_name
 
 
+def nweb_to_arkweb_type(nweb_class_name):
+    """将 NWeb 类名转换为对应的 ArkWeb 类名（get_nweb_base_name 的逆函数）
+
+    例如:
+    - "NWebDevicePermissionResultCallback" -> "ArkWebDevicePermissionResultCallback"
+    - "MMIListenerAdapter" -> "ArkMMIListenerAdapter"
+    - "DateTimeChooser" -> "ArkDateTimeChooser"
+    """
+    if nweb_class_name.startswith('NWeb'):
+        return f'ArkWeb{nweb_class_name[4:]}'
+    if nweb_class_name.startswith('Ark'):
+        return nweb_class_name
+    return f'Ark{nweb_class_name}'
+
+
 def arkweb_to_nweb_type(ark_class_name):
     if ark_class_name in ARKTS_TO_NWEB_CLASS_MAPPING:
         return ARKTS_TO_NWEB_CLASS_MAPPING[ark_class_name]
@@ -1182,10 +1197,13 @@ def _format_param_for_call(param_name, param_type):
 def _get_shared_ptr_impl_class(inner_type):
     """生成 shared_ptr 参数对应的 impl 类名
     例如: MMIListenerAdapter -> ArkMMIListenerAdapterImpl
+         NWebDevicePermissionResultCallback -> ArkWebDevicePermissionResultCallbackImpl
     """
     if inner_type.startswith('Ark'):
         return f'{inner_type}Impl'
-    return f'Ark{inner_type}Impl'
+    # 使用逆映射函数处理 NWeb 前缀（如 NWebXxx -> ArkWebXxx）
+    ark_type = nweb_to_arkweb_type(inner_type)
+    return f'{ark_type}Impl'
 
 
 def _check_shared_ptr_params(params_str):
@@ -1708,7 +1726,8 @@ private:
         for wrapper_include in sorted(wrapper_includes):
             impl += f'#include "{wrapper_include}"\n'
         if self._has_struct_mappings(ark_class):
-            struct_utils_header = f"{system}/bridge/ark_web_{output_subdir}_struct_utils.h"
+            struct_utils_suffix = "view" if output_subdir == "webview" else "core"
+            struct_utils_header = f"{system}/bridge/ark_web_{struct_utils_suffix}_struct_utils.h"
             impl += f'#include "{struct_utils_header}"\n'
         impl += f"""
 namespace OHOS::ArkWeb {{
@@ -1808,7 +1827,14 @@ namespace OHOS::ArkWeb {{
                 elif vec_type:
                     call_params.append(f"{get_vector_struct_to_class_func(vec_type)}({pname})")
                 else:
-                    call_params.append(pname)
+                    # 内置 vector 配置未命中，尝试 struct_mappings 中的自定义 vector 类型
+                    # （如 ArkWebDevicePermissionDeviceIdentifierVector）
+                    struct_vec_mapping = self._match_struct_mapping_by_arkweb_type_in_param(ark_class, param)
+                    if struct_vec_mapping:
+                        struct_to_class_func = struct_vec_mapping['struct_to_class']
+                        call_params.append(f"{struct_to_class_func}({pname})")
+                    else:
+                        call_params.append(pname)
             else:
                 # 检测枚举输出参数：引用参数 + 枚举类型
                 is_ref = '&' in param
@@ -1832,7 +1858,13 @@ namespace OHOS::ArkWeb {{
                         enum_type_full = enum_type
                     call_params.append(f"static_cast<{enum_type_full}>({pname})")
                 else:
-                    call_params.append(pname)
+                    # 检查是否是 struct_mappings 中注册的自定义结构体参数
+                    struct_mapping = self._match_struct_mapping_by_arkweb_type_in_param(ark_class, param)
+                    if struct_mapping:
+                        struct_to_class_func = struct_mapping['struct_to_class']
+                        call_params.append(f"{struct_to_class_func}({pname})")
+                    else:
+                        call_params.append(pname)
         is_void = return_type.strip() == 'void'
         # 对于静态方法，使用 NWeb::ClassName::Method() 调用；对于实例方法，使用 real_.MethodName() 调用
         if is_static:
@@ -1855,15 +1887,26 @@ namespace OHOS::ArkWeb {{
                         needs_string_conv = False
                         if has_arkweb_string_conv:
                             for i, (orig_pname, param_def) in enumerate(zip(param_names, param_list)):
-                                if orig_pname == pname and 'ArkWebString' in param_def:
+                                if orig_pname == pname and _is_pure_arkweb_string_param(param_def):
                                     is_output = '&' in param_def and 'const' not in param_def
                                     if not is_output:  # 输入参数需要转换
                                         needs_string_conv = True
                                     break
+                        # 检查是否是 struct_mappings 中注册的自定义结构体参数
+                        struct_mapping_for_param = None
+                        for orig_pname, orig_param_def in zip(param_names, param_list):
+                            if orig_pname == pname:
+                                struct_mapping_for_param = self._match_struct_mapping_by_arkweb_type_in_param(ark_class, orig_param_def)
+                                break
                         if needs_string_conv:
                             args.append(f"ArkWebStringStructToClass({pname})")
+                        elif struct_mapping_for_param:
+                            struct_to_class_func = struct_mapping_for_param['struct_to_class']
+                            args.append(f"{struct_to_class_func}({pname})")
                         else:
-                            args.append(pname)
+                            # 检查是否是枚举输入参数（按值传递）
+                            _enum_cast = self._get_enum_cast_for_impl_param(nweb_key, pname, param_list, param_names)
+                            args.append(_enum_cast if _enum_cast else pname)
                 args_str = ', '.join(args) if args else ''
                 if is_void:
                     if args_str:
@@ -1903,6 +1946,12 @@ namespace OHOS::ArkWeb {{
                             if not is_output:  # 输入参数需要转换
                                 needs_string_conv = True
                             break
+                # 检查当前参数是否是 struct_mappings 中注册的自定义结构体参数
+                struct_mapping_for_param = None
+                for orig_pname, orig_param_def in zip(param_names, param_list):
+                    if orig_pname == pname:
+                        struct_mapping_for_param = self._match_struct_mapping_by_arkweb_type_in_param(ark_class, orig_param_def)
+                        break
                 if is_refptr and wrapper_class_for_param:
                     # RefPtr 参数，包装为 std::make_shared<Wrapper>(param)
                     if needs_string_conv:
@@ -1911,9 +1960,13 @@ namespace OHOS::ArkWeb {{
                         args.append(f"std::make_shared<{wrapper_class_for_param}>({pname})")
                 elif needs_string_conv:
                     args.append(f"ArkWebStringStructToClass({pname})")
+                elif struct_mapping_for_param:
+                    struct_to_class_func = struct_mapping_for_param['struct_to_class']
+                    args.append(f"{struct_to_class_func}({pname})")
                 else:
-                    # 普通参数
-                    args.append(pname)
+                    # 检查是否是枚举输入参数（按值传递）
+                    _enum_cast = self._get_enum_cast_for_impl_param(nweb_key, pname, param_list, param_names)
+                    args.append(_enum_cast if _enum_cast else pname)
             call_param_str = ', '.join(args) if args else ''
         # 确定最终使用的调用参数字符串
         if not refptr_params:
@@ -2179,7 +2232,8 @@ private:
                 impl += f'#include "{dep_header}"\n'
             impl += '\n'
         if self._has_struct_mappings(ark_class):
-            struct_utils_header = f"{system}/bridge/ark_web_{output_subdir}_struct_utils.h"
+            struct_utils_suffix = "view" if output_subdir == "webview" else "core"
+            struct_utils_header = f"{system}/bridge/ark_web_{struct_utils_suffix}_struct_utils.h"
             impl += f'#include "{struct_utils_header}"\n'
             impl += '\n'
         static_methods = []
@@ -2631,7 +2685,25 @@ namespace OHOS::ArkWeb {{
                     elif _is_function_pointer_param(nweb_param):
                         converted_params.append(param_name)
                     else:
-                        converted_params.append(param_name)
+                        # 检查是否是 struct_mappings 中注册的自定义结构体参数
+                        struct_mapping = self._match_struct_mapping_by_nweb_type_in_param(ark_class, nweb_param)
+                        if struct_mapping:
+                            class_to_struct_func = struct_mapping['class_to_struct']
+                            ark_var_name = f'ark_{param_name}'
+                            ark_type_name = self._get_arkweb_type_from_struct_mapping(struct_mapping)
+                            conversions.append(f'    {ark_type_name} {ark_var_name} = {class_to_struct_func}({param_name});')
+                            converted_params.append(ark_var_name)
+                            release_func = self._get_release_func_from_struct_mapping(struct_mapping)
+                            if release_func:
+                                release_codes.append(f'    {release_func}({ark_var_name});')
+                        else:
+                            # 检查是否是枚举输入参数（按值传递，非引用）
+                            # 需要使用 static_cast<int32_t> 转换为 ArkWeb 接口期望的 int32_t
+                            param_type_clean = nweb_param.replace('const', '').strip().rsplit(' ', 1)[0].strip().rstrip('&*').strip()
+                            if _is_enum_type(param_type_clean) and '&' not in nweb_param and '*' not in nweb_param:
+                                converted_params.append(f'static_cast<int32_t>({param_name})')
+                            else:
+                                converted_params.append(param_name)
         if shared_ptr_checks:
             if conversions:
                 result += '\n'.join(conversions) + '\n\n'
@@ -3291,7 +3363,7 @@ namespace OHOS::ArkWeb {{
         converted_parts = []
         out_params_info = []
         for i, (pname, param_def) in enumerate(zip(param_names, param_list)):
-            if 'ArkWebString' in param_def:
+            if 'ArkWebString' in param_def and _is_pure_arkweb_string_param(param_def):
                 has_arkweb_string = True
                 if '&' in param_def and 'const' not in param_def:
                     # 输出参数
@@ -3600,9 +3672,9 @@ namespace OHOS::ArkWeb {{
         ref_ptr_pattern = r'(?:ArkWebRefPtr|std::shared_ptr)\s*<\s*([A-Za-z][A-Za-z0-9_]*)\s*>'
         for match in re.finditer(ref_ptr_pattern, type_string):
             type_name = match.group(1)
-            # 例如: MMIListenerAdapter -> ArkMMIListenerAdapter
-            if not type_name.startswith('Ark'):
-                type_name = f"Ark{type_name}"
+            # 将 NWeb 类名映射回 ArkWeb 类名（例如 NWebXxx -> ArkWebXxx,
+            # MMIListenerAdapter -> ArkMMIListenerAdapter）
+            type_name = nweb_to_arkweb_type(type_name)
             if type_name != exclude_class:
                 types.add(type_name)
         return types
@@ -3720,6 +3792,29 @@ namespace OHOS::ArkWeb {{
                 headers.add(f'#include "{header}"')
         return headers
 
+    def _get_enum_cast_for_impl_param(self, nweb_key, pname, param_list, param_names):
+        """检查 impl 文件中的参数是否是枚举输入参数，返回 static_cast 表达式或 None"""
+        if nweb_key not in self.enum_type_map:
+            return None
+        if pname not in self.enum_type_map[nweb_key]:
+            return None
+        enum_type = self.enum_type_map[nweb_key][pname]
+        # 查找参数定义，确认是 int32_t/uint32_t 类型
+        param_def = None
+        for orig_pname, orig_def in zip(param_names, param_list):
+            if orig_pname == pname:
+                param_def = orig_def
+                break
+        if not param_def:
+            return None
+        if 'int32_t' not in param_def and 'uint32_t' not in param_def:
+            return None
+        if 'OHOS::NWeb::' not in enum_type:
+            enum_type_full = f"OHOS::NWeb::{enum_type}"
+        else:
+            enum_type_full = enum_type
+        return f"static_cast<{enum_type_full}>({pname})"
+
     def _build_enum_type_mapping(self):
         """扫描 NWeb 接口定义文件，建立枚举类型映射
         通过分析 NWeb 接口定义中的方法签名，学习 int32_t 到实际枚举类型的映射关系
@@ -3746,7 +3841,7 @@ namespace OHOS::ArkWeb {{
                     with open(header_file, 'r', encoding='utf-8') as f:
                         content = f.read()
                     # 查找所有接口类定义和方法签名
-                    class_pattern = r'class\s+(?:OHOS_NWEB_EXPORT\s+)?([A-Z]\w*(?:Adapter|Callback|Listener|Info|Config|Options|Params|Data|Log|Source|Type|State|Mode|Result|Event|Request|Response|Handler|Manager|Client|Proxy|Wrapper|Helper|Exception|Error))\s*[:\{]'
+                    class_pattern = r'class\s+(?:OHOS_NWEB_EXPORT\s+)?([A-Z]\w*(?:Adapter|Callback|Listener|Info|Config|Options|Params|Data|Log|Source|Type|State|Mode|Result|Event|Request|Response|Handler|Manager|Client|Proxy|Wrapper|Helper|Exception|Error|Delegate|Chooser))\s*[:\{]'
                     for class_match in re.finditer(class_pattern, content):
                         nweb_class = class_match.group(1)
                         class_start = class_match.end()
@@ -4120,6 +4215,139 @@ namespace OHOS::ArkWeb {{
         """
         config_key = self._find_struct_mapping_key(ark_class)
         return config_key is not None
+
+    def _get_struct_mapping_info_by_arkweb_type(self, ark_class, arkweb_type):
+        """根据 ArkWeb 类型名查找结构体映射信息（用于 impl 侧参数转换）
+
+        impl 侧的参数类型是 ArkWeb C 结构体类型（如 ArkWebDevicePermissionRequestBase），
+        需要查找 struct_mappings 中以该类型为键的映射，返回 struct_to_class 转换函数。
+
+        Args:
+            ark_class: ArkWeb 类名（如 "ArkWebDevicePermissionDelegate"）
+            arkweb_type: ArkWeb 类型名（如 "ArkWebDevicePermissionRequestBase"）
+
+        Returns:
+            dict or None: 如果找到映射，返回包含 nweb_type, class_to_struct, struct_to_class 的字典
+        """
+        config_key = self._find_struct_mapping_key(ark_class)
+        if not config_key:
+            return None
+        struct_mappings = self.struct_mappings[config_key]
+        # 直接匹配 ArkWeb 类型名
+        if arkweb_type in struct_mappings:
+            return struct_mappings[arkweb_type]
+        # 尝试去掉 const/& 修饰后匹配
+        clean_type = arkweb_type.strip()
+        if clean_type.startswith('const '):
+            clean_type = clean_type[6:].strip()
+        if clean_type.endswith('&'):
+            clean_type = clean_type[:-1].strip()
+        if clean_type in struct_mappings:
+            return struct_mappings[clean_type]
+        return None
+
+    def _match_struct_mapping_by_arkweb_type_in_param(self, ark_class, param_str):
+        """从参数字符串中提取 ArkWeb 类型名并查找 struct_mappings 映射
+
+        参数字符串形如 "const ArkWebDevicePermissionRequestBase& request_info"，
+        本函数解析其中的类型部分（去掉 const、&、参数名），在 struct_mappings
+        中查找对应的映射信息。
+
+        Args:
+            ark_class: ArkWeb 类名（如 "ArkWebDevicePermissionDelegate"）
+            param_str: 参数字符串（如 "const ArkWebDevicePermissionRequestBase& request_info"）
+
+        Returns:
+            dict or None: 如果找到映射，返回包含 nweb_type, class_to_struct, struct_to_class 的字典
+        """
+        config_key = self._find_struct_mapping_key(ark_class)
+        if not config_key:
+            return None
+        struct_mappings = self.struct_mappings[config_key]
+        param_str = param_str.strip()
+        # 去掉 const 前缀
+        if param_str.startswith('const '):
+            param_str = param_str[6:].strip()
+        # 去掉参数名（最后一个 token）
+        tokens = param_str.split()
+        if not tokens:
+            return None
+        # 参数类型可能包含 & 后缀，如 "ArkWebDevicePermissionRequestBase&"
+        type_token = tokens[0].rstrip('&').strip()
+        if type_token in struct_mappings:
+            return struct_mappings[type_token]
+        return None
+
+    def _match_struct_mapping_by_nweb_type_in_param(self, ark_class, nweb_param_str):
+        """从 wrapper 侧的 NWeb 参数字符串中提取类型并查找 struct_mappings 映射
+
+        wrapper 侧参数形如 "const NWebDevicePermissionRequestBase& request_info"
+        或 "const std::vector<NWebDevicePermissionDeviceIdentifier>& devices"。本函数
+        解析其中的类型部分，与 struct_mappings 中各项的 nweb_type 字段匹配。
+
+        Args:
+            ark_class: ArkWeb 类名
+            nweb_param_str: NWeb 侧参数字符串
+
+        Returns:
+            dict or None: struct_mapping 字典（含 arkweb_type 键）或 None
+        """
+        config_key = self._find_struct_mapping_key(ark_class)
+        if not config_key:
+            return None
+        struct_mappings = self.struct_mappings[config_key]
+        param_str = nweb_param_str.strip()
+        # 去掉 const 前缀
+        if param_str.startswith('const '):
+            param_str = param_str[6:].strip()
+        # 去掉参数名（最后一个 token）
+        tokens = param_str.split()
+        if not tokens:
+            return None
+        # 参数类型可能包含 & 后缀
+        raw_type = tokens[0].rstrip('&').strip()
+        # 构建 NWeb 类型的多种候选形式，与 nweb_type 字段对比
+        candidates = set()
+        candidates.add(raw_type)
+        candidates.add(f'OHOS::NWeb::{raw_type}')
+        candidates.add(f'NWeb::{raw_type}')
+        # 也尝试去掉可能的命名空间前缀后再加
+        clean = raw_type
+        for prefix in ('OHOS::NWeb::', 'NWeb::', 'OHOS::'):
+            if clean.startswith(prefix):
+                clean = clean[len(prefix):]
+                break
+        candidates.add(clean)
+        candidates.add(f'OHOS::NWeb::{clean}')
+        # 对于 vector 类型，可能 nweb_type 是 std::vector<OHOS::NWeb::Xxx>，
+        # 而 wrapper 参数是 std::vector<NWebDevicePermissionDeviceIdentifier>
+        vec_match = re.match(r'std::vector<(.+)>$', raw_type)
+        if vec_match:
+            inner = vec_match.group(1).strip()
+            candidates.add(f'std::vector<{inner}>')
+            candidates.add(f'std::vector<OHOS::NWeb::{inner}>')
+            for prefix in ('OHOS::NWeb::', 'NWeb::', 'OHOS::'):
+                if inner.startswith(prefix):
+                    inner_clean = inner[len(prefix):]
+                    candidates.add(f'std::vector<OHOS::NWeb::{inner_clean}>')
+                    candidates.add(f'std::vector<{inner_clean}>')
+                    break
+        for arkweb_type, mapping_info in struct_mappings.items():
+            nweb_type = mapping_info.get('nweb_type', '')
+            if nweb_type in candidates:
+                # 附加 arkweb_type 键，方便后续构造局部变量类型
+                enriched = dict(mapping_info)
+                enriched['arkweb_type'] = arkweb_type
+                return enriched
+        return None
+
+    def _get_arkweb_type_from_struct_mapping(self, struct_mapping):
+        """从 struct_mapping 字典获取 ArkWeb 类型名（用于声明局部变量）"""
+        return struct_mapping.get('arkweb_type', '')
+
+    def _get_release_func_from_struct_mapping(self, struct_mapping):
+        """从 struct_mapping 字典获取 release 函数名，若未配置返回 None"""
+        return struct_mapping.get('release', None)
 
 
 def load_config(config_path):
