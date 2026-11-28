@@ -21,6 +21,7 @@
 #include <refbase.h>
 #include <surface.h>
 #include <thread>
+#include <unistd.h>
 
 #include "app_mgr_client.h"
 #include "application_context.h"
@@ -38,6 +39,7 @@
 #include "parameter.h"
 #include "parameters.h"
 #include "arkweb_utils.h"
+#include "ohos_adapter/include/ark_res_sched_client_adapter.h"
 #if defined(hidebug_async_stack)
 #include "async_stack.h"
 #endif
@@ -1524,6 +1526,15 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         initArgs->AddArg(std::string("--enable-cache-data-dir-migration=").append(isDataMigrate));
     }
 
+    // report createNWeb START event to begin RSS exact preread collect/preread
+    // status 0 == NWebCreateType::NWEB_CREATE_START
+    std::string bundleNameForReport;
+    if (ctx) {
+        bundleNameForReport = ctx->GetBundleName();
+    }
+    OHOS::ArkWeb::ArkResSchedClientAdapter::ReportNWebCreate(
+        0, getpid(), ArkWebStringClassToStruct(bundleNameForReport));
+
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
@@ -1531,6 +1542,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
     }
     int64_t endTime = GetCurrentRealTimeNs();
     EventReport::ReportCreateWebInstanceTime(nweb->GetWebId(), endTime - startTime);
+    // report createNWeb COMPLETE event, RSS ends flow via stop command (event-driven, no timer)
+    // status 1 == NWebCreateType::NWEB_CREATE_COMPLETE
+    OHOS::ArkWeb::ArkResSchedClientAdapter::ReportNWebCreate(
+        1, getpid(), ArkWebStringClassToStruct(bundleNameForReport));
     return nweb;
 }
 
@@ -1565,6 +1580,14 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
     initArgs->AddArg(std::string("--socket-idle-timeout=").append(socketIdleTimeout));
     auto createInfo =
         NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(enhanceSurfaceInfo, initArgs, width, height, incognitoMode);
+    // report createNWeb START event to begin RSS exact preread collect/preread
+    // status 0 == NWebCreateType::NWEB_CREATE_START
+    std::string bundleNameForReport;
+    if (ctx) {
+        bundleNameForReport = ctx->GetBundleName();
+    }
+    OHOS::ArkWeb::ArkResSchedClientAdapter::ReportNWebCreate(
+        0, getpid(), ArkWebStringClassToStruct(bundleNameForReport));
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
@@ -1572,6 +1595,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
     }
     int64_t endTime = GetCurrentRealTimeNs();
     EventReport::ReportCreateWebInstanceTime(nweb->GetWebId(), endTime - startTime);
+    // report createNWeb COMPLETE event, RSS ends flow via stop command (event-driven, no timer)
+    // status 1 == NWebCreateType::NWEB_CREATE_COMPLETE
+    OHOS::ArkWeb::ArkResSchedClientAdapter::ReportNWebCreate(
+        1, getpid(), ArkWebStringClassToStruct(bundleNameForReport));
     return nweb;
 }
 

@@ -18,6 +18,7 @@
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
@@ -65,6 +66,9 @@ public:
  
     /*--ark web()--*/
     static void ReportPreloadNWebCreate(bool isPreload);
+
+    /*--ark web()--*/
+    static void ReportNWebCreate(int32_t status, pid_t pid, const ArkWebString& bundleName);
 };
 
 } // namespace OHOS::ArkWeb

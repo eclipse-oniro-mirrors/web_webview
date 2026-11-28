@@ -92,4 +92,10 @@ void ArkResSchedClientAdapter::ReportPreloadNWebCreate(bool isPreload)
 {
     return NWeb::ResSchedClientAdapter::ReportPreloadNWebCreate(isPreload);
 }
+
+void ArkResSchedClientAdapter::ReportNWebCreate(int32_t status, pid_t pid, const ArkWebString& bundleName)
+{
+    std::string bundleNameStr = ArkWebStringStructToClass(bundleName);
+    NWeb::ResSchedClientAdapter::ReportNWebCreate(status, pid, bundleNameStr);
+}
 } // namespace OHOS::ArkWeb
